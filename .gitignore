@@ -1,19 +1,65 @@
-# Gradle files
-.gradle/
-build/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Local configuration file (sdk path, etc)
-local.properties
+# dependencies
+/tracollab/node_modules
+/node_modules
 
-# Log/OS Files
-*.log
+/tracollab/.pnp
+/.pnp
 
-# Android Studio generated files and folders
-captures/
-.externalNativeBuild/
-.cxx/
-*.apk
-output.json
+.pnp.js
+.yarn/install-state.gz
+
+/tracollab/.pnp.js
+/tracollab/.yarn/install-state.gz
+
+# testing
+/tracollab/coverage
+/coverage
+
+# next.js
+/.next/
+/out/
+
+/tracollab/.next/
+/tracollab/out/
+
+# production
+/tracollab/build
+
+/build
+
+# misc
+.DS_Store
+/tracollab/.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+/tracollab/npm-debug.log*
+/tracollab/yarn-debug.log*
+/tracollab/yarn-error.log*
+
+# local env files
+.env*.local
+
+/tracollab/.env*.local
+
+# vercel
+/tracollab/.vercel
+
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+/tracollab/next-env.d.ts
+
+.idea
 
 # IntelliJ
 *.iml
@@ -21,13 +67,3 @@ output.json
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
-
-# Keystore files
-*.jks
-*.keystore
-
-# Google Services (e.g. APIs or Firebase)
-google-services.json
-
-# Android Profiling
-*.hprof
