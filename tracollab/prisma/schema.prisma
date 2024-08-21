@@ -1,0 +1,100 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  email          String        @unique
+  name           String
+  password       String
+  profilePicture String
+  joinDate       DateTime
+  posts          Post[]        @relation("UserPosts")
+  likes          UserLikes[]
+  reports        UserReports[]
+}
+
+model Sound {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  audioPath     String
+  picture       String
+  genreId       String         @db.ObjectId
+  genre         Genre          @relation(fields: [genreId], references: [id])
+  postableSound PostableSound?
+  Instrumental  Instrumental[]
+  Voice         Voice[]
+  Song          Song[]
+}
+
+model PostableSound {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  soundId String @unique @db.ObjectId
+  sound   Sound  @relation(fields: [soundId], references: [id])
+  post    Post?
+}
+
+model Instrumental {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  soundId String @db.ObjectId
+  sound   Sound  @relation(fields: [soundId], references: [id])
+}
+
+model Voice {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  soundId String @db.ObjectId
+  sound   Sound  @relation(fields: [soundId], references: [id])
+}
+
+model Song {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  soundId String @db.ObjectId
+  sound   Sound  @relation(fields: [soundId], references: [id])
+}
+
+model Post {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  description     String
+  date            DateTime
+  userId          String         @db.ObjectId
+  user            User           @relation("UserPosts", fields: [userId], references: [id])
+  comments        Comment[]
+  postableSound   PostableSound? @relation(fields: [postableSoundId], references: [id])
+  likes           UserLikes[]
+  reports         UserReports[]
+  postableSoundId String?        @unique @db.ObjectId
+}
+
+model UserLikes {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  postId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+}
+
+model UserReports {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  postId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+}
+
+model Comment {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  publish Boolean
+  postId  String  @db.ObjectId
+  post    Post    @relation(fields: [postId], references: [id])
+}
+
+model Genre {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  sounds Sound[]
+}
