@@ -202,7 +202,8 @@ const config: Config = {
   },
 
   transform: {
-    '^.+\\.tsx?$': 'babel-jest',
+    // Use @swc/jest to transform files for Jest
+    '^.+\\.(t|j)sx?$': '@swc/jest',
   },
 };
 
