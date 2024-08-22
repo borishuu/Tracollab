@@ -16,6 +16,24 @@ async function main() {
       },
     });
 
+    // Insertion d'un nouveau genre dans la base de données
+    const genre = await prisma.genre.create({
+      data: {
+        name: 'Hip-Hop',
+      },
+    });
+
+    // Insertion d'un nouveau son dans la base de données
+    const sound = await prisma.sound.create({
+      data: {
+        title: 'Sound 1',
+        audioPath: 'lien_cloud_storage',
+        picture: 'https://example.com/sound1.jpg',
+        genreId: genre.id, // Trouver comment récupérer l'id du genre Hip-Hop
+        description: 'Description 1',
+      },
+    });
+
     // Afficher l'utilisateur créé
     console.log('Nouvel utilisateur inséré : ', user);
   } catch (error) {
