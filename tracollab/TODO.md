@@ -18,8 +18,13 @@
 
 ## Processus de travail
 
-- [ ] Vérifier avec Ludo
+- [x] Vérifier avec Ludo
+- [ ] Ajouter les étapes "humaines" (comment on se répartit les tâches, travail collaboratif, présentiel/distance, etc.)
+
+## CI
+
+- [ ] Créer une petite Github Action qui lance automatiquement un test dès lors qu'une PR est ouverte, pour montrer le bon fonctionnement de la CI
 
 ## Général
 
-- Repasser sur tout (vendredi)
+- [ ] Repasser sur tout (vendredi)
