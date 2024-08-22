@@ -47,13 +47,13 @@ export default function Home() {
             rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Doooocs{" "}
+            Doooocsssssss{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
           <audio controls>
-            <source src="https://storage.cloud.google.com/instrumentals-tracollab/birds-chirping-75156.mp3" type="audio/mpeg"/>
+            <source src="https://storage.googleapis.com/instrumentals-tracollab/birds-chirping-75156.mp3" type="audio/mpeg"/>
             Your browser does not support the audio element.
           </audio>
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
