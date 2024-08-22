@@ -2,7 +2,7 @@
 
 ## Mockup
 
-- [ ] Finaliser (Calvin)
+- [x] Finaliser (Calvin)
 
 ## Landing page
 
@@ -10,21 +10,28 @@
 
 ## Description du projet
 
-- [ ] Peaufiner l'objectif, la problématique (Alan)
+- [x] Peaufiner l'objectif, la problématique (Alan)
 
 ## Description des choix techniques
 
-- [ ] Expliquer pourquoi on a choisi MongoDB, Google Storage/Cloud Run, NextJS, Prisma, etc. (Yanis, Boris)
-
+- [ ] Expliquer pourquoi on a choisi :
+  - [x] Prisma
+  - [ ] MongoDB (Yanis)
+  - [ ] Google Storage (Alan)
+  - [ ] Cloud Run
+  - [ ] NextJS
+  - [x] TailwindCSS
+    
 ## Processus de travail
 
 - [x] Vérifier avec Ludo
-- [ ] Ajouter les étapes "humaines" (comment on se répartit les tâches, travail collaboratif, présentiel/distance, etc.)
+- [x] Ajouter les étapes "humaines" (comment on se répartit les tâches, travail collaboratif, présentiel/distance, etc.)
 
 ## CI
 
-- [ ] Créer une petite Github Action qui lance automatiquement un test dès lors qu'une PR est ouverte, pour montrer le bon fonctionnement de la CI
+- [x] Créer une petite Github Action qui lance automatiquement un test dès lors qu'une PR est ouverte, pour montrer le bon fonctionnement de la CI
 
-## Général
+## Général (vendredi)
 
-- [ ] Repasser sur tout (vendredi)
+- [ ] Repasser sur toute la doc
+- [ ] Préparer la démo
