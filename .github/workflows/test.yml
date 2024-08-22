@@ -24,10 +24,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd app
+          cd tracollab
           npm install
 
       - name: Run Jest tests
         run: |
-          cd app
+          cd tracollab
           npm test
