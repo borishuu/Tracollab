@@ -6,7 +6,7 @@
 
 ## Landing page
 
-- [ ] Finaliser dès que Calvin a fini (Boris)
+- [x] Finaliser dès que Calvin a fini (Boris)
 
 ## Description du projet
 
@@ -16,10 +16,10 @@
 
 - [ ] Expliquer pourquoi on a choisi :
   - [x] Prisma
-  - [ ] MongoDB (Yanis)
-  - [ ] Google Storage (Alan)
-  - [ ] Cloud Run
-  - [ ] NextJS
+  - [x] MongoDB (Yanis)
+  - [x] Google Storage (Alan)
+  - [x] Cloud Run
+  - [x] NextJS
   - [x] TailwindCSS
     
 ## Processus de travail
@@ -33,5 +33,5 @@
 
 ## Général (vendredi)
 
-- [ ] Repasser sur toute la doc
-- [ ] Préparer la démo
+- [x] Repasser sur toute la doc
+- [x] Préparer la démo
