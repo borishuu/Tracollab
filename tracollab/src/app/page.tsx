@@ -53,7 +53,7 @@ export default function Home() {
             </span>
           </h2>
           <audio controls>
-            <source src="https://storage.googleapis.com/instrumentals-tracollab/birds-chirping-75156.mp3" type="audio/mpeg"/>
+            <source src="https://storage.googleapis.com/instrumentals-tracollab/birds.mp3" type="audio/mpeg"/>
             Your browser does not support the audio element.
           </audio>
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
