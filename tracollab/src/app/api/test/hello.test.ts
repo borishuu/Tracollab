@@ -1,4 +1,4 @@
-import { testApiHandler } from "next-test-api-route-handler"; // Must always be first
+import { testApiHandler } from "next-test-api-route-handler";
 import * as appHandler from './route';
 
 it("GET returns 200", async () => {
