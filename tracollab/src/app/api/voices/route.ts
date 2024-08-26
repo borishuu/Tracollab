@@ -4,11 +4,11 @@ const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
     
-    const instrumentals = await prisma.instrumental.findMany();
-    console.log(instrumentals);
+    const voices = await prisma.voice.findMany();
+    console.log(voices);
     await prisma.$disconnect();
 
-    return new Response(JSON.stringify(instrumentals), {
+    return new Response(JSON.stringify(voices), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
