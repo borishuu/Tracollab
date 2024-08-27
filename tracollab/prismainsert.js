@@ -3,6 +3,16 @@ const {PrismaClient} = require('@prisma/client');
 // Créer une instance de PrismaClient
 const prisma = new PrismaClient();
 
+// URLs des dossiers de stockage
+const storageFolder = "https://storage.googleapis.com/tracollab-storage/",
+    instrumentalsFolder = storageFolder + "instrumentals/",
+    imagesFolder = storageFolder + "images/";
+
+// Fonction pour générer le chemin d'accès à un son
+function generateAudioPath(title) {
+    return instrumentalsFolder + encodeURIComponent(title);
+}
+
 // Populer la base de données, pour avoir une base afin d'implémenter le frontend/backend
 async function main() {
     /* Exemples de requêtes Prisma
@@ -98,367 +108,200 @@ async function main() {
         await prisma.$disconnect();
     } */
 
-    /* Insertion de sons dans la base de données */
+    /* Insertion de sons dans la base de données
     try {
-        let jazz0, kpop0, reggae0, jazz1, afrobeat0, rap0, reggae1, pop0, techno0, hiphop0, blues0, rock0, country0,
-            blues1, pop1, afrobeat1, house0, electronic0, latin0, metal0, funk0, funk1, rnb0, rnb1, soul0, electronic1,
-            techno1, salsa0;
-        const instrumentalsFolder = "https://storage.googleapis.com/";
+        // Variables pour stocker les genres, pour pouvoir récupérer leurs IDs et les associer aux sons
+        let jazz = await prisma.genre.findFirst({where: {name: "Jazz"}}),
+            kpop = await prisma.genre.findFirst({where: {name: "K-Pop"}}),
+            reggae = await prisma.genre.findFirst({where: {name: "Reggae"}}),
+            pop = await prisma.genre.findFirst({where: {name: "Pop"}}),
+            techno = await prisma.genre.findFirst({where: {name: "Techno"}}),
+            hiphop = await prisma.genre.findFirst({where: {name: "Hip-Hop"}}),
+            blues = await prisma.genre.findFirst({where: {name: "Blues"}}),
+            rock = await prisma.genre.findFirst({where: {name: "Rock"}}),
+            country = await prisma.genre.findFirst({where: {name: "Country"}}),
+            afrobeat = await prisma.genre.findFirst({where: {name: "Afrobeat"}}),
+            rap = await prisma.genre.findFirst({where: {name: "Rap"}}),
+            electronic = await prisma.genre.findFirst({where: {name: "Electronic"}}),
+            latin = await prisma.genre.findFirst({where: {name: "Latin"}}),
+            metal = await prisma.genre.findFirst({where: {name: "Metal"}}),
+            funk = await prisma.genre.findFirst({where: {name: "Funk"}}),
+            rnb = await prisma.genre.findFirst({where: {name: "R&B"}}),
+            soul = await prisma.genre.findFirst({where: {name: "Soul"}}),
+            salsa = await prisma.genre.findFirst({where: {name: "Salsa"}}),
+            house = await prisma.genre.findFirst({where: {name: "House"}});
 
-        let jazzId = prisma.genre.findFirst({where: {name: "Jazz"}}).then((genre) => genre.id);
+        // Données des sons à insérer
+        const soundsData = [
+            {
+                title: "INSTRU RAP JAZZ GROOVIN' BEAT  - Fred Killah.mp3",
+                picture: imagesFolder + "JazzCover.jpg",
+                genreId: jazz.id,
+            },
+            {
+                title: "NEW KPOP TYPE BEAT (PLEASE READ DESCRIPTION).mp3",
+                picture: imagesFolder + "KPopCover.jpg",
+                genreId: kpop.id,
+            },
+            {
+                title: "REGGAE INSTRUMENTAL - Roots Yard.mp3",
+                picture: imagesFolder + "ReggaeCover.jpg",
+                genreId: reggae.id,
+            },
+            {
+                title: "[FREE] JAZZ TYPE BEAT SAXOPHONE - 777  LOFI BOOMBAP INSTRUMENTAL 2023.mp3",
+                picture: imagesFolder + "JazzCover2.jpg",
+                genreId: jazz.id,
+            },
+            {
+                title: "Afrobeat_Burano.mp3",
+                picture: imagesFolder + "AfrobeatCover.jpg",
+                genreId: afrobeat.id,
+            },
+            {
+                title: "Instru Rap Boom Bap Freestyle Piano - SEDATIF - Prod. By WEEDLACK.mp3",
+                picture: imagesFolder + "RapCover.jpg",
+                genreId: rap.id,
+            },
+            {
+                title: "instrumental reggae - uso libre - beat 2020.mp3",
+                picture: imagesFolder + "ReggaeCover.jpg",
+                genreId: reggae.id,
+            },
+            {
+                title: "Pop Instrumental Libre De Droit 2023  Instru Rock Guitare NO REASON - Prod. By Rise.mp3",
+                picture: "",
+                genreId: pop.id,
+            },
+            {
+                title: "[Free] Tech House x Techno Type Beat - GROOVE  Club Banger Instrumental 2022  Electronic Rap Beat.mp3",
+                picture: imagesFolder + "TechnoCover.jpg",
+                genreId: techno.id,
+            },
+            {
+                title: "[FREE] Hip-Hop Instrumental  Beat The Secret Of Babylon 2021.mp3",
+                picture: imagesFolder + "HipHopCover.jpg",
+                genreId: hiphop.id,
+            },
+            {
+                title: "Smooth Dark Blues.mp3",
+                picture: imagesFolder + "BluesCover.png",
+                genreId: blues.id,
+            },
+            {
+                title: "[FREE] Rock Type Beat Fake Love.mp3",
+                picture: imagesFolder + "RockCover.jpg",
+                genreId: rock.id,
+            },
+            {
+                title: "Fun Love Country Type Beat In The Style Of Russell Dickerson A Million More By BachBeats.mp3",
+                picture: imagesFolder + "CountryCover.jpg",
+                genreId: country.id,
+            },
+            {
+                title: "Guitar Blues Type Beat Evening Sexy Slow Blues Instrumental.mp3",
+                picture: imagesFolder + "BluesCover.png",
+                genreId: blues.id,
+            },
+            {
+                title: "[FREE FOR PROFIT] Smooth Pop Type Beat - Done.mp3",
+                picture: "",
+                genreId: pop.id,
+            },
+            {
+                title: "Afrobeat Instrumental HEAVEN Oxlade x Fireboy Dml x Skiibi x Davido Typebeat 2022.mp3",
+                picture: imagesFolder + "AfrobeatCover2.jpg",
+                genreId: afrobeat.id,
+            },
+            {
+                title: "[FREE] House x Club Type Beat - ATTRACTED  Dance EDM Instrumental.mp3",
+                picture: imagesFolder + "HouseCover.jpg",
+                genreId: house.id,
+            },
+            {
+                title: "[FREE] Deep House x Tech House Type Beat - DRIVE  Banger EDM Dance Club Techno Instrumental 2021.mp3",
+                picture: imagesFolder + "ElectroCover.jpeg",
+                genreId: electronic.id,
+            },
+            {
+                title: "Latin Beat - LUMINA  Spanish Afro guitar type beat  Dancehall Instrumental 2023.mp3",
+                picture: imagesFolder + "LatinCover.jpg",
+                genreId: latin.id,
+            },
+            {
+                title: "[FREE] Trap Metal Type Beat Lost (Heavy Dark Rock Guitar Rap Instrumental 2020).mp3",
+                picture: imagesFolder + "MetalCover.jpg",
+                genreId: metal.id,
+            },
+            {
+                title: "Instru Funk - Type Beat Beverly Hills (Prod. TromatizMusic Ft HRNN).mp3",
+                picture: imagesFolder + "FunkCover.jpg",
+                genreId: funk.id,
+            },
+            {
+                title: "Instru  Miami Funk Type Beat New Funk (Prod.Slimanesb).mp3",
+                picture: imagesFolder + "FunkCover.jpg",
+                genreId: funk.id,
+            },
+            {
+                title: "R&B Guitar Type Beat - VIBE  Smooth R&B Guitar Instrumental 2022.mp3",
+                picture: imagesFolder + "RNBCover.jpg",
+                genreId: rnb.id,
+            },
+            {
+                title: "R&B Type Beat - Feelings Out.mp3",
+                picture: imagesFolder + "RNBCover.jpg",
+                genreId: rnb.id,
+            },
+            {
+                title: "(FREE) Acoustic SZA x Jhene Aiko Type Beat Soul.mp3",
+                picture: imagesFolder + "SoulCover.jpg",
+                genreId: soul.id,
+            },
+            {
+                title: "Electro Latino House 2023 Type Beat Instrumental AZUL  by Shot Records.mp3",
+                picture: imagesFolder + "ElectroCover2.jpg",
+                genreId: electronic.id,
+            },
+            {
+                title: "Tujamo, VINNE & Murotani - Techno Party (Bass House  Tech House).mp3",
+                picture: imagesFolder + "TechnoCover2.jpg",
+                genreId: techno.id,
+            },
+            {
+                title: "Latin Boom Bap Instrumental x Salsa Hip Hop type beat - Habano  Nigma.mp3",
+                picture: imagesFolder + "SalsaCover.jpg",
+                genreId: salsa.id,
+            },
+        ];
 
-        // Créer des sons
-        const sounds = await prisma.sound.createMany({
-            data: [
-                jazz0 = {
-                    title: "INSTRU RAP JAZZ GROOVIN' BEAT  - Fred Killah.mp3",
-                    audioPath: instrumentalsFolder + "INSTRU%20RAP%20JAZZ%20GROOVIN'%20BEAT%20%20-%20Fred%20Killah.mp3",
-                    picture: "",
-                    genreId: jazzId,
-                },
-                kpop0 = {
-                    title: "NEW KPOP TYPE BEAT (PLEASE READ DESCRIPTION).mp3",
-                    audioPath: instrumentalsFolder + "NEW%20KPOP%20TYPE%20BEAT%20(PLEASE%20READ%20DESCRIPTION).mp3",
-                    picture: "",
-                    genreId: kpop.id,
-                },
-                reggae0 = {
-                    title: "REGGAE INSTRUMENTAL - Roots Yard.mp3",
-                    audioPath: instrumentalsFolder + "REGGAE%20INSTRUMENTAL%20-%20Roots%20Yard.mp3",
-                    picture: "",
-                    genreId: reggae.id,
-                },
-                jazz1 = {
-                    title: "[FREE] JAZZ TYPE BEAT SAXOPHONE - 777  LOFI BOOMBAP INSTRUMENTAL 2023.mp3",
-                    audioPath: instrumentalsFolder + "%5BFREE%5D%20JAZZ%20TYPE%20BEAT%20SAXOPHONE%20-%20777%20%20LOFI%20BOOMBAP%20INSTRUMENTAL%202023.mp3",
-                    picture: "",
-                    genreId: jazz.id,
-                },
-                afrobeat0 = {
-                    title: "Afrobeat_Burano.mp3",
-                    audioPath: instrumentalsFolder + "Afrobeat_Burano.mp3",
-                    picture: "",
-                    genreId: afrobeat.id,
-                },
-                rap0 = {
-                    title: "Instru Rap Boom Bap Freestyle Piano - SEDATIF - Prod. By WEEDLACK.mp3",
-                    audioPath: instrumentalsFolder + "Instru%20Rap%20Boom%20Bap%20Freestyle%20Piano%20-%20SEDATIF%20-%20Prod.%20By%20WEEDLACK.mp3",
-                    picture: "",
-                    genreId: rap.id,
-                },
-                reggae1 = {
-                    title: "instrumental reggae - uso libre - beat 2020.mp3",
-                    audioPath: instrumentalsFolder + "instrumental%20reggae%20-%20uso%20libre%20-%20beat%202020.mp3",
-                    picture: "",
-                    genreId: reggae.id,
-                },
-                pop0 = {
-                    title: "Pop Instrumental Libre De Droit 2023  Instru Rock Guitare NO REASON - Prod. By Rise.mp3",
-                    audioPath: instrumentalsFolder + "Pop%20Instrumental%20Libre%20De%20Droit%202023%20%20Instru%20Rock%20Guitare%20NO%20REASON%20-%20Prod.%20By%20Rise.mp3",
-                    picture: "",
-                    genreId: pop.id,
-                },
-                techno0 = {
-                    title: "[Free] Tech House x Techno Type Beat - GROOVE  Club Banger Instrumental 2022  Electronic Rap Beat.mp3",
-                    audioPath: instrumentalsFolder + "%5BFree%5D%20Tech%20House%20x%20Techno%20Type%20Beat%20-%20GROOVE%20%20Club%20Banger%20Instrumental%202022%20%20Electronic%20Rap%20Beat.mp3",
-                    picture: "",
-                    genreId: techno.id,
-                },
-                hiphop0 = {
-                    title: "[FREE] Hip-Hop Instrumental  Beat The Secret Of Babylon 2021.mp3",
-                    audioPath: instrumentalsFolder + "%5BFREE%5D%20Hip-Hop%20Instrumental%20%20Beat%20The%20Secret%20Of%20Babylon%202021.mp3",
-                    picture: "",
-                    genreId: hiphop.id,
-                },
-                blues0 = {
-                    title: "Smooth Dark Blues.mp3",
-                    audioPath: instrumentalsFolder + "Smooth%20Dark%20Blues.mp3",
-                    picture: "",
-                    genreId: blues.id,
-                },
-                rock0 = {
-                    title: "[FREE] Rock Type Beat Fake Love.mp3",
-                    audioPath: instrumentalsFolder + "%5BFREE%5D%20Rock%20Type%20Beat%20Fake%20Love.mp3",
-                    picture: "",
-                    genreId: rock.id,
-                },
-                country0 = {
-                    title: "Fun Love Country Type Beat In The Style Of Russell Dickerson A Million More By BachBeats.mp3",
-                    audioPath: instrumentalsFolder + "Fun%20Love%20Country%20Type%20Beat%20In%20The%20Style%20Of%20Russell%20Dickerson%20A%20Million%20More%20By%20BachBeats.mp3",
-                    picture: "",
-                    genreId: country.id,
-                },
-                blues1 = {
-                    title: "Guitar Blues Type Beat Evening Sexy Slow Blues Instrumental.mp3",
-                    audioPath: instrumentalsFolder + "Guitar%20Blues%20Type%20Beat%20Evening%20Sexy%20Slow%20Blues%20Instrumental.mp3",
-                    picture: "",
-                    genreId: blues.id,
-                },
-                pop1 = {
-                    title: "[FREE FOR PROFIT] Smooth Pop Type Beat - Done.mp3",
-                    audioPath: instrumentalsFolder + "%5BFREE%20FOR%20PROFIT%5D%20Smooth%20Pop%20Type%20Beat%20-%20Done.mp3",
-                    picture: "",
-                    genreId: pop.id,
-                },
-                afrobeat1 = {
-                    title: "Afrobeat Instrumental HEAVEN Oxlade x Fireboy Dml x Skiibi x Davido Typebeat 2022.mp3",
-                    audioPath: instrumentalsFolder + "Afrobeat%20Instrumental%20HEAVEN%20Oxlade%20x%20Fireboy%20Dml%20x%20Skiibi%20x%20Davido%20Typebeat%202022.mp3",
-                    picture: "",
-                    genreId: afrobeat.id,
-                },
-                house0 = {
-                    title: "[FREE] House x Club Type Beat - ATTRACTED  Dance EDM Instrumental.mp3",
-                    audioPath: instrumentalsFolder + "%5BFREE%5D%20House%20x%20Club%20Type%20Beat%20-%20ATTRACTED%20%20Dance%20EDM%20Instrumental.mp3",
-                    picture: "",
-                    genreId: house.id,
-                },
-                electronic0 = {
-                    title: "[FREE] Deep House x Tech House Type Beat - DRIVE  Banger EDM Dance Club Techno Instrumental 2021.mp3",
-                    audioPath: instrumentalsFolder + "%5BFREE%5D%20Deep%20House%20x%20Tech%20House%20Type%20Beat%20-%20DRIVE%20%20Banger%20EDM%20Dance%20Club%20Techno%20Instrumental%202021.mp3",
-                    picture: "",
-                    genreId: electronic.id,
-                },
-                latin0 = {
-                    title: "Latin Beat - LUMINA  Spanish Afro guitar type beat  Dancehall Instrumental 2023.mp3",
-                    audioPath: instrumentalsFolder + "Latin%20Beat%20-%20LUMINA%20%20Spanish%20Afro%20guitar%20type%20beat%20%20Dancehall%20Instrumental%202023.mp3",
-                    picture: "",
-                    genreId: latin.id,
-                },
-                metal0 = {
-                    title: "[FREE] Trap Metal Type Beat Lost (Heavy Dark Rock Guitar Rap Instrumental 2020).mp3",
-                    audioPath: instrumentalsFolder + "%5BFREE%5D%20Trap%20Metal%20Type%20Beat%20Lost%20(Heavy%20Dark%20Rock%20Guitar%20Rap%20Instrumental%202020).mp3",
-                    picture: "",
-                    genreId: metal.id,
-                },
-                funk0 = {
-                    title: "Instru Funk - Type Beat Beverly Hills (Prod. TromatizMusic Ft HRNN).mp3",
-                    audioPath: instrumentalsFolder + "Instru%20Funk%20-%20Type%20Beat%20Beverly%20Hills%20(Prod.%20TromatizMusic%20Ft%20HRNN).mp3",
-                    picture: "",
-                    genreId: funk.id,
-                },
-                funk1 = {
-                    title: "Instru  Miami Funk Type Beat New Funk (Prod.Slimanesb).mp3",
-                    audioPath: instrumentalsFolder + "Instru%20%20Miami%20Funk%20Type%20Beat%20New%20Funk%20(Prod.Slimanesb).mp3",
-                    picture: "",
-                    genreId: funk.id,
-                },
-                rnb0 = {
-                    title: "R&B Guitar Type Beat - VIBE  Smooth R&B Guitar Instrumental 2022.mp3",
-                    audioPath: instrumentalsFolder + "R%26B%20Guitar%20Type%20Beat%20-%20VIBE%20%20Smooth%20R%26B%20Guitar%20Instrumental%202022.mp3",
-                    picture: "",
-                    genreId: rnb.id,
-                },
-                rnb1 = {
-                    title: "R&B Type Beat - Feelings Out.mp3",
-                    audioPath: instrumentalsFolder + "R%26B%20Type%20Beat%20-%20Feelings%20Out.mp3",
-                    picture: "",
-                    genreId: rnb.id,
-                },
-                soul0 = {
-                    title: "(FREE) Acoustic SZA x Jhene Aiko Type Beat Soul.mp3",
-                    audioPath: instrumentalsFolder + "(FREE)%20Acoustic%20SZA%20x%20Jhene%20Aiko%20Type%20Beat%20Soul.mp3",
-                    picture: "",
-                    genreId: soul.id,
-                },
-                electronic1 = {
-                    title: "Electro Latino House 2023 Type Beat Instrumental AZUL  by Shot Records.mp3",
-                    audioPath: instrumentalsFolder + "Electro%20Latino%20House%202023%20Type%20Beat%20Instrumental%20AZUL%20%20by%20Shot%20Records.mp3",
-                    picture: "",
-                    genreId: electronic.id,
-                },
-                techno1 = {
-                    title: "Tujamo, VINNE & Murotani - Techno Party (Bass House  Tech House).mp3",
-                    audioPath: instrumentalsFolder + "Tujamo%2C%20VINNE%20%26%20Murotani%20-%20Techno%20Party%20(Bass%20House%20%20Tech%20House).mp3",
-                    picture: "",
-                    genreId: techno.id,
-                },
-                salsa0 = {
-                    title: "Latin Boom Bap Instrumental x Salsa Hip Hop type beat - Habano  Nigma.mp3",
-                    audioPath: instrumentalsFolder + "Latin%20Boom%20Bap%20Instrumental%20x%20Salsa%20Hip%20Hop%20type%20beat%20-%20Habano%20%20Nigma.mp3",
-                    picture: "",
-                    genreId: salsa.id,
-                },
-            ]
+        // Créer les objets "Sound" correspondants
+        await prisma.sound.createMany({
+            data: soundsData.map((sound) => ({
+                ...sound,
+                audioPath: generateAudioPath(sound.title),
+            })),
+        });
+
+        // Récupérer les sons créés pour pouvoir les associer aux objets "PostableSound" et "Instrumental" par leur ID
+        const createdSounds = await prisma.sound.findMany({
+            where: {
+                title: {in: soundsData.map((sound) => sound.title)},
+            },
         });
 
         // Créer les objets "PostableSound" correspondants
-        const postableSounds = await prisma.postableSound.createMany({
-            data: [
-                {
-                    soundId: jazz0.id,
-                },
-                {
-                    soundId: kpop0.id,
-                },
-                {
-                    soundId: reggae0.id,
-                },
-                {
-                    soundId: jazz1.id,
-                },
-                {
-                    soundId: afrobeat0.id,
-                },
-                {
-                    soundId: rap0.id,
-                },
-                {
-                    soundId: reggae1.id,
-                },
-                {
-                    soundId: pop0.id,
-                },
-                {
-                    soundId: techno0.id,
-                },
-                {
-                    soundId: hiphop0.id,
-                },
-                {
-                    soundId: blues0.id,
-                },
-                {
-                    soundId: rock0.id,
-                },
-                {
-                    soundId: country0.id,
-                },
-                {
-                    soundId: blues1.id,
-                },
-                {
-                    soundId: pop1.id,
-                },
-                {
-                    soundId: afrobeat1.id,
-                },
-                {
-                    soundId: house0.id,
-                },
-                {
-                    soundId: electronic0.id,
-                },
-                {
-                    soundId: latin0.id,
-                },
-                {
-                    soundId: metal0.id,
-                },
-                {
-                    soundId: funk0.id,
-                },
-                {
-                    soundId: funk1.id,
-                },
-                {
-                    soundId: rnb0.id,
-                },
-                {
-                    soundId: rnb1.id,
-                },
-                {
-                    soundId: soul0.id,
-                },
-                {
-                    soundId: electronic1.id,
-                },
-                {
-                    soundId: techno1.id,
-                },
-                {
-                    soundId: salsa0.id,
-                },
-            ]
+        await prisma.postableSound.createMany({
+            data: createdSounds.map((createdSound) => ({
+                soundId: createdSound.id,
+            })),
         });
 
         // Créer les objets "Instrumental" correspondants
-        const instrumentals = await prisma.instrumental.createMany({
-            data: [
-                {
-                    soundId: jazz0.id,
-                },
-                {
-                    soundId: kpop0.id,
-                },
-                {
-                    soundId: reggae0.id,
-                },
-                {
-                    soundId: jazz1.id,
-                },
-                {
-                    soundId: afrobeat0.id,
-                },
-                {
-                    soundId: rap0.id,
-                },
-                {
-                    soundId: reggae1.id,
-                },
-                {
-                    soundId: pop0.id,
-                },
-                {
-                    soundId: techno0.id,
-                },
-                {
-                    soundId: hiphop0.id,
-                },
-                {
-                    soundId: blues0.id,
-                },
-                {
-                    soundId: rock0.id,
-                },
-                {
-                    soundId: country0.id,
-                },
-                {
-                    soundId: blues1.id,
-                },
-                {
-                    soundId: pop1.id,
-                },
-                {
-                    soundId: afrobeat1.id,
-                },
-                {
-                    soundId: house0.id,
-                },
-                {
-                    soundId: electronic0.id,
-                },
-                {
-                    soundId: latin0.id,
-                },
-                {
-                    soundId: metal0.id,
-                },
-                {
-                    soundId: funk0.id,
-                },
-                {
-                    soundId: funk1.id,
-                },
-                {
-                    soundId: rnb0.id,
-                },
-                {
-                    soundId: rnb1.id,
-                },
-                {
-                    soundId: soul0.id,
-                },
-                {
-                    soundId: electronic1.id,
-                },
-                {
-                    soundId: techno1.id,
-                },
-                {
-                    soundId: salsa0.id,
-                },
-            ]
+        await prisma.instrumental.createMany({
+            data: createdSounds.map((createdSound) => ({
+                soundId: createdSound.id,
+            })),
         });
     } catch (error) {
         console.error('Erreur lors de l\'écriture dans la base de données :', error);
@@ -466,6 +309,7 @@ async function main() {
         // Déconnecter Prisma après l'opération
         await prisma.$disconnect();
     }
+     */
 }
 
 // Appeler la fonction principale
