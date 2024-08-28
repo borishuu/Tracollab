@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DropDownList({name, genres = [], onChange}) {
+export default function DropDownList({name, data = [], onChange}) {
     return (
         <div className="relative pr-1 pl-1">
             <select
@@ -10,14 +10,12 @@ export default function DropDownList({name, genres = [], onChange}) {
                 onChange={onChange}
             >
                 <option value="">{name}</option>
-                {genres.map((genre, index) => (
-                    <option key={index} value={genre.name}>
-                        {genre.name}
+                {data.map((e, index) => (
+                    <option key={index} value={e.name}>
+                        {e.name}
                     </option>
                 ))}
             </select>
         </div>
     );
 }
-
-// Faire en sorte que cela affiche que les Posts qui ont le Genre selectionné
