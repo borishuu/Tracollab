@@ -1,6 +1,11 @@
+"use client";
+
+import { useParams } from 'next/navigation';
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 
 export default function Home() {
+    const { pseudo } = useParams();
+
   return (
       <main className="min-h-screen flex flex-col">
         <div className="flex-grow bg-[#404040] pl-12 pr-12 pt-4 pb-12">
