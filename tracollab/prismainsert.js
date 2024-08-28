@@ -346,6 +346,24 @@ async function main() {
                 userId: "66c5f01a973d083e14093aa9",
                 soundId: instrumentals[5].soundId,
             },
+            {
+                description: "I count on you!",
+                date: new Date(),
+                userId: "66cdc46093d0319685c99fd2",
+                soundId: instrumentals[6].soundId,
+            },
+            {
+                description: "It's me, bruh!",
+                date: new Date(),
+                userId: "66cdc46093d0319685c99fd2",
+                soundId: instrumentals[7].soundId,
+            },
+            {
+                description: "Hey!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                soundId: instrumentals[8].soundId,
+            },
         ];
 
         // Insérer les posts dans la base de données
