@@ -1,4 +1,7 @@
-import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
+import CommentValidate from "@/components/CommentValidate";
+import MusicPlayer from "@/components/MusicPlayer";
+import React from "react";
+import {Comme} from "next/dist/compiled/@next/font/dist/google";
 
 export default function Home() {
   return (
@@ -29,23 +32,8 @@ export default function Home() {
                 </div>
 
 
-                <div className="bg-[#C162EA] text-white p-4 rounded-3xl mt-10">
-                    <div className="flex items-center justify-between mt-4">
-                        <MusicPlayerWithImage/>
-                        <div className="flex flex-col space-y-2">
-                            <img
-                                src="assets/validate.png"
-                                alt="Notification icon"
-                                className="w-8 h-8 object-cover rounded-lg shadow-md"
-                            />
-                            <img
-                                src="assets/remove.png"
-                                alt="Delete icon"
-                                className="w-8 h-8 object-cover rounded-lg shadow-md"
-                            />
-                        </div>
-                    </div>
-                </div>
+                <CommentValidate hasMusic={true}/>
+                <CommentValidate hasMusic={false}/>
 
             </div>
         </div>
