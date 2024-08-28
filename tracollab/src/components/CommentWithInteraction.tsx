@@ -17,8 +17,9 @@ export default function Comment({ hasMusic = false }: CommentProps) {
                 </div>
 
                 <div className="w-8/12 break-words">
-                    <p>Suzie20</p>
-                    <p>Bonjour, test testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttteeeeeeeeeeeeeeeeeeeeeeeeeet</p>
+                    <a href="/profile" className="text-xl font-bold">Suzie20</a>
+                    <p>Bonjour, test
+                        testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttteeeeeeeeeeeeeeeeeeeeeeeeeet</p>
                     {hasMusic && (
                         <MusicPlayer/>
                     )}
