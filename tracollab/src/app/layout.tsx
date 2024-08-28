@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/context/authContext";
 import Nav from "@/components/Nav";
+import {bgWhite} from "next/dist/lib/picocolors";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
+      <html lang="en" className={"bg-[#404040]"}>
       <body className={inter.className}>
       <AuthProvider>
       <header className="bg-[#C162EA]">
