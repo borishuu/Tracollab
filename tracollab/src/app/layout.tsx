@@ -2,6 +2,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import AuthProvider from "@/context/authContext";
+import Nav from "@/components/Nav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,54 +17,16 @@ export default function RootLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en">
-        <body className={`${inter.className} bg-[#404040]`}>
-        <header className="bg-[#C162EA]">
-            <nav
-                className="relative flex w-full items-center justify-between h-16 shadow-dark-mild dark:bg-body-dark"
-                data-twe-navbar-ref
-            >
-                <div className="flex-1 h-full flex items-center pl-3 justify-start">
-                    <img
-                        src="/assets/Logo.png"
-                        className="h-12 object-contain"
-                        alt="logo"
-                    />
-                </div>
-
-                <div className="flex-1 h-full flex items-center justify-center">
-                    <img
-                        src="/assets/LogoBlackTexte.png"
-                        className="h-10 object-contain"
-                        alt="logo"
-                    />
-                </div>
-
-                <div className="flex-1 flex items-center justify-end px-3 bg-[#C162EA] h-full">
-                    <div className="flex items-center ml-2 mr-2">
-                        <a href="/postUpload" className="inline-block">
-                            <img
-                                src="/assets/home.png"
-                                className="w-8 h-auto"
-                                alt="Home"
-                            />
-                        </a>
-                    </div>
-                    <div className="flex items-center ml-2 mr-2">
-                        <a href="/path-to-your-page" className="inline-block">
-                            <img
-                                src="/assets/user.png"
-                                className="w-8 h-auto"
-                                alt="User"
-                            />
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </header>
-        <main>{children}</main>
-        </body>
-        </html>
-    );
+  return (
+      <html lang="en">
+      <body className={inter.className}>
+      <AuthProvider>
+      <header className="bg-[#C162EA]">
+        <Nav/>
+      </header>
+      <main>{children}</main>
+      </AuthProvider>
+      </body>
+      </html>
+  );
 }
