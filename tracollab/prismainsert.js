@@ -283,18 +283,11 @@ async function main() {
             })),
         });
 
-        // Récupérer les sons créés pour pouvoir les associer aux objets "PostableSound" et "Instrumental" par leur ID
+        // Récupérer les sons créés pour pouvoir les associer aux objets "Instrumental" (pour Voice pareil) par leur ID
         const createdSounds = await prisma.sound.findMany({
             where: {
                 title: {in: soundsData.map((sound) => sound.title)},
             },
-        });
-
-        // Créer les objets "PostableSound" correspondants
-        await prisma.postableSound.createMany({
-            data: createdSounds.map((createdSound) => ({
-                soundId: createdSound.id,
-            })),
         });
 
         // Créer les objets "Instrumental" correspondants
@@ -308,13 +301,12 @@ async function main() {
     } finally {
         // Déconnecter Prisma après l'opération
         await prisma.$disconnect();
-    }
-     */
+    } */
 
     /* Insertion de posts dans la base de données
     try {
         // Récupérer les PostableSounds existants
-        const postableSounds = await prisma.postableSound.findMany();
+        const instrumentals = await prisma.instrumental.findMany();
 
         // Créer des posts et les lier aux instrumentals
         const postsData = [
@@ -322,25 +314,37 @@ async function main() {
                 description: "Check out this amazing instrumental!",
                 date: new Date(),
                 userId: "66c5f01a973d083e14093aa9",
-                postableSoundId: postableSounds[0].id,
+                soundId: instrumentals[0].id,
             },
             {
                 description: "Loving this beat!",
                 date: new Date(),
                 userId: "66cdc46093d0319685c99fd2",
-                postableSoundId: postableSounds[1].id,
+                soundId: instrumentals[1].id,
             },
             {
                 description: "This one is fire!",
                 date: new Date(),
                 userId: "66cdc46093d0319685c99fd2",
-                postableSoundId: postableSounds[2].id,
+                soundId: instrumentals[2].id,
             },
             {
                 description: "Wow!",
                 date: new Date(),
                 userId: "66c5f01a973d083e14093aa9",
-                postableSoundId: postableSounds[3].id,
+                soundId: instrumentals[3].id,
+            },
+            {
+                description: "Incredible sound!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                soundId: instrumentals[4].id,
+            },
+            {
+                description: "Enjoy!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                soundId: instrumentals[5].id,
             },
         ];
 
