@@ -8,15 +8,15 @@ generator client {
 }
 
 model User {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  email          String        @unique
-  name           String        @unique
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  email          String       @unique
+  name           String       @unique
   password       String
   profilePicture String
-  joinDate       DateTime
-  posts          Post[]        @relation("UserPosts")
-  likes          UserLikes[]
-  reports        UserReports[]
+  joinDate       DateTime     @default(now())
+  posts          Post[]       @relation("UserPosts")
+  likes          UserLike[]   @relation("UserLikes")
+  reports        UserReport[] @relation("UserReports")
 }
 
 model Sound {
@@ -25,9 +25,9 @@ model Sound {
   audioPath     String
   picture       String
   genreId       String         @db.ObjectId
-  genre         Genre          @relation(fields: [genreId], references: [id])
+  genre         Genre          @relation("SoundGenre", fields: [genreId], references: [id])
   isFinished    Boolean        @default(false)
-  posts         Post[]
+  posts         Post[]         @relation("SoundPosts")
   instrumentals Instrumental[] @relation("SoundInstrumentals")
   voices        Voice[]        @relation("SoundVoices")
 }
@@ -45,43 +45,43 @@ model Voice {
 }
 
 model Post {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   description String
-  date        DateTime
-  userId      String        @db.ObjectId
-  user        User          @relation("UserPosts", fields: [userId], references: [id])
-  soundId     String        @db.ObjectId
-  sound       Sound         @relation(fields: [soundId], references: [id])
-  comments    Comment[]
-  likes       UserLikes[]
-  reports     UserReports[]
+  date        DateTime     @default(now())
+  userId      String       @db.ObjectId
+  user        User         @relation("UserPosts", fields: [userId], references: [id])
+  soundId     String       @db.ObjectId
+  sound       Sound        @relation("SoundPosts", fields: [soundId], references: [id])
+  comments    Comment[]    @relation("PostComments")
+  likes       UserLike[]   @relation("PostLikes")
+  reports     UserReport[] @relation("PostReports")
 }
 
-model UserLikes {
+model UserLike {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
   postId String @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id])
+  user   User   @relation("UserLikes", fields: [userId], references: [id])
+  post   Post   @relation("PostLikes", fields: [postId], references: [id])
 }
 
-model UserReports {
+model UserReport {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
   postId String @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id])
+  user   User   @relation("UserReports", fields: [userId], references: [id])
+  post   Post   @relation("PostReports", fields: [postId], references: [id])
 }
 
 model Comment {
   id      String  @id @default(auto()) @map("_id") @db.ObjectId
   publish Boolean
   postId  String  @db.ObjectId
-  post    Post    @relation(fields: [postId], references: [id])
+  post    Post    @relation("PostComments", fields: [postId], references: [id])
 }
 
 model Genre {
   id     String  @id @default(auto()) @map("_id") @db.ObjectId
   name   String
-  sounds Sound[]
+  sounds Sound[] @relation("SoundGenre")
 }
