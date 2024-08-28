@@ -1,37 +1,16 @@
 # Choses à faire
 
-## Mockup
+## Tâches à faire
 
-- [x] Finaliser (Calvin)
+- Refaire schéma prisma
+- Bar de recherche backend (reffectuer requête après chaque modification de l'input)
+- Gestion likes
+- Gestion report (ratio report par like)
 
-## Landing page
+- (likes page d'accueil)
 
-- [x] Finaliser dès que Calvin a fini (Boris)
+### Crunker tâches
+- Composante audio fonctionelle où l'on peut joueur l'audio + design selon maquette
+- Téléchargement audio
 
-## Description du projet
-
-- [x] Peaufiner l'objectif, la problématique (Alan)
-
-## Description des choix techniques
-
-- [ ] Expliquer pourquoi on a choisi :
-  - [x] Prisma
-  - [x] MongoDB (Yanis)
-  - [x] Google Storage (Alan)
-  - [x] Cloud Run
-  - [x] NextJS
-  - [x] TailwindCSS
-    
-## Processus de travail
-
-- [x] Vérifier avec Ludo
-- [x] Ajouter les étapes "humaines" (comment on se répartit les tâches, travail collaboratif, présentiel/distance, etc.)
-
-## CI
-
-- [x] Créer une petite Github Action qui lance automatiquement un test dès lors qu'une PR est ouverte, pour montrer le bon fonctionnement de la CI
-
-## Général (vendredi)
-
-- [x] Repasser sur toute la doc
-- [x] Préparer la démo
+- Oubli de mdp (backend + frontend)
