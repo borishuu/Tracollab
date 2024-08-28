@@ -15,10 +15,10 @@ export default function Home() {
             try {
                 const response = await fetch("/api/posts");
                 const postsData = await response.json();
-                // console.log("instrumentalsData: ", instrumentalsData);
+                // console.log("postsData: ", postsData);
                 setPosts(postsData);
             } catch (error) {
-                console.error("Error fetching instrumentals: ", error);
+                console.error("Error fetching posts: ", error);
             }
         }
 

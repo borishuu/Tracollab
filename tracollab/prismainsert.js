@@ -305,7 +305,7 @@ async function main() {
 
     /* Insertion de posts dans la base de données
     try {
-        // Récupérer les PostableSounds existants
+        // Récupérer les Sounds existants
         const instrumentals = await prisma.instrumental.findMany();
 
         // Créer des posts et les lier aux instrumentals
@@ -314,37 +314,37 @@ async function main() {
                 description: "Check out this amazing instrumental!",
                 date: new Date(),
                 userId: "66c5f01a973d083e14093aa9",
-                soundId: instrumentals[0].id,
+                soundId: instrumentals[0].soundId,
             },
             {
                 description: "Loving this beat!",
                 date: new Date(),
                 userId: "66cdc46093d0319685c99fd2",
-                soundId: instrumentals[1].id,
+                soundId: instrumentals[1].soundId,
             },
             {
                 description: "This one is fire!",
                 date: new Date(),
                 userId: "66cdc46093d0319685c99fd2",
-                soundId: instrumentals[2].id,
+                soundId: instrumentals[2].soundId,
             },
             {
                 description: "Wow!",
                 date: new Date(),
                 userId: "66c5f01a973d083e14093aa9",
-                soundId: instrumentals[3].id,
+                soundId: instrumentals[3].soundId,
             },
             {
                 description: "Incredible sound!",
                 date: new Date(),
                 userId: "66c5f01a973d083e14093aa9",
-                soundId: instrumentals[4].id,
+                soundId: instrumentals[4].soundId,
             },
             {
                 description: "Enjoy!",
                 date: new Date(),
                 userId: "66c5f01a973d083e14093aa9",
-                soundId: instrumentals[5].id,
+                soundId: instrumentals[5].soundId,
             },
         ];
 
