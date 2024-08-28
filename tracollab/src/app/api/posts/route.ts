@@ -1,6 +1,11 @@
 import {PrismaClient} from '@prisma/client';
+import { NextRequest } from 'next/server';
 
 const prisma = new PrismaClient();
+
+const storageFolder = "https://storage.googleapis.com/tracollab-storage/",
+    instrumentalsFolder = storageFolder + "instrumentals/",
+    imagesFolder = storageFolder + "images/";
 
 export async function GET(req: Request) {
     
@@ -13,4 +18,13 @@ export async function GET(req: Request) {
           'Content-Type': 'application/json',
         },
       });
+}
+
+export async function POST(req: NextRequest) {
+  const postData = await req.json();
+  const pic = postData.picture;
+  const genreId = postData.genreId;
+  const type = postData.type;
+  const text = postData.text;
+  const audio = postData.audio;
 }

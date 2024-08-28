@@ -11,6 +11,7 @@ export default function Home() {
     const [title, setTitle] = useState('');
     const [type, setType] = useState('');
     const [text, setText] = useState('');
+    const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -18,10 +19,52 @@ export default function Home() {
         console.log("submit");
     }
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         setAudio(file);
         console.log('MP3 file selected:', file);
+
+        setUploading(true);
+
+        try {
+
+            const formData = new FormData();
+            formData.append('audioFile', file);
+
+            // Step 1: Request signed URL from the backend
+            const response = await fetch('/api/upload-audio', {
+              method: 'POST',        
+              body: formData,
+            });
+
+            await response.json();
+      
+            //const { signedUrl } = await response.json();
+      
+            // Step 2: Upload file to GCS using signed URL
+            /*const uploadResponse = await fetch(signedUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'audio/mpeg',
+              },
+              body: file,
+            });
+      
+            if (!uploadResponse.ok) {
+              throw new Error('Failed to upload file');
+            }*/
+      
+            // The file has been uploaded successfully
+            /*const fileUrl = signedUrl.split('?')[0]; // Public URL of the uploaded file
+            setFileUrl(fileUrl);*/
+      
+            // Step 3: Send the file URL to your API
+            // Example: await sendFileUrlToAPI(fileUrl);
+          } catch (error) {
+            console.error('Error uploading file:', error);
+          } finally {
+            setUploading(false);
+          }
     }
 
     return (
@@ -82,6 +125,7 @@ export default function Home() {
                                         accept="audio/mp3"
                                         onChange={handleFileUpload}
                                         className="hidden"
+                                        name='audioFile'
                                     />
                                 </label>
 
