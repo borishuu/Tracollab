@@ -1,8 +1,29 @@
+'use client';
+
+import { useState } from 'react';
 import SearchBar from "@/components/SearchBar";
 import DropDownList from "@/components/DropDownList";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 
 export default function Home() {
+    const [pic, setPic] = useState('');
+    const [audio, setAudio] = useState(null);
+    const [title, setTitle] = useState('');
+    const [type, setType] = useState('');
+    const [text, setText] = useState('');
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("submit");
+    }
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        setAudio(file);
+        console.log('MP3 file selected:', file);
+    }
+
     return (
         <main>
             <div className="pl-12 pr-12 pt-4 pb-12 bg-[#404040] h-full">
@@ -19,11 +40,12 @@ export default function Home() {
                             </button>
                         </div>
 
-                        <div className="flex-1 h-full p-4">
+                        <form onSubmit={handleSubmit} className="flex-1 h-full p-4">
                             <div className="h-1/6 mb-4">
                                 <label className="block text-sm font-medium text-white">Title</label>
                                 <input type="text"
-                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                       onChange={(e) => setText(e.target.value)}/>
                             </div>
 
                             <div className="h-1/6 mb-4">
@@ -34,34 +56,45 @@ export default function Home() {
                             <div className="h-1/6 mb-4">
                                 <label className="block text-sm font-medium text-white">Type</label>
                                 <input type="text"
-                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"/>
                             </div>
 
                             <div className="h-1/3 mb-4">
                                 <label className="block text-sm font-medium text-white">Text</label>
                                 <input type="text"
-                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"/>
                             </div>
 
                             <div className="h-1/6 mb-4 flex items-center space-x-0">
                                 <input
                                     type="text"
-                                    className="block w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    className="block w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                    readOnly
+                                    value={audio ? audio.name : ''}
                                 />
 
-                                <button
-                                    className="px-6 py-2 w-1/3 bg-[#E5D5D5] text-white rounded-md hover:bg-[#c9a7a7] focus:outline-none focus:ring-2 focus:ring-blue-300 -ml-px">
+                                <label
+                                    className="px-6 py-2 w-1/3 bg-[#E5D5D5] text-white rounded-md hover:bg-[#c9a7a7] focus:outline-none focus:ring-2 focus:ring-blue-300 -ml-px text-center cursor-pointer"
+                                >
                                     Upload file
-                                </button>
+                                    <input
+                                        type="file"
+                                        accept="audio/mp3"
+                                        onChange={handleFileUpload}
+                                        className="hidden"
+                                    />
+                                </label>
 
                                 <div className="lg:w-10 sm:w-0"></div>
 
                                 <button
-                                    className="px-4 py-2 ml-2 bg-[#C162EA] text-white rounded-md hover:bg-[#9732C2] focus:outline-none focus:ring-2 focus:ring-green-300">
+                                    className="px-4 py-2 ml-2 bg-[#C162EA] text-white rounded-md hover:bg-[#9732C2] focus:outline-none focus:ring-2 focus:ring-green-300"
+                                    type="submit">
                                     Post
                                 </button>
                             </div>
-                        </div>
+                        </form>
+                        {error && <p className="text-red-500 mb-4">{error}</p>}
                     </div>
                 </div>
             </div>

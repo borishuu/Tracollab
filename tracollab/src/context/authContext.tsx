@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await fetch('/api/user');
             const data = await response.json();
-            console.log(data);
+
             if (data && data.name) {
                 setUser(data.name);
             } else {
