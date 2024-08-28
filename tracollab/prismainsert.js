@@ -310,6 +310,52 @@ async function main() {
         await prisma.$disconnect();
     }
      */
+
+    /* Insertion de posts dans la base de données
+    try {
+        // Récupérer les PostableSounds existants
+        const postableSounds = await prisma.postableSound.findMany();
+
+        // Créer des posts et les lier aux instrumentals
+        const postsData = [
+            {
+                description: "Check out this amazing instrumental!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                postableSoundId: postableSounds[0].id,
+            },
+            {
+                description: "Loving this beat!",
+                date: new Date(),
+                userId: "66cdc46093d0319685c99fd2",
+                postableSoundId: postableSounds[1].id,
+            },
+            {
+                description: "This one is fire!",
+                date: new Date(),
+                userId: "66cdc46093d0319685c99fd2",
+                postableSoundId: postableSounds[2].id,
+            },
+            {
+                description: "Wow!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                postableSoundId: postableSounds[3].id,
+            },
+        ];
+
+        // Insérer les posts dans la base de données
+        await prisma.post.createMany({
+            data: postsData,
+        });
+
+        console.log('Posts created successfully');
+    } catch (error) {
+        console.error('Erreur lors de l\'écriture dans la base de données :', error);
+    } finally {
+        // Déconnecter Prisma après l'opération
+        await prisma.$disconnect();
+    } */
 }
 
 // Appeler la fonction principale
