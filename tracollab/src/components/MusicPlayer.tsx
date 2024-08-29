@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Crunker from 'crunker';
 
-export default function MusicPlayer({ post }) {
+export default function MusicPlayer({post}) {
     // État pour stocker l'URL de l'audio traité
     const [audioUrl, setAudioUrl] = useState<string | undefined>(post.sound.audioPath);
 
@@ -12,12 +12,15 @@ export default function MusicPlayer({ post }) {
             try {
                 // Charger le fichier audio
                 const audioBuffer = await crunker.fetchAudio(post.sound.audioPath);
+                console.log("audioBuffer", audioBuffer);
 
                 // Effectuer une opération sur l'audio (par exemple, un simple mixage avec lui-même)
                 const mixedAudio = crunker.mergeAudio(audioBuffer);
 
                 // Exporter le résultat
                 const output = await crunker.export(mixedAudio, 'audio/mp3');
+
+                console.log("output", output);
 
                 // Mettre à jour l'URL de l'audio dans l'état
                 setAudioUrl(output.url);
