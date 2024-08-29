@@ -1,29 +1,31 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Crunker from 'crunker';
 
-export default function MusicPlayer({post}) {
-    // État pour stocker l'URL de l'audio traité
-    const [audioUrl, setAudioUrl] = useState<string | undefined>(post.sound.audioPath);
+export default function MusicPlayer({ post }) {
+    const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         const crunker = new Crunker();
 
         async function processAudio() {
             try {
-                // Charger le fichier audio
-                const audioBuffer = await crunker.fetchAudio(post.sound.audioPath);
-                console.log("audioBuffer", audioBuffer);
+                const audioBuffer = await crunker.fetchAudio(post.sound.audioPath, "https://storage.googleapis.com/tracollab-storage/instrumentals/REGGAE%20INSTRUMENTAL%20-%20Roots%20Yard.mp3");
 
-                // Effectuer une opération sur l'audio (par exemple, un simple mixage avec lui-même)
-                const mixedAudio = crunker.mergeAudio(audioBuffer);
+                const mixedAudio = await crunker.mergeAudio(audioBuffer);
 
-                // Exporter le résultat
                 const output = await crunker.export(mixedAudio, 'audio/mp3');
 
-                console.log("output", output);
-
-                // Mettre à jour l'URL de l'audio dans l'état
                 setAudioUrl(output.url);
+
+                const formData = new FormData();
+                formData.append('file', output.blob, 'merged-audio.mp3');
+
+                const requestOptions = {
+                    method: 'POST',
+                    body: formData,
+                };
+
+                const response = await fetch('/api/crunker', requestOptions as any);
             } catch (error) {
                 console.error("Error processing audio with Crunker: ", error);
             }
@@ -31,7 +33,6 @@ export default function MusicPlayer({post}) {
 
         processAudio();
 
-        // Cleanup pour libérer les ressources
         return () => {
             if (audioUrl) {
                 URL.revokeObjectURL(audioUrl);
@@ -54,7 +55,7 @@ export default function MusicPlayer({post}) {
             </div>
             <div className="w-full pl-6 pb-1 flex justify-center">
                 <audio controls className="w-full max-w-xs">
-                    <source src={audioUrl} type="audio/mpeg"/>
+                    {audioUrl && <source src={audioUrl} type="audio/mpeg" />}
                     Your browser does not support the audio element.
                 </audio>
             </div>
