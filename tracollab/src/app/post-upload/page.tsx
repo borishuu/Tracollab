@@ -1,70 +1,72 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import SearchBar from "@/components/SearchBar";
 import DropDownList from "@/components/DropDownList";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 
 export default function Home() {
-    const [pic, setPic] = useState('');
+    const router = useRouter();
+    const [pic, setPic] = useState(null);
     const [audio, setAudio] = useState(null);
     const [title, setTitle] = useState('');
     const [type, setType] = useState('');
     const [text, setText] = useState('');
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
+    const [imagePreview, setImagePreview] = useState('');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("submit");
+
+        try {
+            setUploading(true);
+
+            const formData = new FormData();
+            formData.append('audioFile', audio);
+            formData.append('imageFile', pic);
+            formData.append('title', title);
+            formData.append('type', type);
+            formData.append('text', text);
+
+            const response = await fetch('/api/posts', {
+              method: 'POST',        
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            setUploading(false);
+
+            if (response.status === 200) {
+                router.push('/');
+            } else {
+                setError(data.error);
+            }
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          setError(error);
+        } finally {
+          setUploading(false);
+        }
     }
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         setAudio(file);
         console.log('MP3 file selected:', file);
+    }
 
-        setUploading(true);
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        setPic(file);
 
-        try {
-
-            const formData = new FormData();
-            formData.append('audioFile', file);
-
-            // Step 1: Request signed URL from the backend
-            const response = await fetch('/api/upload-audio', {
-              method: 'POST',        
-              body: formData,
-            });
-
-            await response.json();
-      
-            //const { signedUrl } = await response.json();
-      
-            // Step 2: Upload file to GCS using signed URL
-            /*const uploadResponse = await fetch(signedUrl, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'audio/mpeg',
-              },
-              body: file,
-            });
-      
-            if (!uploadResponse.ok) {
-              throw new Error('Failed to upload file');
-            }*/
-      
-            // The file has been uploaded successfully
-            /*const fileUrl = signedUrl.split('?')[0]; // Public URL of the uploaded file
-            setFileUrl(fileUrl);*/
-      
-            // Step 3: Send the file URL to your API
-            // Example: await sendFileUrlToAPI(fileUrl);
-          } catch (error) {
-            console.error('Error uploading file:', error);
-          } finally {
-            setUploading(false);
-          }
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setImagePreview(imageUrl);
+        }
     }
 
     return (
@@ -76,11 +78,22 @@ export default function Home() {
                         <div
                             className="flex-none w-full lg:w-1/3 flex flex-col items-center pl-12 pr-12 pt-6">
                             <div
-                                className="w-full max-w-xs aspect-square bg-red-400 rounded-3xl flex justify-center items-center mb-4">
+                                className="w-full max-w-xs aspect-square bg-red-400 rounded-3xl flex justify-center items-center mb-4">                            
+                                {imagePreview ? (
+                                    <img src={imagePreview} alt="Uploaded Image" className="rounded-3xl object-cover" />
+                                ) : (
+                                    <span className="text-white">No image uploaded</span>
+                                )}
                             </div>
-                            <button className="w-full max-w-xs py-2 bg-[#C162EA] hover:bg-[#9732C2] text-white rounded-full text-lg">
-                                Upload pic
-                            </button>
+                            <label className="w-full max-w-xs py-2 bg-[#C162EA] hover:bg-[#9732C2] text-white rounded-full text-lg cursor-pointer text-center">
+                                Upload Pic
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    className="hidden"
+                                />
+                            </label>
                         </div>
 
                         <form onSubmit={handleSubmit} className="flex-1 h-full p-4">
@@ -99,13 +112,15 @@ export default function Home() {
                             <div className="h-1/6 mb-4">
                                 <label className="block text-sm font-medium text-white">Type</label>
                                 <input type="text"
-                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"/>
+                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                       onChange={(e) => setType(e.target.value)}/>
                             </div>
 
                             <div className="h-1/3 mb-4">
                                 <label className="block text-sm font-medium text-white">Text</label>
                                 <input type="text"
-                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"/>
+                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                       onChange={(e) => setText(e.target.value)}/>
                             </div>
 
                             <div className="h-1/6 mb-4 flex items-center space-x-0">
@@ -139,6 +154,15 @@ export default function Home() {
                             </div>
                         </form>
                         {error && <p className="text-red-500 mb-4">{error}</p>}
+                        {uploading && (
+                            <div>
+                            <img
+                                src="https://i.gifer.com/ZKZg.gif"
+                                alt="Loading..."
+                                style={{ width: '50px', height: '50px' }}
+                            />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -22,6 +22,9 @@ export default function Login() {
             },
             body: JSON.stringify({ email, password }),
           });
+          const data = await response.json();
+          localStorage.setItem('authToken', data.token);
+
           await fetchData();
     
           if (!response.ok) {
