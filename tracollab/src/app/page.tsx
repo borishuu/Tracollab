@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import SearchBar from "@/components/SearchBar";
 import DropDownList from "@/components/DropDownList";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 
 const sortingOptions = [
-    { name: "Newest" },
-    { name: "Oldest" },
+    {name: "Newest"},
+    {name: "Oldest"},
 ];
 
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [genres, setGenres] = useState([]);
     const [selectedGenre, setSelectedGenre] = useState("");
-    const [selectedSort, setSelectedSort] = useState("");
+    const [selectedSort, setSelectedSort] = useState("Most Liked");
 
     useEffect(() => {
         async function getPosts() {
@@ -58,6 +58,8 @@ export default function Home() {
             return new Date(b.date).getTime() - new Date(a.date).getTime();
         } else if (selectedSort === "Oldest") {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
+        } else if (selectedSort === "Most Liked") {
+            return b.likes?.length - a.likes?.length;
         }
         return 0;
     });
@@ -65,23 +67,23 @@ export default function Home() {
     return (
         <main>
             <div className="w-full bg-red-500 flex flex-wrap">
-                <div className="w-full lg:w-1/2 bg-yellow-500" style={{ backgroundColor: '#D3C3C3' }}>
-                    <SearchBar />
+                <div className="w-full lg:w-1/2 bg-yellow-500" style={{backgroundColor: '#D3C3C3'}}>
+                    <SearchBar/>
                 </div>
-                <div className="w-1/2 lg:w-1/4 bg-blue-500" style={{ backgroundColor: '#D3C3C3' }}>
-                    <DropDownList name={"All Genres"} data={genres} onChange={handleGenreChange} />
+                <div className="w-1/2 lg:w-1/4 bg-blue-500" style={{backgroundColor: '#D3C3C3'}}>
+                    <DropDownList name={"All Genres"} data={genres} onChange={handleGenreChange}/>
                 </div>
-                <div className="w-1/2 lg:w-1/4 bg-green-500" style={{ backgroundColor: '#D3C3C3' }}>
-                    <DropDownList name={"Sort by"} data={sortingOptions} onChange={handleSortChange} />
+                <div className="w-1/2 lg:w-1/4 bg-green-500" style={{backgroundColor: '#D3C3C3'}}>
+                    <DropDownList name={"Most Liked"} data={sortingOptions} onChange={handleSortChange}/>
                 </div>
             </div>
 
-            <div className="pl-12 pr-12 pt-3" style={{ backgroundColor: '#404040' }}>
+            <div className="pl-12 pr-12 pt-3" style={{backgroundColor: '#404040'}}>
                 <h1 className="text-white text-5xl mb-2">Trends</h1>
                 <div className="grid gap-y-4 gap-x-8 min-[1280px]:grid-cols-2 min-[1880px]:grid-cols-3">
                     {sortedPosts.map((post, index) => (
                         <div key={index} className="rounded-lg overflow-hidden flex flex-col">
-                            <MusicPlayerWithImage post={post} />
+                            <MusicPlayerWithImage post={post}/>
                         </div>
                     ))}
                 </div>

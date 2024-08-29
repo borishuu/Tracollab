@@ -8,10 +8,10 @@ export async function GET(req: Request) {
             include: {
                 sound: {
                     include: {
-                        genre: true, // Include the genre data
+                        genre: true,
                     },
                 },
-                user: true, // Include user data
+                user: true,
                 comments: true,
                 likes: true,
                 reports: true
