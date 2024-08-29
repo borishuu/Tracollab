@@ -378,6 +378,116 @@ async function main() {
         // Déconnecter Prisma après l'opération
         await prisma.$disconnect();
     } */
+
+    /* Insertion de likes dans la base de données
+    try {
+        // Récupérer les posts existants
+        const posts = await prisma.post.findMany();
+
+        // Créer des likes et les lier aux posts
+        const likesData = [
+            {
+                userId: "66cdc46093d0319685c99fd2",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66c5f01a973d083e14093aa9",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66cd9a5793d0319685c99fc7",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66cdcb2393d0319685c99fe2",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66ced380fe0539d9244ef9c5",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66cf209d44e72c0acdad377f",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66cf11425c656985be9a0234",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66cf10dc3c0f258126c52f05",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66cf1098f3e544d700807e47",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66cf0ecbce80aa67fe0bf8f9",
+                postId: posts[0].id,
+            },
+            {
+                userId: "66cf1098f3e544d700807e47",
+                postId: posts[1].id,
+            },
+            {
+                userId: "66cf0ecbce80aa67fe0bf8f9",
+                postId: posts[1].id,
+            },
+        ];
+
+        // Insérer les likes dans la base de données
+        await prisma.userLike.createMany({
+            data: likesData,
+        });
+
+        console.log('Likes created successfully');
+    } catch (error) {
+        console.error('Error writing to the database:', error);
+    } finally {
+        // Déconnecter Prisma après l'opération
+        await prisma.$disconnect();
+    }
+
+    /* Append les likes aux Posts
+    try {
+        // Récupérer les posts existants
+        const posts = await prisma.post.findMany();
+
+        // Récupérer les likes existants
+        const likes = await prisma.userLike.findMany();
+
+        // Ajouter les likes aux posts
+        for (let i = 0; i < posts.length; i++) {
+            const post = posts[i];
+            const postLikes = likes.filter(like => like.postId === post.id);
+            post.likes = postLikes;
+            await prisma.post.update({
+                where: {
+                    id: post.id,
+                },
+                data: {
+                    likes: {
+                        connect: postLikes.map(like => ({id: like.id})),
+                    },
+                },
+            });
+        }
+
+        // Vérifier que les likes ont bien été ajoutés au posts[0]
+        const postWithLikes = await prisma.post.findUnique({
+            where: {id: "66cf2a1bb9c5f80ed3455d74"},
+            include: {likes: true},
+        });
+        console.log("prismainsert.js: postWithLikes:", postWithLikes);
+
+        console.log('Likes appended to posts successfully');
+    } catch (error) {
+        console.error('Error writing to the database:', error);
+    } finally {
+        // Déconnecter Prisma après l'opération
+        await prisma.$disconnect();
+    } */
 }
 
 // Appeler la fonction principale
