@@ -100,12 +100,15 @@ export async function POST(req: NextRequest) {
       const audioUrl = await uploadToGc(audioFile, 'instrumentals');
       const imgUrl = await uploadToGc(imageFile, 'images');
 
+
+      let jazz = await prisma.genre.findFirst({where: {name: "Jazz"}});
+
       const sound = await prisma.sound.create({
         data: {
           title: title,
           audioPath: audioUrl,
           picture: imgUrl,
-          genreId: null,
+          genreId: jazz.id,
         },
       });
 
