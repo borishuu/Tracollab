@@ -45,7 +45,7 @@ export default function Nav() {
 
           <div className="flex-1 flex items-center justify-end px-3 bg-[#C162EA] h-full">
             <div className="flex items-center ml-2 mr-2">
-              <a href="/path-to-your-page" className="inline-block">
+              <a href="/" className="inline-block">
                 <img
                     src="/assets/home.png"
                     className="w-8 h-auto"
@@ -55,7 +55,7 @@ export default function Nav() {
             </div>
             <div className="flex items-center ml-2 mr-2">
                 {user ? (
-                    <a href="/path-to-your-page" className="inline-block">
+                    <a href={`/user/${user.name}`} className="inline-block">
                         <img
                             src="/assets/user.png"
                             className="w-8 h-auto"
