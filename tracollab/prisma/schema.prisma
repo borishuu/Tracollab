@@ -63,28 +63,28 @@ model UserLike {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
   postId String @db.ObjectId
-  user   User   @relation("UserLikes", fields: [userId], references: [id])
-  post   Post   @relation("PostLikes", fields: [postId], references: [id])
+  user   User   @relation("UserLikes", fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation("PostLikes", fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model UserReport {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
   postId String @db.ObjectId
-  user   User   @relation("UserReports", fields: [userId], references: [id])
-  post   Post   @relation("PostReports", fields: [postId], references: [id])
+  user   User   @relation("UserReports", fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation("PostReports", fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
   id      String  @id @default(auto()) @map("_id") @db.ObjectId
   content String
   publish Boolean @default(false)
-  soundId String  @db.ObjectId
-  sound   Sound   @relation("SoundComments", fields: [soundId], references: [id])
+  soundId String? @db.ObjectId // Optional field
+  sound   Sound?  @relation("SoundComments", fields: [soundId], references: [id]) // Optional field
   postId  String  @db.ObjectId
-  post    Post    @relation("PostComments", fields: [postId], references: [id])
+  post    Post    @relation("PostComments", fields: [postId], references: [id], onDelete: Cascade)
   userId  String  @db.ObjectId
-  user    User    @relation("UserComments", fields: [userId], references: [id])
+  user    User    @relation("UserComments", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Genre {
