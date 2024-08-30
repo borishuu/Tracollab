@@ -1,5 +1,5 @@
-import MusicPlayer from "@/components/MusicPlayer";
 import React from 'react';
+import MusicPlayer from "@/components/MusicPlayer";
 
 export default function MusicPlayerWithImage({ post }) {
     const hasSoundData = post?.sound;

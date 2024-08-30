@@ -18,8 +18,6 @@ export async function GET(req: Request) {
             },
         });
 
-        console.log("genre: ", posts[0]);
-
         // Send the posts data back as a JSON response
         return new Response(JSON.stringify(posts), {
             status: 200,
