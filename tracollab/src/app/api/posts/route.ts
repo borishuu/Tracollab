@@ -38,16 +38,39 @@ async function uploadToGc(file, folder) {
 }
 
 export async function GET(req: Request) {
-    
-    const instrumentals = await prisma.post.findMany();
-    await prisma.$disconnect();
-
-    return new Response(JSON.stringify(instrumentals), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+  try {
+      const posts = await prisma.post.findMany({
+          include: {
+              sound: {
+                  include: {
+                      genre: true,
+                  },
+              },
+              user: true,
+              comments: true,
+              likes: true,
+              reports: true
+          },
       });
+
+      // Send the posts data back as a JSON response
+      return new Response(JSON.stringify(posts), {
+          status: 200,
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
+  } catch (error) {
+      console.error('Error fetching posts:', error);
+      return new Response(JSON.stringify({error: 'Internal Server Error'}), {
+          status: 500,
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
+  } finally {
+      await prisma.$disconnect();
+  }
 }
 
 export async function POST(req: NextRequest) {
