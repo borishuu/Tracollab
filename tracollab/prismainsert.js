@@ -283,18 +283,11 @@ async function main() {
             })),
         });
 
-        // Récupérer les sons créés pour pouvoir les associer aux objets "PostableSound" et "Instrumental" par leur ID
+        // Récupérer les sons créés pour pouvoir les associer aux objets "Instrumental" (pour Voice pareil) par leur ID
         const createdSounds = await prisma.sound.findMany({
             where: {
                 title: {in: soundsData.map((sound) => sound.title)},
             },
-        });
-
-        // Créer les objets "PostableSound" correspondants
-        await prisma.postableSound.createMany({
-            data: createdSounds.map((createdSound) => ({
-                soundId: createdSound.id,
-            })),
         });
 
         // Créer les objets "Instrumental" correspondants
@@ -308,8 +301,65 @@ async function main() {
     } finally {
         // Déconnecter Prisma après l'opération
         await prisma.$disconnect();
-    }
-     */
+    } */
+
+    /* Insertion de posts dans la base de données
+    try {
+        // Récupérer les Sounds existants
+        const instrumentals = await prisma.instrumental.findMany();
+
+        // Créer des posts et les lier aux instrumentals
+        const postsData = [
+            {
+                description: "Check out this amazing instrumental!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                soundId: instrumentals[0].soundId,
+            },
+            {
+                description: "Loving this beat!",
+                date: new Date(),
+                userId: "66cdc46093d0319685c99fd2",
+                soundId: instrumentals[1].soundId,
+            },
+            {
+                description: "This one is fire!",
+                date: new Date(),
+                userId: "66cdc46093d0319685c99fd2",
+                soundId: instrumentals[2].soundId,
+            },
+            {
+                description: "Wow!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                soundId: instrumentals[3].soundId,
+            },
+            {
+                description: "Incredible sound!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                soundId: instrumentals[4].soundId,
+            },
+            {
+                description: "Enjoy!",
+                date: new Date(),
+                userId: "66c5f01a973d083e14093aa9",
+                soundId: instrumentals[5].soundId,
+            },
+        ];
+
+        // Insérer les posts dans la base de données
+        await prisma.post.createMany({
+            data: postsData,
+        });
+
+        console.log('Posts created successfully');
+    } catch (error) {
+        console.error('Erreur lors de l\'écriture dans la base de données :', error);
+    } finally {
+        // Déconnecter Prisma après l'opération
+        await prisma.$disconnect();
+    } */
 }
 
 // Appeler la fonction principale

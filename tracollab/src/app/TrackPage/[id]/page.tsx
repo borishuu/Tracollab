@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PostButton from "@/components/PostButton";
-import Comment from "@/components/Comment";
+import CommentWithInteraction from "@/components/CommentWithInteraction";
 import LikeReport from "@/components/LikeReport";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 import UploadSection from "@/components/UploadSection ";

@@ -19,7 +19,7 @@ interface CommentProps {
     };
 }
 
-export default function Comment({ comment }: CommentProps) {
+export default function CommentWithInteraction({ comment }: CommentProps) {
     const { user, content, sound } = comment;
 
     useEffect(() => {
