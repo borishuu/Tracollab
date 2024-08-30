@@ -56,7 +56,9 @@ export async function POST(req: NextRequest) {
         bitrate: 192,
     }).setBuffer(buffer);
 
-    const output = await encoder.encode();
+    await encoder.encode();
+    const output = encoder.getBuffer();
+
 
     const newFile = new File([output], 'merged-audio.mp3', {
         type: 'audio/mp3'
