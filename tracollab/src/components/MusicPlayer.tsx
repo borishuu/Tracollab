@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import FormattedDate from "@/components/formatDate";
 
-export default function MusicPlayer({ post }) {
+export default function MusicPlayer({ post, handlePostClick }) {
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
     const [isAudioReady, setIsAudioReady] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -64,15 +64,17 @@ export default function MusicPlayer({ post }) {
 
     return (
         <div className="text-white bg-[#9732C2] rounded-3xl shadow-md p-4">
-            <div className="w-full overflow-hidden whitespace-nowrap mb-2">
-                <div className="scrolling-title text-xl font-bold">
-                    <span className="inline-block animate-scroll max-w-48">{post.sound.title}</span>
+            <div className={"rounded-xl hover:cursor-pointer hover:bg-[#5A1980] transition-colors duration-300"} onClick={() => handlePostClick(post.id)}>
+                <div className="w-full overflow-hidden whitespace-nowrap mb-2">
+                    <div className="scrolling-title text-xl font-bold">
+                        <span className="inline-block animate-scroll max-w-48">{post.sound.title}</span>
+                    </div>
                 </div>
-            </div>
 
-            <div className="flex justify-between items-center mb-4">
-                <span className="font-medium">By {post.user?.name} - <FormattedDate dateString={post.date} /></span>
-                <span className="font-medium">{post.sound.genre.name}</span>
+                <div className="flex justify-between items-center mb-4">
+                    <span className="font-medium">By {post.user?.name} - <FormattedDate dateString={post.date}/></span>
+                    <span className="font-medium">{post.sound.genre.name}</span>
+                </div>
             </div>
 
             <div className="w-full flex flex-col items-center mb-2">
