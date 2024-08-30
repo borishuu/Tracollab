@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SearchBar from "@/components/SearchBar";
 import DropDownList from "@/components/DropDownList";
@@ -13,9 +13,25 @@ export default function Home() {
     const [title, setTitle] = useState('');
     const [type, setType] = useState('');
     const [text, setText] = useState('');
+    const [genres, setGenres] = useState([]);
+    const [selectedGenre, setSelectedGenre] = useState("");
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
     const [imagePreview, setImagePreview] = useState('');
+
+    useEffect(() => {
+        async function getGenres() {
+            try {
+                const response = await fetch("/api/genres");
+                const genresData = await response.json();
+                setGenres(genresData);
+            } catch (error) {
+                console.error("Error fetching genres: ", error);
+            }
+        }
+
+        getGenres();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -30,6 +46,7 @@ export default function Home() {
             formData.append('title', title);
             formData.append('type', type);
             formData.append('text', text);
+            formData.append('genre', selectedGenre);
 
             const response = await fetch('/api/posts', {
               method: 'POST',        
@@ -106,14 +123,12 @@ export default function Home() {
 
                             <div className="h-1/6 mb-4">
                                 <label className="block text-sm font-medium text-white">Genre</label>
-                                <DropDownList/>
+                                <DropDownList name={"All Genres"} data={genres} onChange={(e) => setSelectedGenre(e.target.value)} />
                             </div>
 
                             <div className="h-1/6 mb-4">
                                 <label className="block text-sm font-medium text-white">Type</label>
-                                <input type="text"
-                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
-                                       onChange={(e) => setType(e.target.value)}/>
+                                <DropDownList name={"Type"} data={[{name: "Instrumental"}, {name: "Voice"}]} onChange={(e) => setType(e.target.value)} />
                             </div>
 
                             <div className="h-1/3 mb-4">
@@ -152,17 +167,17 @@ export default function Home() {
                                     Post
                                 </button>
                             </div>
-                        </form>
-                        {error && <p className="text-red-500 mb-4">{error}</p>}
-                        {uploading && (
-                            <div>
-                            <img
-                                src="https://i.gifer.com/ZKZg.gif"
-                                alt="Loading..."
-                                style={{ width: '50px', height: '50px' }}
-                            />
-                            </div>
-                        )}
+                            {error && <p className="text-red-500 mb-4">{error}</p>}
+                            {uploading && (
+                                <div>
+                                <img
+                                    src="https://i.gifer.com/ZKZg.gif"
+                                    alt="Loading..."
+                                    style={{ width: '50px', height: '50px' }}
+                                />
+                                </div>
+                            )}
+                        </form>                    
                     </div>
                 </div>
             </div>

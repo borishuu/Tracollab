@@ -80,17 +80,12 @@ export async function POST(req: NextRequest) {
     const audioFile = form.get("audioFile") as File;
     const imageFile = form.get("imageFile") as File;
     const title = form.get('title') as string;
-    const type = form.get('type');
+    const type = form.get('type') as string;
+    const genreName = form.get('genre') as string;
     const text = form.get('text') as string;
 
     try {
       const userId = await getUserData(req) as string;
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: userId,
-        }
-      });
 
       if (audioFile.size < 1 || imageFile.size < 1) {
         return new NextResponse(JSON.stringify(
@@ -99,33 +94,56 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      const genre = await prisma.genre.findFirst({where: {name: genreName}});
+
+      if (!genre) {
+        return new NextResponse(JSON.stringify(
+          { error: "Invalid genre selected" }),
+          { status: 400 }
+        );
+      }
+
+      if (type !== "Instrumental" && type !== "Voice") {
+        return new NextResponse(JSON.stringify(
+          { error: "Invalid type selected" }),
+          { status: 400 }
+        );
+      }
+
       const audioUrl = await uploadToGc(audioFile, 'instrumentals');
       const imgUrl = await uploadToGc(imageFile, 'images');
-
-
-      let jazz = await prisma.genre.findFirst({where: {name: "Jazz"}});
 
       const sound = await prisma.sound.create({
         data: {
           title: title,
           audioPath: audioUrl,
           picture: imgUrl,
-          genreId: jazz.id,
+          genreId: genre.id,
         },
       });
 
-      const instrumental = await prisma.instrumental.create({
-        data: {
-          soundId: sound.id, // Reference soundId directly
-        },
-      });
+      switch(type) {
+        case "Instrumental":
+          await prisma.instrumental.create({
+            data: {
+              soundId: sound.id,
+            },
+          });
+          break;
+        case "Voice":
+          await prisma.voice.create({
+            data: {
+              soundId: sound.id,
+            },
+          });
+          break;
+      }
 
-      // Create the post entry
       const post = await prisma.post.create({
         data: {
           description: text,
-          user: { connect: { id: userId } },  // Correctly reference the user relation
-          sound: { connect: { id: sound.id } },               // Reference soundId directly
+          user: { connect: { id: userId } },
+          sound: { connect: { id: sound.id } },
         },
       });
 

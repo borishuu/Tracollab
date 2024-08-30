@@ -11,11 +11,7 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^7.12.1",
-<<<<<<< HEAD
     "@prisma/client": "^5.19.0",
-=======
-    "@prisma/client": "^5.18.0",
->>>>>>> dev
     "bcrypt": "^5.1.1",
     "crunker": "^2.4.0",
     "jest": "^29.7.0",
