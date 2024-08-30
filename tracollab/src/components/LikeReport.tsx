@@ -1,21 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export default function LikeReport() {
+export default function LikeReport({ likesCount }) {
+
+    const [liked, setLiked] = useState(false);
+
+    const toggleLike = () => {
+        setLiked(!liked);
+    };
+
     return (
-        <div className="space-y-2"> {/* Reduced vertical spacing */}
-            <div className="flex">
+        <div className="md:space-y-2 lg:space-y-0 sm:space-y-2 space-x-2 flex flex-col">
+            <div className="flex space-x-2">
                 <div className="w-1/4">
                     <img
-                        src="/assets/notLiked.png"
-                        className="h-6 object-contain"
+                        src={liked ? "/assets/liked.png" : "/assets/notLiked.png"}
+                        className="h-6 object-contain cursor-pointer"
+                        onClick={toggleLike}
                     />
                 </div>
                 <label className="w-3/4 text-white">
-                    0 likes
+                    {likesCount} likes
                 </label>
             </div>
 
-            <div className="flex">
+            <div className="flex space-x-2">
                 <div className="w-1/4">
                     <img
                         src="/assets/report.png"
