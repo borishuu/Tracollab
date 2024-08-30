@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
     const postId = params.id;
+    console.log("postId: ", postId);
 
     try {
         const post = await prisma.post.findUnique({
@@ -21,6 +22,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             },
         });
 
+        // TODO: voir pourquoi ça entre dans le if 404 et n'affiche pas la page du Post
+        console.log("post: ", post);
+
         if (!post) {
             return new Response(JSON.stringify({ error: 'Post not found' }), {
                 status: 404,
@@ -29,7 +33,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
                 },
             });
         }
-        console.log("test", post);
 
         return new Response(JSON.stringify(post), {
             status: 200,
