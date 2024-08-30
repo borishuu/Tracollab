@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^7.12.1",
-    "@prisma/client": "^5.18.0",
+    "@prisma/client": "^5.19.0",
     "bcrypt": "^5.1.1",
     "crunker": "^2.4.0",
     "jest": "^29.7.0",
@@ -32,6 +32,7 @@
     "@babel/preset-typescript": "^7.24.7",
     "@swc/jest": "^0.2.36",
     "@types/bcrypt": "^5.0.2",
+    "@types/formidable": "^3.4.5",
     "@types/jest": "^29.5.12",
     "@types/node": "^20",
     "@types/react": "^18",

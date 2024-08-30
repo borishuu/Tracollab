@@ -22,6 +22,9 @@ export default function Login() {
             },
             body: JSON.stringify({ email, password }),
           });
+          const data = await response.json();
+          localStorage.setItem('authToken', data.token);
+
           await fetchData();
     
           if (!response.ok) {
@@ -43,7 +46,7 @@ export default function Login() {
     return(
         <main>
             <div className="pl-12 pr-12 pt-3" style={{ backgroundColor: '#404040' }}>
-                <h1 className="text-white text-5xl mb-2 text-center">Create your account</h1>            
+                <h1 className="text-white text-5xl mb-2 text-center">Login to your account</h1>            
                 <div className="flex justify-center">
                     {error && <p className="text-red-500 mb-4">{error}</p>}
                     <form onSubmit={handleSubmit} className="mt-8 space-y-4 w-full max-w-lg">
