@@ -54,9 +54,9 @@ export async function POST(req: NextRequest) {
     const form = await req.formData();
     const audioFile = form.get("audioFile") as File;
     const imageFile = form.get("imageFile") as File;
-    const title = form.get('title');
+    const title = form.get('title') as string;
     const type = form.get('type');
-    const text = form.get('text');
+    const text = form.get('text') as string;
 
     try {
       const userId = await getUserData(req) as string;
@@ -76,6 +76,30 @@ export async function POST(req: NextRequest) {
 
       const audioUrl = await uploadToGc(audioFile, 'instrumentals');
       const imgUrl = await uploadToGc(imageFile, 'images');
+
+      const sound = await prisma.sound.create({
+        data: {
+          title: title,
+          audioPath: audioUrl,
+          picture: imgUrl,
+          genreId: null,
+        },
+      });
+
+      const instrumental = await prisma.instrumental.create({
+        data: {
+          soundId: sound.id, // Reference soundId directly
+        },
+      });
+
+      // Create the post entry
+      const post = await prisma.post.create({
+        data: {
+          description: text,
+          user: { connect: { id: userId } },  // Correctly reference the user relation
+          sound: { connect: { id: sound.id } },               // Reference soundId directly
+        },
+      });
 
       return new NextResponse(JSON.stringify(
           { message: "Audio uploaded" }),
