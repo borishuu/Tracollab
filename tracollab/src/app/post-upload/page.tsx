@@ -101,7 +101,7 @@ export default function Home() {
                                 <label className="block text-sm font-medium text-white">Title</label>
                                 <input type="text"
                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
-                                       onChange={(e) => setText(e.target.value)}/>
+                                       onChange={(e) => setTitle(e.target.value)}/>
                             </div>
 
                             <div className="h-1/6 mb-4">
