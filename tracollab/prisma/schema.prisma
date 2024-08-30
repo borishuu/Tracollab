@@ -31,18 +31,19 @@ model Sound {
   posts         Post[]         @relation("SoundPosts")
   instrumentals Instrumental[] @relation("SoundInstrumentals")
   voices        Voice[]        @relation("SoundVoices")
+  comments      Comment[]      @relation("SoundComments")
 }
 
 model Instrumental {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   soundId String @db.ObjectId
-  sound   Sound  @relation("SoundInstrumentals", fields: [soundId], references: [id])
+  sound   Sound  @relation("SoundInstrumentals", fields: [soundId], references: [id], onDelete: Cascade)
 }
 
 model Voice {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   soundId String @db.ObjectId
-  sound   Sound  @relation("SoundVoices", fields: [soundId], references: [id])
+  sound   Sound  @relation("SoundVoices", fields: [soundId], references: [id], onDelete: Cascade)
 }
 
 model Post {
@@ -77,7 +78,9 @@ model UserReport {
 model Comment {
   id      String  @id @default(auto()) @map("_id") @db.ObjectId
   content String
-  publish Boolean
+  publish Boolean @default(false)
+  soundId String  @db.ObjectId
+  sound   Sound   @relation("SoundComments", fields: [soundId], references: [id])
   postId  String  @db.ObjectId
   post    Post    @relation("PostComments", fields: [postId], references: [id])
   userId  String  @db.ObjectId
