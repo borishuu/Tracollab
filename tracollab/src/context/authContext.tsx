@@ -1,10 +1,17 @@
 'use client';
 
-import React, { useEffect, useState, createContext, useContext } from "react";
+import React, { useEffect, useState, createContext, useContext, ReactNode } from "react";
+
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    // Ajoutez d'autres propriétés si nécessaire
+}
 
 interface AuthContextType {
-    user: Object;
-    setUser: React.Dispatch<React.SetStateAction<string | null>>;
+    user: User | null;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
     fetchData: () => Promise<void>;
 }
 
@@ -18,17 +25,17 @@ export const useAuth = () => {
     return context;
 }
 
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState<Object>(null);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
         try {
             const response = await fetch('/api/user');
             const data = await response.json();
-            console.log(data);
+
             if (data && data.name) {
-                setUser(data.name);
+                setUser(data);
             } else {
                 setUser(null);
             }

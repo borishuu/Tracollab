@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Crunker from 'crunker';
+import FormattedDate from "@/components/formatDate";
+
+
 
 export default function MusicPlayer({ post }) {
-    // État pour stocker l'URL de l'audio traité
     const [audioUrl, setAudioUrl] = useState<string | undefined>(post.sound.audioPath);
 
     useEffect(() => {
@@ -10,16 +12,9 @@ export default function MusicPlayer({ post }) {
 
         async function processAudio() {
             try {
-                // Charger le fichier audio
                 const audioBuffer = await crunker.fetchAudio(post.sound.audioPath);
-
-                // Effectuer une opération sur l'audio (par exemple, un simple mixage avec lui-même)
                 const mixedAudio = crunker.mergeAudio(audioBuffer);
-
-                // Exporter le résultat
                 const output = await crunker.export(mixedAudio, 'audio/mp3');
-
-                // Mettre à jour l'URL de l'audio dans l'état
                 setAudioUrl(output.url);
             } catch (error) {
                 console.error("Error processing audio with Crunker: ", error);
@@ -28,7 +23,6 @@ export default function MusicPlayer({ post }) {
 
         processAudio();
 
-        // Cleanup pour libérer les ressources
         return () => {
             if (audioUrl) {
                 URL.revokeObjectURL(audioUrl);
@@ -37,20 +31,21 @@ export default function MusicPlayer({ post }) {
     }, [audioUrl, post.sound.audioPath]);
 
     return (
-        <div className="relative text-white rounded-3xl overflow-hidden bg-[#9732C2] max-w-sm">
-            <div className="flex">
-                <div className="w-3/4 h-20 z-10 pl-5 pt-3">
-                    <p className="text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-sm">
-                        <span className="inline-block animate-scroll">{post.sound.title}</span>
-                    </p>
-                    <p className="text-sm mt-4">by {post.user?.name}</p>
-                </div>
-                <div className="w-1/4 h-20 z-10 pt-3 flex justify-center">
-                    <p className="text-sm">{post.sound.genre.name}</p>
+        <div className="text-white bg-[#9732C2] rounded-3xl shadow-md p-4">
+            <div className="w-full overflow-hidden whitespace-nowrap mb-2">
+                <div className="scrolling-title text-xl font-bold">
+                    <span className="inline-block animate-scroll max-w-48">{post.sound.title}</span>
                 </div>
             </div>
-            <div className="w-full pl-6 pb-1 flex justify-center">
-                <audio controls className="w-full max-w-xs">
+
+            <div className="flex justify-between items-center mb-4">
+                <span className="font-medium">By {post.user?.name} - <FormattedDate dateString={post.date} /></span>
+                <span className="font-medium">{post.sound.genre.name}</span>
+            </div>
+
+
+            <div className="w-full flex justify-center mb-2">
+                <audio controls className="w-full max-w-full sm:max-w-xs md:max-w-sm">
                     <source src={audioUrl} type="audio/mpeg"/>
                     Your browser does not support the audio element.
                 </audio>
