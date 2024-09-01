@@ -6,7 +6,6 @@ import DropDownList from "@/components/DropDownList";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 
 const sortingOptions = [
-    {name: "Most Liked"},
     {name: "Newest"},
     {name: "Oldest"},
 ];
