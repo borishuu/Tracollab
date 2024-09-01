@@ -5,8 +5,7 @@
 - [x] Refaire schéma prisma
 - [x] Bar de recherche backend (reffectuer requête après chaque modification de l'input)
 - [ ] Gestion likes : cliquer donne un like (backend) (Alan)
-- [ ] Pouvoir cliquer sur un Post sur la page d'accueil (Yanis)
-- [ ] Créer un Context pour n'avoir qu'un seul son joué en même temps
+- [x] Pouvoir cliquer sur un Post sur la page d'accueil (Yanis)
 - [ ] Gestion report (ratio report par like)
 
 ### Crunker tâches
