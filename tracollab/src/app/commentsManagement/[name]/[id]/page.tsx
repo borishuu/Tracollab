@@ -17,10 +17,10 @@ export default function CommentsManagement() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-       /* if (!loggedInUser || loggedInUser.name !== name) {
-            router.push('/login');
-            return;
-        }*/
+        /* if (!loggedInUser || loggedInUser.name !== name) {
+             router.push('/login');
+             return;
+         }*/
 
         const fetchData = async () => {
             try {
@@ -75,11 +75,10 @@ export default function CommentsManagement() {
                             </div>
                             <div className="flex flex-col ml-0 sm:ml-4 text-white w-full">
                                 <div className="text-3xl w-full p-1">
-                                    {post?.sound.title ? post.sound.title : 'Unknown title'}
+                                    {post?.sound.title}
                                 </div>
                                 <div className="w-full p-1">
-                                    Published on the {post?.date ?
-                                    <FormattedDate dateString={post.date}/> : 'Unknown date'}
+                                    Published on the <FormattedDate dateString={post?.date}/>
                                 </div>
                             </div>
                         </div>
@@ -96,7 +95,7 @@ export default function CommentsManagement() {
                                     <CommentValidate key={comment.id} comment={comment}/>
                                 ))
                             ) : (
-                                <p>No comments yet.</p>
+                                <p>There are currently no comments</p>
                             )}
                         </div>
                     </div>
