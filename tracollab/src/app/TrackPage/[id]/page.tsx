@@ -114,7 +114,7 @@ export default function PostPage() {
                         <div className="text-white mt-4">
                             {comments.length > 0 ? (
                                 comments.map((comment) => (
-                                    <Comment key={comment.id} comment={comment} />
+                                    <CommentWithInteraction comment={comment} />
                                 ))
                             ) : (
                                 <p>No comments yet.</p>
