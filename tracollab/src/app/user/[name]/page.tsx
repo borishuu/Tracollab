@@ -151,7 +151,7 @@ export default function ProfilePage() {
                                     accept=".jpg, .jpeg, .png"
                                     onChange={handleFileChange}
                                 />
-                                <a href="/postUpload" className="inline-block">
+                                <a href="/post-upload" className="inline-block">
                                     <button
                                         className="w-full px-6 py-2 bg-[#C162EA] text-white rounded-full hover:bg-[#9732C2] focus:outline-none focus:ring-2 focus:ring-green-300">
                                         Add instrumental

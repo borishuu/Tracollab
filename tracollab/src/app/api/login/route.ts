@@ -17,10 +17,13 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        console.log("email and password");
+
         const user = await prisma.user.findUnique({
             where: { email },
         });
 
+        console.log("user found");
         if (!user) {
             return new NextResponse(JSON.stringify(
                 { error: 'Email or password incorrect' }),
@@ -36,6 +39,8 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
+
+        console.log("password valid");
 
         const jwtSecret = new TextEncoder().encode(secret);
         const token = await new SignJWT({ userId: user.id })
@@ -54,6 +59,7 @@ export async function POST(request: NextRequest) {
             secure: true
         });
 
+        console.log("login succeed");
         return response;
     } catch (error) {
         console.log(error);

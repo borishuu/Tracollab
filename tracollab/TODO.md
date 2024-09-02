@@ -2,15 +2,15 @@
 
 ## Tâches à faire
 
-- Refaire schéma prisma
-- Bar de recherche backend (reffectuer requête après chaque modification de l'input)
-- Gestion likes
-- Gestion report (ratio report par like)
-
-- (likes page d'accueil)
+- [x] Refaire schéma prisma
+- [x] Bar de recherche backend (reffectuer requête après chaque modification de l'input)
+- [ ] Gestion likes : cliquer donne un like (backend) (Alan)
+- [x] Pouvoir cliquer sur un Post sur la page d'accueil (Yanis)
+- [ ] Gestion report (ratio report par like)
 
 ### Crunker tâches
-- Composante audio fonctionelle où l'on peut joueur l'audio + design selon maquette
-- Téléchargement audio
+- [x] Composante audio fonctionelle où l'on peut joueur l'audio + design selon maquette
+- [x] Téléchargement audio
+- [ ] Compresser les fichiers audios
 
-- Oubli de mdp (backend + frontend)
+- [ ] (Oubli de mdp (backend + frontend))
