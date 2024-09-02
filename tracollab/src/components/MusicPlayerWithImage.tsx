@@ -9,8 +9,12 @@ export default function MusicPlayerWithImage({ post }) {
     const router = useRouter();
 
     const handlePostClick = (postId: string) => {
-        router.push(`/posts/${postId}`);
+        router.push(`/TrackPage/${postId}`);
     };
+
+    const handleUserClick = (name: string) => {
+        router.push(`/user/${name}`);
+    }
 
     return (
         <div className="flex flex-col sm:flex-row items-center p-4 w-full">
@@ -39,7 +43,7 @@ export default function MusicPlayerWithImage({ post }) {
             {/* Lecteur audio */}
             <div className="flex-1 pl-4">
                 <div className="w-full">
-                    <MusicPlayer post={post} handlePostClick={handlePostClick} />
+                    <MusicPlayer post={post} handlePostClick={handlePostClick} handleUserClick={handleUserClick}/>
                 </div>
             </div>
         </div>
