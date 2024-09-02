@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
                 email: email,
                 name: username,
                 password: hashPassword,
-                profilePicture: 'https://example.com/profile.jpg',
+                profilePicture: 'https://storage.googleapis.com/tracollab-storage/images/default-profile.jpg',
                 joinDate: new Date()
             },
          });
