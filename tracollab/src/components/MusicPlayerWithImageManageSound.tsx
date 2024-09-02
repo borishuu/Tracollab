@@ -29,7 +29,7 @@ export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, u
         <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
             <MusicPlayerWithImage post={post} />
             <div className="flex flex-col space-y-2 mt-4 sm:mt-0">
-                <a href={`/commentsManagement/${userName}/${post.sound.id}`} className="inline-block">
+                <a href={`/commentsManagement/${userName}/${post.id}`} className="inline-block">
                     <img
                         src="/assets/bell.png"
                         alt="Notification"
