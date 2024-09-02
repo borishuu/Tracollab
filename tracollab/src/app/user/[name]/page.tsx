@@ -16,6 +16,9 @@ export default function ProfilePage() {
     const { user: loggedInUser } = useAuth();
     const [isCurrentUser, setIsCurrentUser] = useState(false);  // Check if it's the profile of current logged user
 
+    const [pic, setPic] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
+
     useEffect(() => {
         async function fetchUser() {
             setIsLoading(true);
@@ -44,32 +47,32 @@ export default function ProfilePage() {
         fetchUser();
     }, [name, loggedInUser]);
 
-    const handleEditProfilePictureClick = () => {
-        fileInputRef.current.click();
-    };
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];  // Récupère le fichier sélectionné
+        setPic(file);
 
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
         if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setImagePreview(imageUrl);
+
+            // Appeler l'API pour télécharger l'image
             const formData = new FormData();
             formData.append('profilePicture', file);
 
             try {
-                const response = await fetch('/api/uploadProfilePicture', {
+                const response = await fetch(`/api/user/${name}/picture`, {
                     method: 'POST',
                     body: formData,
                 });
 
-                if (response.ok) {
-                    console.log('Profile picture uploaded successfully');
-                } else {
-                    console.error('Failed to upload profile picture');
-                }
+                if (response.ok) window.location.reload();
+                else console.error('Failed to upload profile picture');
             } catch (error) {
                 console.error('Error uploading profile picture:', error);
             }
         }
     };
+
 
     const handlePostDeleted = (postId) => {
         if (user) {
@@ -113,51 +116,55 @@ export default function ProfilePage() {
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start pt-6">
                         <div
-                            className="flex flex-col sm:flex-row items-center sm:space-x-4 mb-4 sm:mb-0 w-full sm:w-auto">
+                            className="flex flex-col sm:flex-row sm:items-start items-center sm:space-x-4 mb-4 sm:mb-0 w-full sm:w-auto">
                             <div className="flex-none flex items-center justify-center">
                                 <div
                                     className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
                                     <img
-                                        src={user.profilePictureUrl || '/assets/default-profile.jpg'}
+                                        src={user?.profilePicture || '/assets/default-profile.jpg'} // Utilisation de l'URL de l'image de profil
                                         alt="Profile picture"
                                         className="object-cover w-full h-full rounded-3xl"
                                     />
                                 </div>
                             </div>
-                            <div className="flex flex-col ml-0 sm:ml-4 text-white">
+
+                            <div
+                                className="flex flex-col ml-0 sm:ml-4 text-white text-center sm:text-left"> {/* Adjust text alignment based on screen size */}
                                 <div className="text-3xl w-full max-w-xs p-1">
                                     {user.userName}
                                 </div>
                                 <div className="w-full max-w-xs p-1">
-                                    Joined on the <FormattedDate dateString={user.joinDate} /><br/>
+                                    Joined on the <FormattedDate dateString={user.joinDate}/><br/>
                                     Instrumentals posted: {user.instrumentalCount}<br/>
                                     Voice-over posted: {user.voiceOverCount}
                                 </div>
                             </div>
                         </div>
+
+
                         {isCurrentUser && (
                             <div className="flex flex-col space-y-2 sm:w-auto sm:ml-auto">
-                                <button
-                                    className="w-full px-6 py-2 bg-[#C162EA] text-white rounded-full hover:bg-[#9732C2] focus:outline-none focus:ring-2 focus:ring-green-300"
-                                    onClick={handleEditProfilePictureClick}
+                                <label
+                                    className="w-full max-w-xs bg-[#C162EA] hover:bg-[#9732C2] text-white rounded-full text-lg cursor-pointer text-center flex items-center justify-center py-2 px-4"
                                 >
                                     Edit profile picture
-                                </button>
-
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    style={{display: 'none'}}
-                                    accept=".jpg, .jpeg, .png"
-                                    onChange={handleFileChange}
-                                />
-                                <a href="/post-upload" className="inline-block">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        className="hidden"
+                                    />
+                                </label>
+                                <a href="/post-upload" className="w-full max-w-xs">
                                     <button
-                                        className="w-full px-6 py-2 bg-[#C162EA] text-white rounded-full hover:bg-[#9732C2] focus:outline-none focus:ring-2 focus:ring-green-300">
+                                        className="w-full bg-[#C162EA] text-white rounded-full text-lg hover:bg-[#9732C2] focus:outline-none focus:ring-2 focus:ring-green-300 py-2 px-4 flex items-center justify-center"
+                                    >
                                         Add instrumental
                                     </button>
                                 </a>
                             </div>
+
+
                         )}
                     </div>
 
@@ -176,7 +183,7 @@ export default function ProfilePage() {
                                                 userName={user.userName}
                                             />
                                         ) : (
-                                            <MusicPlayerWithImage post={post} />
+                                            <MusicPlayerWithImage post={post}/>
                                         )}
                                     </div>
                                 ))
