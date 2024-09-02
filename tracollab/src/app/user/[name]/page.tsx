@@ -1,37 +1,62 @@
 "use client";
 
 import { useParams } from 'next/navigation';
-import MusicPlayerWithImageManageSound from "@/components/MusicPlayerWithImageManageSound";
 import React, { useEffect, useState, useRef } from 'react';
 import FormattedDate from "@/components/formatDate";
 import { useAuth } from '@/context/authContext';
+import MusicPlayerWithImageManageSound from "@/components/MusicPlayerWithImageManageSound";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
+
+interface CommentCounts {
+    instrumentals: { [key: string]: number };  // Mapping from post ID to comment count for instrumentals
+    voices: { [key: string]: number };         // Mapping from post ID to comment count for voices
+}
 
 export default function ProfilePage() {
     const { name } = useParams();
-    const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);  // State to handle loading
-    const [isUserNotFound, setIsUserNotFound] = useState(false);  // State to handle if user not found
+    const [user, setUser] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isUserNotFound, setIsUserNotFound] = useState(false);
+    const [commentsCount, setCommentsCount] = useState<CommentCounts>({
+        instrumentals: {},
+        voices: {}
+    });
     const fileInputRef = useRef(null);
     const { user: loggedInUser } = useAuth();
-    const [isCurrentUser, setIsCurrentUser] = useState(false);  // Check if it's the profile of current logged user
-
-    const [pic, setPic] = useState(null);
-    const [imagePreview, setImagePreview] = useState('');
+    const [isCurrentUser, setIsCurrentUser] = useState(false);
+    const [pic, setPic] = useState<any>(null);
+    const [imagePreview, setImagePreview] = useState<string>('');
 
     useEffect(() => {
         async function fetchUser() {
             setIsLoading(true);
-
             if (name) {
                 try {
                     const res = await fetch(`/api/user/${name}`);
                     if (res.ok) {
                         const data = await res.json();
                         setUser(data);
-
                         if (loggedInUser && data && loggedInUser.name === data.userName) setIsCurrentUser(true);
                         else setIsCurrentUser(false);
+
+                        // Fetch comment counts for each post
+                        const instrumentalsCounts = await Promise.all(data.postsWithInstrumentals.map(async (post) => {
+                            const response = await fetch(`/api/posts/comments/${post.id}?publish=false`);
+                            const commentsData = await response.json();
+                            return { id: post.id, count: Array.isArray(commentsData.comments) ? commentsData.comments.length : 0 };
+                        }));
+
+                        const voicesCounts = await Promise.all(data.postsWithVoices.map(async (post) => {
+                            const response = await fetch(`/api/posts/comments/${post.id}?publish=false`);
+                            const commentsData = await response.json();
+                            return { id: post.id, count: Array.isArray(commentsData.comments) ? commentsData.comments.length : 0 };
+                        }));
+
+                        setCommentsCount({
+                            instrumentals: instrumentalsCounts.reduce((acc, { id, count }) => ({ ...acc, [id]: count }), {}),
+                            voices: voicesCounts.reduce((acc, { id, count }) => ({ ...acc, [id]: count }), {}),
+                        });
+
                     } else {
                         setIsUserNotFound(true);
                         setUser(null);
@@ -41,21 +66,17 @@ export default function ProfilePage() {
                     setIsUserNotFound(true);
                 }
             }
-            setIsLoading(false);  // Stop loading
+            setIsLoading(false);
         }
-
         fetchUser();
     }, [name, loggedInUser]);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];  // Récupère le fichier sélectionné
+        const file = e.target.files?.[0];
         setPic(file);
-
         if (file) {
             const imageUrl = URL.createObjectURL(file);
             setImagePreview(imageUrl);
-
-            // Appeler l'API pour télécharger l'image
             const formData = new FormData();
             formData.append('profilePicture', file);
 
@@ -73,8 +94,7 @@ export default function ProfilePage() {
         }
     };
 
-
-    const handlePostDeleted = (postId) => {
+    const handlePostDeleted = (postId: string) => {
         if (user) {
             setUser(prevUser => ({
                 ...prevUser,
@@ -109,27 +129,22 @@ export default function ProfilePage() {
         );
     }
 
-
     return (
         <main className="min-h-screen flex flex-col">
             <div className="flex-grow bg-[#404040] px-4 lg:px-36 py-4">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start pt-6">
-                        <div
-                            className="flex flex-col sm:flex-row sm:items-start items-center sm:space-x-4 mb-4 sm:mb-0 w-full sm:w-auto">
+                        <div className="flex flex-col sm:flex-row sm:items-start items-center sm:space-x-4 mb-4 sm:mb-0 w-full sm:w-auto">
                             <div className="flex-none flex items-center justify-center">
-                                <div
-                                    className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
+                                <div className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
                                     <img
-                                        src={user?.profilePicture || '/assets/default-profile.jpg'} // Utilisation de l'URL de l'image de profil
+                                        src={user?.profilePicture || '/assets/default-profile.jpg'}
                                         alt="Profile picture"
                                         className="object-cover w-full h-full rounded-3xl"
                                     />
                                 </div>
                             </div>
-
-                            <div
-                                className="flex flex-col ml-0 sm:ml-4 text-white text-center sm:text-left"> {/* Adjust text alignment based on screen size */}
+                            <div className="flex flex-col ml-0 sm:ml-4 text-white text-center sm:text-left">
                                 <div className="text-3xl w-full max-w-xs p-1">
                                     {user.userName}
                                 </div>
@@ -141,12 +156,9 @@ export default function ProfilePage() {
                             </div>
                         </div>
 
-
                         {isCurrentUser && (
                             <div className="flex flex-col space-y-2 sm:w-auto sm:ml-auto">
-                                <label
-                                    className="w-full max-w-xs bg-[#C162EA] hover:bg-[#9732C2] text-white rounded-full text-lg cursor-pointer text-center flex items-center justify-center py-2 px-4"
-                                >
+                                <label className="w-full max-w-xs bg-[#C162EA] hover:bg-[#9732C2] text-white rounded-full text-lg cursor-pointer text-center flex items-center justify-center py-2 px-4">
                                     Edit profile picture
                                     <input
                                         type="file"
@@ -163,8 +175,6 @@ export default function ProfilePage() {
                                     </button>
                                 </a>
                             </div>
-
-
                         )}
                     </div>
 
@@ -176,15 +186,12 @@ export default function ProfilePage() {
                             {user.postsWithInstrumentals.length > 0 ? (
                                 user.postsWithInstrumentals.map((post) => (
                                     <div key={post.id} className="w-full">
-                                        {isCurrentUser ? (
-                                            <MusicPlayerWithImageManageSound
-                                                post={post}
-                                                onPostDeleted={handlePostDeleted}
-                                                userName={user.userName}
-                                            />
-                                        ) : (
-                                            <MusicPlayerWithImage post={post}/>
-                                        )}
+                                        <MusicPlayerWithImageManageSound
+                                            post={post}
+                                            onPostDeleted={handlePostDeleted}
+                                            userName={user.userName}
+                                            commentsCount={commentsCount.instrumentals[post.id] || 0} // Pass the comments count
+                                        />
                                     </div>
                                 ))
                             ) : (
@@ -201,15 +208,12 @@ export default function ProfilePage() {
                             {user.postsWithVoices.length > 0 ? (
                                 user.postsWithVoices.map((post) => (
                                     <div key={post.id} className="w-full">
-                                        {isCurrentUser ? (
-                                            <MusicPlayerWithImageManageSound
-                                                post={post}
-                                                onPostDeleted={handlePostDeleted}
-                                                userName={user.userName}
-                                            />
-                                        ) : (
-                                            <MusicPlayerWithImage post={post} />
-                                        )}
+                                        <MusicPlayerWithImageManageSound
+                                            post={post}
+                                            onPostDeleted={handlePostDeleted}
+                                            userName={user.userName}
+                                            commentsCount={commentsCount.voices[post.id] || 0} // Pass the comments count
+                                        />
                                     </div>
                                 ))
                             ) : (

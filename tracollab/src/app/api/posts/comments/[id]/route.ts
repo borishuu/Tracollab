@@ -18,7 +18,6 @@ export async function GET(req: Request) {
         const publishParam = url.searchParams.get('publish');
         const publish = publishParam === 'true'; // Convert in bool
 
-
         // Fetch comments for the specific post ID including user details and soundId
         const comments = await prisma.comment.findMany({
             where: {
@@ -29,7 +28,7 @@ export async function GET(req: Request) {
                 id: true,
                 content: true,
                 sound: {
-                    select:{
+                    select: {
                         title: true,
                         audioPath: true,
                     },
@@ -43,7 +42,7 @@ export async function GET(req: Request) {
             },
         });
 
-        return new Response(JSON.stringify({ comments }), {
+        return new Response(JSON.stringify({ comments: comments || [] }), { // Ensure comments is always an array
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });

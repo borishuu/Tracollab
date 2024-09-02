@@ -4,25 +4,22 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/authContext';
 import FormattedDate from "@/components/formatDate";
-import MusicPlayerWithImageManageSound from "@/components/MusicPlayerWithImageManageSound";
-import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 import CommentValidate from "@/components/CommentValidate";
-import CommentWithInteraction from "@/components/CommentWithInteraction";  // Assurez-vous que ce hook d'authentification fonctionne
 
 export default function CommentsManagement() {
-    const { name, id } = useParams();  // Utiliser `useParams()` correctement pour obtenir les paramètres
-    const { user: loggedInUser } = useAuth();    // Récupération de l'utilisateur connecté
-    const router = useRouter();                  // Pour rediriger si nécessaire
+    const { name, id } = useParams();
+    const { user: loggedInUser } = useAuth();
+    const router = useRouter();
 
     const [post, setPost] = useState<any>(null);
-    const [comments, setComments] = useState<any[]>([]); // État pour les commentaires
+    const [comments, setComments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
        /* if (!loggedInUser || loggedInUser.name !== name) {
             router.push('/login');
-            return; // Assurez-vous de retourner ici pour éviter d'exécuter le reste du code.
+            return;
         }*/
 
         const fetchData = async () => {
@@ -47,20 +44,18 @@ export default function CommentsManagement() {
                     return;
                 }
 
-                setComments(commentsData.comments);
+                setComments(commentsData.comments || []); // Ensure comments is always an array
 
             } catch (err) {
-                console.error('Error fetching data:', err); // Log des erreurs dans la console
+                console.error('Error fetching data:', err);
                 setError('Error fetching data');
             } finally {
                 setLoading(false);
             }
-
         };
 
-        fetchData(); // Appel de la fonction fetchData
-    }, [loggedInUser, name, router]);
-
+        fetchData();
+    }, [loggedInUser, name, id, router]);
 
     return (
         <main className="min-h-screen flex flex-col">
@@ -72,7 +67,7 @@ export default function CommentsManagement() {
                                 <div
                                     className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
                                     <img
-                                        src={'/assets/default-profile.jpg'}
+                                        src={post?.sound.picture}
                                         alt="Profile picture"
                                         className="object-cover w-full h-full rounded-3xl"
                                     />
@@ -90,27 +85,18 @@ export default function CommentsManagement() {
                         </div>
                     </div>
 
-
                     <div className="bg-[#C162EA] text-white p-4 rounded-3xl mt-10">
                         <div className="mt-4 space-y-4">
-                            {post ? (
-                                <div className="text-white mt-4">
-                                    {post ? (
-                                        <div className="text-white mt-4">
-                                            {comments.length > 0 ? (
-                                                comments.map((comment) => (
-                                                    <CommentValidate key={comment.id} comment={comment}/>
-                                                ))
-                                            ) : (
-                                                <p>No comments yet.</p>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <p>Loading comments...</p>
-                                    )}
-                                </div>
-                            ) : (
+                            {loading ? (
                                 <p>Loading comments...</p>
+                            ) : error ? (
+                                <p>{error}</p>
+                            ) : comments.length > 0 ? (
+                                comments.map((comment) => (
+                                    <CommentValidate key={comment.id} comment={comment}/>
+                                ))
+                            ) : (
+                                <p>No comments yet.</p>
                             )}
                         </div>
                     </div>
