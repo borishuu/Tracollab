@@ -1,10 +1,45 @@
-export default function SearchBar() {
+import React, { useState, useEffect } from "react";
+
+export default function SearchBar({query, setQuery, posts, onSearchResults }) {
+    useEffect(() => {
+        if (query.length === 0) {
+            onSearchResults([]);
+            return;
+        }
+
+        const fetchResults = async () => {
+            // try {
+            //     const response = await fetch('/api/search', {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         },
+            //         body: JSON.stringify({ query }),
+            //     });
+            //     const data = await response.json();
+            //     onSearchResults(data);
+            // } catch (error) {
+            //     console.error("Error fetching search results:", error);
+            // }
+
+            // Filter the results
+            const results = posts.filter((post) => {
+                return post.sound.title.toLowerCase().includes(query.toLowerCase()) || post.user.name.toLowerCase().includes(query.toLowerCase());
+            });
+            onSearchResults(results);
+        };
+
+        fetchResults();
+    }, [query]);
+
     return (
         <div className="w-full max-w-md mx-auto mt-1 mb-1">
             <div className="relative">
                 <input
                     type="text"
-                    className="w-full h-6 px-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="w-full h-6 px-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                     placeholder="Search..."
                 />
                 <button className="absolute top-0 right-0 mt-1 mr-4">
