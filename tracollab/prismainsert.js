@@ -379,66 +379,113 @@ async function main() {
         await prisma.$disconnect();
     } */
 
-    /* Insertion de likes dans la base de données
+    /* Insertion de UserLikes dans la base de données */
     try {
-        // Récupérer les posts existants
-        const posts = await prisma.post.findMany();
-
-        // Créer des likes et les lier aux posts
+        // Créer des UserLikes
         const likesData = [
             {
                 userId: "66cdc46093d0319685c99fd2",
-                postId: posts[0].id,
             },
             {
                 userId: "66c5f01a973d083e14093aa9",
-                postId: posts[0].id,
             },
             {
                 userId: "66cd9a5793d0319685c99fc7",
-                postId: posts[0].id,
             },
             {
                 userId: "66cdcb2393d0319685c99fe2",
-                postId: posts[0].id,
             },
             {
                 userId: "66ced380fe0539d9244ef9c5",
-                postId: posts[0].id,
             },
             {
                 userId: "66cf209d44e72c0acdad377f",
-                postId: posts[0].id,
             },
             {
                 userId: "66cf11425c656985be9a0234",
-                postId: posts[0].id,
             },
             {
                 userId: "66cf10dc3c0f258126c52f05",
-                postId: posts[0].id,
             },
             {
                 userId: "66cf1098f3e544d700807e47",
-                postId: posts[0].id,
             },
             {
                 userId: "66cf0ecbce80aa67fe0bf8f9",
-                postId: posts[0].id,
-            },
-            {
-                userId: "66cf1098f3e544d700807e47",
-                postId: posts[1].id,
-            },
-            {
-                userId: "66cf0ecbce80aa67fe0bf8f9",
-                postId: posts[1].id,
             },
         ];
 
         // Insérer les likes dans la base de données
         await prisma.userLike.createMany({
             data: likesData,
+        });
+
+        // Récupérer les UserLikes créés
+        const likes = await prisma.userLike.findMany();
+
+        // Récupérer les Comments existants pour le Post avec l'id "66cf2a1bb9c5f80ed3455d74"
+        const commentsOnPost = await prisma.comment.findMany({
+            where: {
+                postId: "66cf2a1bb9c5f80ed3455d74",
+            },
+        });
+
+        // Créer des UserLikesComment correspondants
+        const likesCommentsData = [
+            {
+                userLikeId: likes[0].id,
+                commentId: commentsOnPost[0].id,
+            },
+            {
+                userLikeId: likes[1].id,
+                commentId: commentsOnPost[0].id,
+            },
+            {
+                userLikeId: likes[2].id,
+                commentId: commentsOnPost[0].id,
+            },
+            {
+                userLikeId: likes[3].id,
+                commentId: commentsOnPost[1].id,
+            },
+            {
+                userLikeId: likes[4].id,
+                commentId: commentsOnPost[1].id,
+            },
+        ];
+
+        // Insérer les UserLikesComment dans la base de données
+        await prisma.userLikeComment.createMany({
+            data: likesCommentsData,
+        });
+
+        // Créer des UserLikesPost correspondants
+        const likesPostsData = [
+            {
+                userLikeId: likes[5].id,
+                postId: "66cf2a1bb9c5f80ed3455d74",
+            },
+            {
+                userLikeId: likes[6].id,
+                postId: "66cf2a1bb9c5f80ed3455d74",
+            },
+            {
+                userLikeId: likes[7].id,
+                postId: "66cf2a1bb9c5f80ed3455d74",
+            },
+            {
+                userLikeId: likes[8].id,
+                postId: "66cf2a1bb9c5f80ed3455d74",
+            },
+            {
+                userLikeId: likes[9].id,
+                postId: "66cf2a1bb9c5f80ed3455d74",
+            },
+        ];
+
+        // Insérer les UserLikesPost dans la base de données
+        await prisma.userLikePost.createMany({
+            data: likesPostsData,
         });
 
         console.log('Likes created successfully');
