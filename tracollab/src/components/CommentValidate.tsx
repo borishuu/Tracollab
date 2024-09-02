@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from 'react';
-import MusicPlayer from "@/components/MusicPlayer";
 
 interface CommentProps {
     comment: {
@@ -46,9 +45,11 @@ export default function CommentValidate({ comment }: CommentProps) {
 
     const deleteComment = async () => {
         try {
+            alert("validate " + comment.id);
             const response = await fetch(`/api/comments/${comment.id}/delete`, {
                 method: 'DELETE',
             });
+            alert("validate termine");
 
             if (response.ok) {
                 alert('Comment deleted successfully');
@@ -58,8 +59,9 @@ export default function CommentValidate({ comment }: CommentProps) {
             }
         } catch (error) {
             console.error('Error deleting comment:', error);
-            alert('An error occurred while deleting the comment.');
+            alert(`An error occurred while deleting the comment: ${error.message}`);
         }
+
     };
 
     return (
