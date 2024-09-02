@@ -1,7 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 
-
-export default function CustomMusicPlayer({post, setTimeAgo}) {
+export default function CustomMusicPlayer({postOrComment}) {
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
     const [isAudioReady, setIsAudioReady] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -11,10 +10,6 @@ export default function CustomMusicPlayer({post, setTimeAgo}) {
     const [totalDuration, setTotalDuration] = useState(0);
 
     const audioRef = useRef<HTMLAudioElement>(null);
-
-    useEffect(() => {
-        calculateTimeAgo(post.date);
-    }, [post.date]);
 
     const handleTimeUpdate = () => {
         const audio = audioRef.current;
@@ -33,7 +28,7 @@ export default function CustomMusicPlayer({post, setTimeAgo}) {
         const audio = audioRef.current;
 
         if (!audioUrl) {
-            setAudioUrl(post.sound.audioPath);
+            setAudioUrl(postOrComment.sound.audioPath);
         }
 
         if (isAudioReady) {
@@ -66,36 +61,11 @@ export default function CustomMusicPlayer({post, setTimeAgo}) {
         setVolume(newVolume);
     };
 
-    const calculateTimeAgo = (dateString: string) => {
-        const now = new Date();
-        const postDate = new Date(dateString);
-        const diff = now.getTime() - postDate.getTime();
-
-        const seconds = Math.floor(diff / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-        const months = Math.floor(days / 30);
-        const years = Math.floor(months / 12);
-
-        if (years > 0) {
-            setTimeAgo(`${years} year${years > 1 ? 's' : ''} ago`);
-        } else if (months > 0) {
-            setTimeAgo(`${months} month${months > 1 ? 's' : ''} ago`);
-        } else if (days > 0) {
-            setTimeAgo(`${days} day${days > 1 ? 's' : ''} ago`);
-        } else if (hours > 0) {
-            setTimeAgo(`${hours} hour${hours > 1 ? 's' : ''} ago`);
-        } else {
-            setTimeAgo(`${minutes} minute${minutes > 1 ? 's' : ''} ago`);
-        }
-    };
-
     const handleDownloadClick = async () => {
         if (!audioUrl) {
-            setAudioUrl(post.sound.audioPath);
+            setAudioUrl(postOrComment.sound.audioPath);
         }
-        window.open(post.sound.audioPath, '_self');
+        window.open(postOrComment.sound.audioPath, '_self');
     };
 
     return (
