@@ -6,7 +6,6 @@ interface User {
     id: string;
     name: string;
     email: string;
-    // Ajoutez d'autres propriétés si nécessaire
 }
 
 interface AuthContextType {
@@ -35,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const data = await response.json();
 
             if (data && data.name) {
-                setUser(data);
+                setUser(data); 
             } else {
                 setUser(null);
             }
@@ -63,3 +62,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 }
 
 export default AuthProvider;
+ 
