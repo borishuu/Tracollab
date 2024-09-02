@@ -379,7 +379,7 @@ async function main() {
         await prisma.$disconnect();
     } */
 
-    /* Insertion de UserLikes dans la base de données */
+    /* Insertion de UserLikes dans la base de données
     try {
         // Créer des UserLikes
         const likesData = [
@@ -494,7 +494,7 @@ async function main() {
     } finally {
         // Déconnecter Prisma après l'opération
         await prisma.$disconnect();
-    }
+    } */
 
     /* Append les likes aux Posts
     try {
