@@ -1,8 +1,38 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CustomMusicPlayer from "@/components/CustomMusicPlayer";
 
 export default function MusicPlayer({post, handlePostClick, handleUserClick}) {
     const [timeAgo, setTimeAgo] = useState('');
+
+    useEffect(() => {
+        calculateTimeAgo(post.date);
+    }, [post.date]);
+
+
+    const calculateTimeAgo = (dateString: string) => {
+        const now = new Date();
+        const postDate = new Date(dateString);
+        const diff = now.getTime() - postDate.getTime();
+
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const months = Math.floor(days / 30);
+        const years = Math.floor(months / 12);
+
+        if (years > 0) {
+            setTimeAgo(`${years} year${years > 1 ? 's' : ''} ago`);
+        } else if (months > 0) {
+            setTimeAgo(`${months} month${months > 1 ? 's' : ''} ago`);
+        } else if (days > 0) {
+            setTimeAgo(`${days} day${days > 1 ? 's' : ''} ago`);
+        } else if (hours > 0) {
+            setTimeAgo(`${hours} hour${hours > 1 ? 's' : ''} ago`);
+        } else {
+            setTimeAgo(`${minutes} minute${minutes > 1 ? 's' : ''} ago`);
+        }
+    };
 
     return (
         <div className="text-white bg-[#9732C2] rounded-3xl shadow-md p-4">
@@ -32,7 +62,7 @@ export default function MusicPlayer({post, handlePostClick, handleUserClick}) {
                 </div>
             </div>
 
-            <CustomMusicPlayer post={post} setTimeAgo={setTimeAgo}></CustomMusicPlayer>
+            <CustomMusicPlayer postOrComment={post}></CustomMusicPlayer>
         </div>
     );
 }
