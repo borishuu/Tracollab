@@ -1,11 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 
+// Initialize PrismaClient instance
 const prisma = new PrismaClient();
 
+// Handler for the DELETE method to remove a comment by its ID.
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-    const { id } = params;
+    const { id } = params; // Retrieve the comment ID from request parameters
 
     try {
+        // Check if the comment ID is provided
         if (!id) {
             return new Response(JSON.stringify({ error: 'ID of the comment is required' }), {
                 status: 400,
@@ -29,6 +32,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
             headers: { 'Content-Type': 'application/json' },
         });
     } finally {
+        // Disconnect the PrismaClient instance
         await prisma.$disconnect();
     }
 }
