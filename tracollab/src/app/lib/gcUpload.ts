@@ -1,4 +1,4 @@
-import { Storage } from '@google-cloud/storage';
+import {SaveOptions, Storage} from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 
@@ -10,7 +10,7 @@ export async function uploadToGc(file, folder) {
     const fileExtension = path.extname(file.name);
     const uniqueId = uuidv4();
     const newFileName = `${timestamp}-${uniqueId}${fileExtension}`;
-  
+
     const buffer = await file.arrayBuffer();
     const storage = new Storage({ keyFilename: serviceAccountKeyFile });
   
@@ -19,9 +19,7 @@ export async function uploadToGc(file, folder) {
     await storage.bucket(bucketName).file(filePath).save(Buffer.from(buffer), {
       resumable: false,
       contentType: file.type,
-    });
+    } as SaveOptions);
   
-    const publicUrl = `https://storage.googleapis.com/${bucketName}/${filePath}`;
-  
-    return publicUrl;
+    return `https://storage.googleapis.com/${bucketName}/${filePath}`;
   }
