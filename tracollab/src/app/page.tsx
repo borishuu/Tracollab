@@ -1,117 +1,104 @@
-import Image from "next/image";
+"use client";
+
+import React, {useEffect, useState} from "react";
+import SearchBar from "@/components/SearchBar";
+import DropDownList from "@/components/DropDownList";
+import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
+
+const sortingOptions = [
+    {name: "Newest"},
+    {name: "Oldest"},
+];
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    const [posts, setPosts] = useState([]);
+    const [query, setQuery] = useState("");
+    const [searchResults, setResults] = useState([]);
+    const [genres, setGenres] = useState([]);
+    const [selectedGenre, setSelectedGenre] = useState("");
+    const [selectedSort, setSelectedSort] = useState("Most Liked");
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    useEffect(() => {
+        async function getPosts() {
+            try {
+                const response = await fetch("/api/posts");
+                const postsData = await response.json();
+                setPosts(postsData);
+            } catch (error) {
+                console.error("Error fetching posts: ", error);
+            }
+        }
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <audio controls>
-            <source src="https://storage.googleapis.com/instrumentals-tracollab/birds.mp3" type="audio/mpeg"/>
-            Your browser does not support the audio element.
-          </audio>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+        async function getGenres() {
+            try {
+                const response = await fetch("/api/genres");
+                const genresData = await response.json();
+                setGenres(genresData);
+            } catch (error) {
+                console.error("Error fetching genres: ", error);
+            }
+        }
 
-        <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+        getGenres();
+        getPosts();
+    }, []);
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+    const handleGenreChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedGenre(event.target.value);
+    };
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+    const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedSort(event.target.value);
+    };
+
+    // Combinaison du genre et des résultats de recherche
+    const getFilteredPosts = () => {
+        let filtered = searchResults.length > 0 || query.length > 0 ? searchResults : posts;
+
+        if (selectedGenre) {
+            filtered = filtered.filter(post => post.sound.genre?.name === selectedGenre);
+        }
+
+        return filtered;
+    };
+
+    const filteredPosts = getFilteredPosts();
+
+    const sortedPosts = [...filteredPosts].sort((a, b) => {
+        if (selectedSort === "Newest") {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+        } else if (selectedSort === "Oldest") {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+        } else if (selectedSort === "Most Liked") {
+            return b.likes?.length - a.likes?.length;
+        }
+        return 0;
+    });
+
+    return (
+        <main>
+            <div className="w-full bg-red-500 flex flex-wrap">
+                <div className="w-full lg:w-1/2 bg-yellow-500" style={{backgroundColor: '#D3C3C3'}}>
+                    <SearchBar query={query} setQuery={setQuery} posts={posts} onSearchResults={setResults}/>
+                </div>
+                <div className="w-1/2 lg:w-1/4 bg-blue-500" style={{backgroundColor: '#D3C3C3'}}>
+                    <DropDownList name={"All Genres"} data={genres} onChange={handleGenreChange}/>
+                </div>
+                <div className="w-1/2 lg:w-1/4 bg-green-500" style={{backgroundColor: '#D3C3C3'}}>
+                    <DropDownList name={"Most Liked"} data={sortingOptions} onChange={handleSortChange}/>
+                </div>
+            </div>
+
+            <div className="pl-12 pr-12 pt-3" style={{backgroundColor: '#404040'}}>
+                <h1 className="text-white text-5xl mb-2">Trends</h1>
+                <div className="grid gap-y-4 gap-x-8 min-[1280px]:grid-cols-2 min-[1880px]:grid-cols-3">
+                    {sortedPosts.map((post, index) => (
+                        <div key={index} className="rounded-lg overflow-hidden flex flex-col">
+                            <MusicPlayerWithImage post={post}/>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </main>
+    );
 }
