@@ -58,7 +58,7 @@ export default function ProfilePage() {
 
                     } else {
                         setIsUserNotFound(true); // Set the user state if the user is not found
-                        setUser(null); // DELETE
+                        setUser(null);
                     }
                 } catch (error) {
                     console.error('Error fetching user:', error);
@@ -131,7 +131,7 @@ export default function ProfilePage() {
                             <div className="flex-none flex items-center justify-center">
                                 <div className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
                                     <img
-                                        src={user?.profilePicture || '/assets/default-profile.jpg'}
+                                        src={user?.profilePicture}
                                         alt="Profile picture"
                                         className="object-cover w-full h-full rounded-3xl"
                                     />
