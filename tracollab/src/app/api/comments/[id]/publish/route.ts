@@ -1,59 +1,68 @@
 import { PrismaClient } from '@prisma/client';
 
+// Initialize the PrismaClient instance
 const prisma = new PrismaClient();
 
+// Handler of the PATCH method for updating the publication status of a comment.
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-    const { id } = params; // Récupération de l'ID du commentaire à modifier
+    const { id } = params; // Récupération de l'ID du commentaire à partir des paramètres
+
+    // Check if the ID of the comment is provided
+    if (!id) {
+        return new Response(
+            JSON.stringify({ error: 'ID of the comment is required' }),
+            {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            }
+        );
+    }
 
     try {
-        // Vérification si l'ID du commentaire est fourni
-        if (!id) {
-            return new Response(JSON.stringify({ error: 'ID of the comment is required' }), {
-                status: 400,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+        const currentPublishState = await prisma.comment.findUnique({
+            where: { id },
+            select: { publish: true },
+        });
+
+        // Check if the comment is found
+        if (!currentPublishState) {
+            return new Response(
+                JSON.stringify({ error: 'Comment not found' }),
+                {
+                    status: 404,
+                    headers: { 'Content-Type': 'application/json' },
+                }
+            );
         }
 
-// Mise à jour du commentaire, définition de publish à l'opposé de sa valeur actuelle
+        // Update the comment, invert the ‘publish’ value
         const updatedComment = await prisma.comment.update({
-            where: {
-                id: id,
-            },
-            data: {
-                publish: {
-                    // Inverse la valeur actuelle de "publish"
-                    set: (await prisma.comment.findUnique({
-                        where: { id: id },
-                        select: { publish: true },
-                    }))?.publish === true ? false : true,
-                },
-            },
+            where: { id },
+            data: { publish: !currentPublishState.publish },
         });
 
-
-        await prisma.$disconnect(); // Déconnexion de Prisma
-
-        return new Response(JSON.stringify({
-            message: `The comment has been validated`,
-            comment: updatedComment
-        }), {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
+        return new Response(
+            JSON.stringify({
+                message: 'The comment has been updated successfully',
+                comment: updatedComment,
+            }),
+            {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            }
+        );
     } catch (error) {
         console.error('Error updating comment:', error);
-        return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-            status: 500,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+
+        return new Response(
+            JSON.stringify({ error: 'Internal Server Error' }),
+            {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            }
+        );
     } finally {
-        await prisma.$disconnect(); // Assurez-vous que Prisma est déconnecté
+        // Disconnect the PrismaClient instance
+        await prisma.$disconnect();
     }
 }

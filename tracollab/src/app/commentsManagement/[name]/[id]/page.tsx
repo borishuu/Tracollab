@@ -7,8 +7,8 @@ import FormattedDate from "@/components/formatDate";
 import CommentValidate from "@/components/CommentValidate";
 
 export default function CommentsManagement() {
-    const { name, id } = useParams();
-    const { user: loggedInUser } = useAuth();
+    const { name, id } = useParams(); // Get the name and id from the URL
+    const { user: loggedInUser } = useAuth(); // Get user logged from the context of authentication
     const router = useRouter();
 
     const [post, setPost] = useState<any>(null);
@@ -17,10 +17,13 @@ export default function CommentsManagement() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        /* if (!loggedInUser || loggedInUser.name !== name) {
+        const nameStr = Array.isArray(name) ? name[0] : name;
+        const decodedName = nameStr ? decodeURIComponent(nameStr) : '';
+
+        if (!loggedInUser || loggedInUser.name !== decodedName) {
              router.push('/login');
              return;
-         }*/
+         }
 
         const fetchData = async () => {
             try {
@@ -43,7 +46,6 @@ export default function CommentsManagement() {
                     setError(commentsData.error);
                     return;
                 }
-
                 setComments(commentsData.comments || []); // Ensure comments is always an array
 
             } catch (err) {
@@ -61,8 +63,10 @@ export default function CommentsManagement() {
         <main className="min-h-screen flex flex-col">
             <div className="flex-grow bg-[#404040] px-4 lg:px-36 py-4">
                 <div className="max-w-7xl mx-auto">
+                    { /* Display the information of the sound */ }
                     <div className="flex flex-col sm:flex-row items-center sm:items-start pt-6 w-full">
                         <div className="flex flex-col sm:flex-row items-center sm:space-x-4 mb-4 sm:mb-0 w-full">
+                            {/* Display the cover of the sound */}
                             <div className="flex-none flex items-center justify-center w-full sm:w-auto">
                                 <div
                                     className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
@@ -73,9 +77,13 @@ export default function CommentsManagement() {
                                     />
                                 </div>
                             </div>
+
+                            {/* Display the title and date of the sound */}
                             <div className="flex flex-col ml-0 sm:ml-4 text-white w-full">
                                 <div className="text-3xl w-full p-1">
-                                    {post?.sound.title}
+                                    <a href={`/TrackPage/${post?.id}`} className="hover:underline">
+                                        {post?.sound.title}
+                                    </a>
                                 </div>
                                 <div className="w-full p-1">
                                     Published on the <FormattedDate dateString={post?.date}/>
@@ -84,6 +92,7 @@ export default function CommentsManagement() {
                         </div>
                     </div>
 
+                    {/* Display the comments */}
                     <div className="bg-[#C162EA] text-white p-4 rounded-3xl mt-10">
                         <div className="mt-4 space-y-4">
                             {loading ? (

@@ -1,12 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 import {useState} from "react";
 
+// Initialize PrismaClient instance
 const prisma = new PrismaClient();
 
+// Handler for the GET method to fetch comments for a given post ID.
 export async function GET(req: Request) {
-    // On suppose que l'ID de la publication est passé en tant que paramètre de requête
-    const { searchParams } = new URL(req.url);
-    const postId = searchParams.get('postId');  // Récupère l'ID de la publication depuis les paramètres de la requête
+    const { searchParams } = new URL(req.url); // Extract query parameters from the request URL
+    const postId = searchParams.get('postId');  // Retrieve the postId from query parameters
     const [comments, setComments] = useState<any[]>([]); // État pour les commentaires
     const [error, setError] = useState<string | null>(null);
 

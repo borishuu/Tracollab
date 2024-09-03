@@ -11,7 +11,7 @@ export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, u
                 });
 
                 if (response.ok) {
-                    alert('Music deleted successfully');
+                    console.log('Music deleted successfully');
                     if (onPostDeleted) {
                         onPostDeleted(post.id);
                     }
