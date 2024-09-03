@@ -1,66 +1,67 @@
-"use client";
-
-import React, {useEffect} from 'react';
+import {useEffect, useState} from "react";
 import LikeReport from "@/components/LikeReport";
 
-interface CommentProps {
-    comment: {
-        id: string;
-        content: string;
-        user: {
-            name: string;
-            profilePicture: string;
-        };
-        sound: {
-            title: string;
-            audioPath: string;
-        } | null;
-        soundId: string | null;
-    };
-}
-
-export default function CommentWithInteraction({ comment }: CommentProps) {
-    const { user, content, sound } = comment;
+export default function CommentWithInteraction({comment}) {
+    const [audioReady, setAudioReady] = useState(false);
 
     useEffect(() => {
-        console.log("test: ", comment);
-    }, []);
+        // Check if there is a sound associated with the comment
+        if (comment.sound && comment.sound.audioPath) {
+            // Create a new audio object and check if it can load properly
+            const audio = new Audio(comment.sound.audioPath);
+
+            // Add an event listener to handle the loaded data event
+            audio.addEventListener('loadeddata', () => {
+                // When the audio is fully loaded, set the audioReady state to true
+                setAudioReady(true);
+            });
+
+            // Handle potential errors in loading the audio
+            audio.addEventListener('error', () => {
+                console.error("Failed to load audio.");
+                setAudioReady(false);
+            });
+
+            // Trigger loading the audio
+            audio.load();
+        } else {
+            // If no audio, consider it as ready
+            setAudioReady(true);
+        }
+    }, [comment.sound]);
+
+    if (!audioReady) {
+        // Display a loading indicator or simply return null to hide the component
+        return <div>Loading comment...</div>;  // or return null;
+    }
 
     return (
         <div className="flex flex-col items-stretch mt-4 bg-[#C162EA] rounded-2xl">
             <div className="flex">
                 <div className="w-2/12 rounded-tl-2xl relative">
                     <div className="w-24 h-24 rounded-2xl overflow-hidden">
-                        {user.profilePicture ? (
-                            <img
-                                src={user.profilePicture}
-                                alt={user.name || 'Profile picture'}
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <p className="text-white">No profile picture</p>
-                        )}
+                        <img src={comment.user.profilePicture} alt={comment.user.name}
+                             className="w-full h-full object-cover"/>
                     </div>
                 </div>
-
                 <div className="w-8/12 break-words pt-2 pr-2 pb-2">
-                    <p className="font-bold">{user.name || 'Anonymous'}</p>
-                    <p>{content || 'No content'}</p>
+                    <p className="text-sm font-semibold">{comment.user.name}</p>
+                    <p>{comment.content}</p>
 
-                    {sound && sound.audioPath && (
-                        <div>
+                    {comment.sound && comment.sound.audioPath && (
+                        <div style={{display: 'flex', justifyContent: 'center'}} className="pt-2">
                             <audio controls>
-                                <source src={sound.audioPath} type="audio/mpeg" />
+                                <source src={comment.sound.audioPath} type="audio/mpeg"/>
                                 Your browser does not support the audio element.
                             </audio>
                         </div>
                     )}
                 </div>
-
                 <div className="w-2/12 pt-2 pl-2">
-                    <LikeReport likesCount={0} />
+                    <LikeReport likesCount={0}/>
                 </div>
             </div>
         </div>
     );
 }
+ 
