@@ -29,7 +29,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
                 },
             });
         }
-        console.log("test", post);
 
         return new Response(JSON.stringify(post), {
             status: 200,

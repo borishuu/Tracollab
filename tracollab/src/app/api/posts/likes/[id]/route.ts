@@ -1,16 +1,14 @@
-// app/api/posts/[id]/route.ts
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
     try {
-        // Extract the post ID from the request URL
         const url = new URL(req.url);
         const id = url.pathname.split('/').pop(); // Assuming URL pattern is /api/posts/[id]
 
-        if (!id || !/^[a-fA-F0-9]{24}$/.test(id)) {
-            return new Response(JSON.stringify({ error: 'Invalid or missing Post ID' }), {
+        if (!id) {
+            return new Response(JSON.stringify({ error: 'Post ID is required' }), {
                 status: 400,
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,7 +27,7 @@ export async function GET(req: Request) {
                 },
                 user: true,
                 comments: true,
-                likes: true, // Include likes data
+                likes: true, // Include likes data from UserLikePost
                 reports: true,
             },
         });
@@ -43,10 +41,11 @@ export async function GET(req: Request) {
             });
         }
 
-        // Calculate the number of likes
-        const likesCount = post.likes.length;
+        // Count the number of likes for this post
+        const likesCount = await prisma.userLikePost.count({
+            where: { postId: id },
+        });
 
-        // Send the post data back as a JSON response, including likes count
         return new Response(JSON.stringify({ ...post, likesCount }), {
             status: 200,
             headers: {
@@ -65,3 +64,4 @@ export async function GET(req: Request) {
         await prisma.$disconnect();
     }
 }
+
