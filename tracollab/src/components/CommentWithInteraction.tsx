@@ -1,28 +1,9 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import LikeComments from '@/components/LikeComments';
+import CustomMusicPlayer from "@/components/CustomMusicPlayer";
 
-export default function CommentWithInteraction({ comment }) {
-    const [audioReady, setAudioReady] = useState(false);
+export default function CommentWithInteraction({comment}) {
     const [likesCount, setLikesCount] = useState<number | null>(null);
-
-    useEffect(() => {
-        if (comment.sound && comment.sound.audioPath) {
-            const audio = new Audio(comment.sound.audioPath);
-
-            audio.addEventListener('loadeddata', () => {
-                setAudioReady(true);
-            });
-
-            audio.addEventListener('error', () => {
-                console.error("Failed to load audio.");
-                setAudioReady(false);
-            });
-
-            audio.load();
-        } else {
-            setAudioReady(true);
-        }
-    }, [comment.sound]);
 
     useEffect(() => {
         const fetchLikesCount = async () => {
@@ -42,10 +23,6 @@ export default function CommentWithInteraction({ comment }) {
         fetchLikesCount();
     }, [comment.id]);
 
-    if (!audioReady) {
-        return <div>Loading comment...</div>;
-    }
-
     return (
         <div className="flex flex-col items-stretch mt-4 bg-[#C162EA] rounded-2xl">
             <div className="flex">
@@ -63,12 +40,7 @@ export default function CommentWithInteraction({ comment }) {
                     <p>{comment.content}</p>
 
                     {comment.sound && comment.sound.audioPath && (
-                        <div style={{ display: 'flex', justifyContent: 'center' }} className="pt-2">
-                            <audio controls>
-                                <source src={comment.sound.audioPath} type="audio/mpeg" />
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
+                        <CustomMusicPlayer postOrComment={comment}></CustomMusicPlayer>
                     )}
                 </div>
                 <div className="w-2/12 pt-2 pl-2">
@@ -76,7 +48,7 @@ export default function CommentWithInteraction({ comment }) {
                         <p>Loading...</p>
                     ) : (
                         <>
-                            <LikeComments commentId={comment.id} initialLikesCount={likesCount} />
+                            <LikeComments commentId={comment.id} initialLikesCount={likesCount}/>
                         </>
                     )}
                 </div>

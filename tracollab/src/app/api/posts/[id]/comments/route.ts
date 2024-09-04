@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { uploadToGc } from '@/app/lib/gcUpload';
-import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
-// ID de genre par défaut
-const DEFAULT_GENRE_ID = '66cc8d4e5006988d7cde1790';
+// ID de genre par défaut ("Unknown")
+const DEFAULT_GENRE_ID = '66d822bce76d99d3c2cc2355';
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
     const { id: postId } = params;
@@ -41,6 +40,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
             soundId = newSound.id;
         }
 
+        console.log("2");
+
         // Créez un nouveau commentaire
         const newComment = await prisma.comment.create({
             data: {
@@ -51,6 +52,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
                 soundId, // Incluez soundId seulement si l'audio est téléchargé
             },
         });
+
+        console.log("3");
 
         return NextResponse.json({ comment: newComment });
     } catch (error) {
