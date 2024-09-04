@@ -23,9 +23,9 @@ export default function MusicPlayerWithImage({ post }) {
                 className="flex-shrink-0 flex items-center justify-center mb-4 sm:mb-0 hover:cursor-pointer transition-all duration-300"
                 onClick={() => handlePostClick(post.id)}
             >
-                {hasSoundData && hasPicture ? (
+
                     <div
-                        className="w-32 h-32 bg-[#8ACE01] rounded-full overflow-hidden flex items-center justify-center hover:border-4 hover:border-white"
+                        className="w-32 h-32 bg-gray-400 rounded-full overflow-hidden flex items-center justify-center hover:border-4 hover:border-white"
                     >
                         <img
                             src={post.sound.picture}
@@ -33,11 +33,6 @@ export default function MusicPlayerWithImage({ post }) {
                             className="object-cover w-full h-full"
                         />
                     </div>
-                ) : (
-                    <div className="w-32 h-32 bg-[#8ACE00] flex items-center justify-center text-white rounded-full hover:border-4 hover:border-white">
-                        <span>🎵</span>
-                    </div>
-                )}
             </div>
 
             {/* Lecteur audio */}

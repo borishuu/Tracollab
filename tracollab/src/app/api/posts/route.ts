@@ -1,7 +1,13 @@
 import {PrismaClient} from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserData } from '../user/route';
-import {uploadToGc} from "@/app/lib/gcUpload";
+import { uploadToGc } from '@/app/lib/gcUpload';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const prisma = new PrismaClient();
 
@@ -20,6 +26,8 @@ export async function GET(req: Request) {
           reports: true
       },
     });
+
+    console.log("genre: ", posts[0]);
 
     // Send the posts data back as a JSON response
     return new Response(JSON.stringify(posts), {
@@ -51,76 +59,89 @@ export async function POST(req: NextRequest) {
     const text = form.get('text') as string;
 
     try {
-        const userId = await getUserData(req) as string;
+      const userId = await getUserData(req) as string;
 
-        if (audioFile.size < 1 || imageFile.size < 1) {
+      const genre = await prisma.genre.findFirst({where: {name: genreName}});
+
+        if (!title) {
             return new NextResponse(JSON.stringify(
-                    { error: "Some files are empty" }),
-                { status: 500 }
-            );
-        }
-
-        const genre = await prisma.genre.findFirst({where: {name: genreName}});
-
-        if (!genre) {
-            return new NextResponse(JSON.stringify(
-                    { error: "Invalid genre selected" }),
+                    { error: "A title is required." }),
                 { status: 400 }
             );
         }
 
-        if (type !== "Instrumental" && type !== "Voice") {
-            return new NextResponse(JSON.stringify(
-                    { error: "Invalid type selected" }),
-                { status: 400 }
-            );
-        }
-
-        const audioUrl = await uploadToGc(audioFile, 'instrumentals');
-        const imgUrl = await uploadToGc(imageFile, 'images');
-
-        const sound = await prisma.sound.create({
-            data: {
-                title: title,
-                audioPath: audioUrl,
-                picture: imgUrl,
-                genreId: genre.id,
-            },
-        });
-
-        switch(type) {
-            case "Instrumental":
-                await prisma.instrumental.create({
-                    data: {
-                        soundId: sound.id,
-                    },
-                });
-                break;
-            case "Voice":
-                await prisma.voice.create({
-                    data: {
-                        soundId: sound.id,
-                    },
-                });
-                break;
-        }
-
-        const post = await prisma.post.create({
-            data: {
-                description: text,
-                user: { connect: { id: userId } },
-                sound: { connect: { id: sound.id } },
-            },
-        });
-
+      if (!genre) {
         return new NextResponse(JSON.stringify(
-                { message: "Audio uploaded" }),
-            { status: 200 }
+          { error: "Please select a genre." }),
+          { status: 400 }
         );
+      }
+
+      if (type !== "Instrumental" && type !== "Voice") {
+        return new NextResponse(JSON.stringify(
+          { error: "Please select a type." }),
+          { status: 400 }
+        );
+      }
+
+        if (!audioFile || !(audioFile instanceof File)) {
+            return new NextResponse(JSON.stringify(
+                    { error: "An audio file (MP3) is required." }),
+                { status: 400 }
+            );
+        }
+
+      const audioUrl = await uploadToGc(audioFile, 'instrumentals');
+      let imgUrl;
+
+      if (!imageFile || !(imageFile instanceof File)) {
+          imgUrl = "https://storage.googleapis.com/tracollab-storage/images/default-sound.jpg";
+      } else {
+            imgUrl = await uploadToGc(imageFile, 'images');
+      }
+
+      const sound = await prisma.sound.create({
+        data: {
+          title: title,
+          audioPath: audioUrl,
+          picture: imgUrl,
+          genreId: genre.id,
+        },
+      });
+
+      switch(type) {
+        case "Instrumental":
+          await prisma.instrumental.create({
+            data: {
+              soundId: sound.id,
+            },
+          });
+          break;
+        case "Voice":
+          await prisma.voice.create({
+            data: {
+              soundId: sound.id,
+            },
+          });
+          break;
+      }
+
+      const post = await prisma.post.create({
+        data: {
+          description: text,
+          user: { connect: { id: userId } },
+          sound: { connect: { id: sound.id } },
+        },
+      });
+
+      return new NextResponse(JSON.stringify(
+          { message: "Audio uploaded" }),
+          { status: 200 }
+      );
     } catch (error) {
         console.log(error);
         return new NextResponse(JSON.stringify(
-                { error: "Server error" }),
+            { error: "Server error" }),
             { status: 500 }
         );
 
