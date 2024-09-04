@@ -1,6 +1,6 @@
 import {PrismaClient} from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserData } from '../user/route';
+import { getUserData} from "@/app/lib/getUserData";
 import { uploadToGc } from '@/app/lib/gcUpload';
 
 const prisma = new PrismaClient();

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { getUserData } from "@/app/api/user/route";
+import { getUserData} from "@/app/lib/getUserData";
 import {NextRequest, NextResponse} from "next/server";
 
 const prisma = new PrismaClient();

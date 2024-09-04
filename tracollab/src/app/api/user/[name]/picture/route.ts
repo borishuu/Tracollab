@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { Storage } from '@google-cloud/storage';
+import {SaveOptions, Storage} from '@google-cloud/storage';
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import { getUserData } from '../../route';
+import { getUserData} from "@/app/lib/getUserData";
 import path from 'path';
 
 const serviceAccountKeyFile = path.join(process.cwd(), process.env.GC_KEY_PATH);
@@ -24,7 +24,7 @@ async function uploadToGc(file, folder) {
     await storage.bucket(bucketName).file(filePath).save(Buffer.from(buffer), {
         resumable: false,
         contentType: file.type,
-    });
+    } as SaveOptions);
 
     const publicUrl = `https://storage.googleapis.com/${bucketName}/${filePath}`;
 

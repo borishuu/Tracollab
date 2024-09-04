@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getUserData } from '@/app/api/user/route';
+import { getUserData} from "@/app/lib/getUserData";
 
 type Params = {
     id: string;
