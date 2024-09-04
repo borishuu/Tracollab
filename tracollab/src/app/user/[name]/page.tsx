@@ -129,7 +129,7 @@ export default function ProfilePage() {
 
                             {/* Display profile picture */ }
                             <div className="flex-none flex items-center justify-center">
-                                <div className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
+                                <div className="w-full max-w-[150px] aspect-square bg-gray-400 rounded-3xl flex justify-center items-center">
                                     <img
                                         src={user?.profilePicture}
                                         alt="Profile picture"
