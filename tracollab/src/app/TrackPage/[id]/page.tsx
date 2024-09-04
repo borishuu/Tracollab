@@ -1,12 +1,12 @@
 'use client';
 
 import {useParams} from 'next/navigation';
-import {useEffect, useState} from 'react';
-import PostButton from "@/components/PostButton";
+import React, {useEffect, useState} from 'react';
 import CommentWithInteraction from "@/components/CommentWithInteraction";
 import LikeReport from "@/components/LikeReport";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 import {useAuth} from '@/context/authContext';
+import Crunker from "crunker";
 
 export default function PostPage() {
     const {id} = useParams();
@@ -109,7 +109,6 @@ export default function PostPage() {
         }
     };
 
-
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         setAudio(file ?? null);
@@ -130,18 +129,39 @@ export default function PostPage() {
             const formData = new FormData();
             formData.append('userId', user.id);
             formData.append('content', sanitizedContent);
+
             if (audio) {
-                formData.append('audioFile', audio);
+                // Form data pour l'envoi de l'audio Voice au Cloud Storage
+                const audioFormData = new FormData();
+                audioFormData.append('audioFile', audio);
+
+                // Envoi de l'audio au serveur et récupération de l'URL
+                const audioPathTemp = await fetch('/api/uploadVoice', {
+                    method: 'POST',
+                    body: audioFormData,
+                } as RequestInit).then((response) => response.json()).then((data) => data.url);
+
+                console.log('Audio path temp: ', audioPathTemp);
+
+                // Initialiser Crunker
+                const crunker = new Crunker();
+
+                // Récupérer l'audio du post et le mélanger avec l'audio de l'utilisateur
+                const audioBuffer = await crunker.fetchAudio(
+                    post.sound.audioPath,
+                    audioPathTemp,
+                );
+                const mixedAudio = await crunker.mergeAudio(audioBuffer);
+
+                // Exporter l'audio mixé en MP3
+                const output = await crunker.export(mixedAudio, 'audio/mp3');
+                formData.append('audioFile', output.blob);
             }
 
-            const response = await fetch(`/api/posts/${id}/comments`, {
+            await fetch(`/api/posts/${id}/comments`, {
                 method: 'POST',
-                body: formData as unknown as BodyInit,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to post comment');
-            }
+                body: formData,
+            } as RequestInit);
 
             // Après la création du commentaire, on récupère de nouveau tous les commentaires
             fetchComments();
@@ -180,7 +200,6 @@ export default function PostPage() {
                                 <LikeReport
                                     postId={post.id}
                                     initialLikesCount={likesCount || 0}
-                                    userId={user.id}
                                 />
                             )}
 
@@ -190,8 +209,6 @@ export default function PostPage() {
                     <div className="text-white bg-[#C162EA] mb-4 p-4 rounded-3xl break-words">
                         <p>{post?.description}</p>
                     </div>
-
-
 
 
                     <div className="w-full bg-[#9732C2] flex rounded-3xl">
@@ -210,40 +227,37 @@ export default function PostPage() {
                                     type="text"
                                     value={inputValue}
                                     onChange={handleInputChange}
-                                    className="w-full h-8 mb-2 pl-4 rounded-full"
+                                    className="w-full h-8 mb-2 pl-4 rounded-full text-black"
                                 />
 
-
-                            <div className="flex items-center">
-                                <input
-                                    type="text"
-                                    className="flex-grow  pl-4 h-8 border border-gray-300 rounded-bl-full rounded-tl-full shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
-                                    readOnly
-                                    value={audio ? audio.name : ''}
-                                />
-                                <label
-                                    className="flex items-center justify-center px-4 py-2 bg-[#E5D5D5] text-white rounded-tr-full rounded-br-full hover:bg-[#c9a7a7] focus:outline-none focus:ring-2 focus:ring-blue-300 cursor-pointer transition-transform transform hover:scale-105">
-                                    <img
-                                        src="/assets/upload.png"
-                                        alt="Upload file"
-                                        className="h-4 w-6 object-contain"
-                                    />
+                                <div className="flex items-center">
                                     <input
-                                        type="file"
-                                        accept="audio/mp3"
-                                        onChange={handleFileUpload}
-                                        className="hidden"
-                                        name="audioFile"
+                                        type="text"
+                                        className="flex-grow  pl-4 h-8 border border-gray-300 rounded-bl-full rounded-tl-full shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                        readOnly
+                                        value={audio ? audio.name : ''}
                                     />
-                                </label>
-                                <button
-                                    className="ml-2 px-6 py-2 bg-[#C162EA] text-white rounded-full hover:bg-[#7716a1] focus:outline-none focus:ring-2 focus:ring-green-300">
-                                    Post
-                                </button>
+                                    <label
+                                        className="flex items-center justify-center px-4 py-2 bg-[#E5D5D5] text-white rounded-tr-full rounded-br-full hover:bg-[#c9a7a7] focus:outline-none focus:ring-2 focus:ring-blue-300 cursor-pointer transition-transform transform hover:scale-105">
+                                        <img
+                                            src="/assets/upload.png"
+                                            alt="Upload file"
+                                            className="h-4 w-6 object-contain"
+                                        />
+                                        <input
+                                            type="file"
+                                            accept="audio/mp3"
+                                            onChange={handleFileUpload}
+                                            className="hidden"
+                                            name="audioFile"
+                                        />
+                                    </label>
+                                    <button
+                                        className="ml-2 px-6 py-2 bg-[#C162EA] text-white rounded-full hover:bg-[#7716a1] focus:outline-none focus:ring-2 focus:ring-green-300">
+                                        Post
+                                    </button>
+                                </div>
                             </div>
-                            </div>
-
-
 
 
                         </form>
