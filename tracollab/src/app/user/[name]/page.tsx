@@ -39,13 +39,13 @@ export default function ProfilePage() {
 
                         // Fetch comment counts for each post
                         const instrumentalsCounts = await Promise.all(data.postsWithInstrumentals.map(async (post) => {
-                            const response = await fetch(`/api/posts/comments/${post.id}?publish=false`);
+                            const response = await fetch(`/api/posts/${post.id}/comments/?publish=false`);
                             const commentsData = await response.json();
                             return { id: post.id, count: Array.isArray(commentsData.comments) ? commentsData.comments.length : 0 };
                         }));
 
                         const voicesCounts = await Promise.all(data.postsWithVoices.map(async (post) => {
-                            const response = await fetch(`/api/posts/comments/${post.id}?publish=false`);
+                            const response = await fetch(`/api/posts/${post.id}/comments/?publish=false`);
                             const commentsData = await response.json();
                             return { id: post.id, count: Array.isArray(commentsData.comments) ? commentsData.comments.length : 0 };
                         }));

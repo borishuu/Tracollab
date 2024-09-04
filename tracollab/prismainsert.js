@@ -99,6 +99,7 @@ async function main() {
                 latin = {name: 'Latin'},
                 kpop = {name: 'K-Pop'},
                 afrobeat = {name: 'Afrobeat'},
+                unknown = {name: 'Unknown'},
             ],
         });
     } catch (error) {
@@ -529,6 +530,27 @@ async function main() {
         console.log("prismainsert.js: postWithLikes:", postWithLikes);
 
         console.log('Likes appended to posts successfully');
+    } catch (error) {
+        console.error('Error writing to the database:', error);
+    } finally {
+        // Déconnecter Prisma après l'opération
+        await prisma.$disconnect();
+    } */
+
+    /* Supprimer toutes les entrées des Collections sauf celles de User et Genre de la base de données
+    try {
+        // Supprimer les entrées des Collections
+        await prisma.comment.deleteMany();
+        await prisma.post.deleteMany();
+        await prisma.userLikeComment.deleteMany();
+        await prisma.userLikePost.deleteMany();
+        await prisma.userLike.deleteMany();
+        await prisma.userReport.deleteMany();
+        await prisma.instrumental.deleteMany();
+        await prisma.voice.deleteMany();
+        await prisma.sound.deleteMany();
+
+        console.log('Collections cleared successfully');
     } catch (error) {
         console.error('Error writing to the database:', error);
     } finally {
