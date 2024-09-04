@@ -54,7 +54,7 @@ export default function PostPage() {
 
     const fetchComments = async () => {
         try {
-            const commentsResponse = await fetch(`/api/posts/comments/${id}`);
+            const commentsResponse = await fetch(`/api/posts/${id}/comments`);
             const commentsData = await commentsResponse.json();
 
             if (commentsData.error) {
@@ -228,7 +228,7 @@ export default function PostPage() {
                         <div className="text-white mt-4">
                             {comments.length > 0 ? (
                                 comments.map((comment) => (
-                                    <CommentWithInteraction comment={comment}/>
+                                    <CommentWithInteraction key={comment.id} comment={comment}/>
                                 ))
                             ) : (
                                 <p>No comments yet.</p>

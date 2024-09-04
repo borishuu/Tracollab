@@ -21,7 +21,7 @@ export async function GET(req: Request) {
     }
 
     // Fetch comments
-    const commentsResponse = await fetch(`/api/posts/comments/${postId}`);
+    const commentsResponse = await fetch(`/api/posts/${postId}/comments`);
     const commentsData = await commentsResponse.json();
 
     if (commentsData.error) {
