@@ -28,7 +28,6 @@ export async function GET(request: NextRequest, context: { params: Params }) {
         });
 
         if (existingReport) {
-            console.log('User has already reported this post');
             return NextResponse.json({ error: 'You have already reported this post' }, { status: 400 });
         }
 
@@ -55,7 +54,6 @@ export async function GET(request: NextRequest, context: { params: Params }) {
             return NextResponse.json({ message: 'Post deleted due to multiple reports' }, { status: 200 });
         }
 
-        console.log(`Post has ${postReports} reports`);
         return NextResponse.json({ message: 'Post reported successfully' }, { status: 200 });
     } catch (error) {
         console.error('Error reporting post:', error);
