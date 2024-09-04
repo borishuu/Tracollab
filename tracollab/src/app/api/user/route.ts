@@ -13,7 +13,7 @@ export async function getUserData(req: NextRequest) {
       return payload.userId;
     } catch(error) {
       console.error("Error getting user data:", error);
-      return NextResponse.json({error: "Error getting user data"});
+      return null;
     }
 
     /*const instrumentals = await prisma.instrumental.findMany();

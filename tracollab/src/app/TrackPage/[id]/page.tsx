@@ -1,30 +1,27 @@
 'use client';
 
-import {useParams} from 'next/navigation';
-import {useEffect, useState} from 'react';
-import PostButton from "@/components/PostButton";
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import CommentWithInteraction from "@/components/CommentWithInteraction";
 import LikeReport from "@/components/LikeReport";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
-import {useAuth} from '@/context/authContext';
+import { useAuth } from '@/context/authContext';
 
 export default function PostPage() {
-    const {id} = useParams();
+    const { id } = useParams();
+    const { user } = useAuth();
     const [post, setPost] = useState<any>(null);
-    const [likesCount, setLikesCount] = useState<number | null>(null);
     const [comments, setComments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState('');
-    const {user} = useAuth();
+    const [userLiked, setUserLiked] = useState(false);
     const [audio, setAudio] = useState<File | null>(null);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-
-
                 const postResponse = await fetch(`/api/posts/${id}`);
                 const postData = await postResponse.json();
 
@@ -33,42 +30,13 @@ export default function PostPage() {
                     return;
                 }
 
-                setPost(postData);
-                console.log('Post récupéré:', postData);
+                setPost(postData.fetchedPost);
+                setUserLiked(postData.userLiked);
 
-                const likesResponse = await fetch(`/api/posts/likes/${id}`);
-                const likesData = await likesResponse.json();
-
-                console.log('test likesResponse: ', likesResponse);
-                console.log('test likesData: ', likesData);
-
-                if (likesData.error) {
-                    setError(likesData.error);
-                    return;
-                }
-
-
-                setLikesCount(likesData.likesCount);
-
-                const commentsResponse = await fetch(`/api/posts/comments/${id}`);
-                const commentsData = await commentsResponse.json();
-
-                if (commentsData.error) {
-                    setError(commentsData.error);
-                    return;
-                }
-
-                const sortedComments = commentsData.comments.sort((a: any, b: any) =>
-                    sortOrder === 'desc'
-                        ? b.id.localeCompare(a.id)
-                        : a.id.localeCompare(b.id)
-                );
-
-                setComments(sortedComments);
-                console.log('Commentaires récupérés:', sortedComments);
+                await fetchComments();
             } catch (err) {
                 setError('Error fetching data');
-                console.error('Erreur lors de la récupération des données:', err);
+                console.error('Error while fetching data:', err);
             } finally {
                 setLoading(false);
             }
@@ -77,7 +45,7 @@ export default function PostPage() {
         if (id) {
             fetchData();
         }
-    }, [id, sortOrder]);
+    }, [id, sortOrder, user?.id]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);
@@ -85,7 +53,6 @@ export default function PostPage() {
 
     const fetchComments = async () => {
         try {
-
             const commentsResponse = await fetch(`/api/posts/comments/${id}`);
             const commentsData = await commentsResponse.json();
 
@@ -94,7 +61,6 @@ export default function PostPage() {
                 return;
             }
 
-            // Trier les commentaires en fonction de l'état de tri
             const sortedComments = commentsData.comments.sort((a: any, b: any) =>
                 sortOrder === 'desc'
                     ? b.id.localeCompare(a.id)
@@ -102,19 +68,16 @@ export default function PostPage() {
             );
 
             setComments(sortedComments);
-            console.log('Commentaires récupérés:', sortedComments);
         } catch (err) {
             setError('Error fetching data');
-            console.error('Erreur lors de la récupération des données:', err);
+            console.error('Error while fetching data:', err);
         }
     };
-
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         setAudio(file ?? null);
-        console.log('Fichier MP3 sélectionné:', file);
-    }
+    };
 
     const handlePostComment = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -134,7 +97,7 @@ export default function PostPage() {
                 formData.append('audioFile', audio);
             }
 
-            const response = await fetch(`/api/posts/${id}/comments`, {
+            const response = await fetch(`/api/posts/comments/${id}`, {
                 method: 'POST',
                 body: formData as unknown as BodyInit,
             });
@@ -143,16 +106,14 @@ export default function PostPage() {
                 throw new Error('Failed to post comment');
             }
 
-            // Après la création du commentaire, on récupère de nouveau tous les commentaires
             fetchComments();
 
             setInputValue('');
-            setAudio(null); // Réinitialiser l'audio après l'envoi
+            setAudio(null);
         } catch (error) {
-            console.error('Erreur lors de la publication du commentaire:', error);
+            console.error('Error while publishing comment:', error);
         }
     };
-
 
     const handleSortToggle = () => {
         setSortOrder(prevOrder => prevOrder === 'asc' ? 'desc' : 'asc');
@@ -172,33 +133,27 @@ export default function PostPage() {
                 <div className="lg:pl-12 lg:ml-24 sm:ml-0 sm:mr-0 lg:mr-24 lg:pr-12 lg:pt-3">
                     <div className="w-full flex flex-row">
                         <div className="w-full md:w-10/12">
-                            {post && <MusicPlayerWithImage post={post}/>}
+                            {post && <MusicPlayerWithImage post={post} />}
                         </div>
                         <div
                             className="flex justify-center items-center sm:justify-center sm:items-center md:w-2/12 md:mt-12 md:justify-start md:items-start lg:mt-12 sm:mt-2">
-                            {post && user && (
+                            {post && (
                                 <LikeReport
-                                    postId={post.id}
-                                    initialLikesCount={likesCount || 0}
-                                    userId={user.id}
+                                    post={post}
+                                    userLiked={userLiked}
                                 />
                             )}
-
-
                         </div>
                     </div>
                     <div className="text-white bg-[#C162EA] mb-4 p-4 rounded-3xl break-words">
                         <p>{post?.description}</p>
                     </div>
 
-
-
-
                     <div className="w-full bg-[#9732C2] flex rounded-3xl">
                         <div className="w-1/12 flex items-center justify-center">
                             <img
                                 src="/assets/sort.png"
-                                className="h-6 object-contain cursor-pointer"
+                                className={`h-6 object-contain cursor-pointer ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 onClick={handleSortToggle}
                                 alt="Sort"
                             />
@@ -211,41 +166,41 @@ export default function PostPage() {
                                     value={inputValue}
                                     onChange={handleInputChange}
                                     className="w-full h-8 mb-2 pl-4 rounded-full"
+                                    disabled={!user}
                                 />
 
-
-                            <div className="flex items-center">
-                                <input
-                                    type="text"
-                                    className="flex-grow  pl-4 h-8 border border-gray-300 rounded-bl-full rounded-tl-full shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
-                                    readOnly
-                                    value={audio ? audio.name : ''}
-                                />
-                                <label
-                                    className="flex items-center justify-center px-4 py-2 bg-[#E5D5D5] text-white rounded-tr-full rounded-br-full hover:bg-[#c9a7a7] focus:outline-none focus:ring-2 focus:ring-blue-300 cursor-pointer transition-transform transform hover:scale-105">
-                                    <img
-                                        src="/assets/upload.png"
-                                        alt="Upload file"
-                                        className="h-4 w-6 object-contain"
-                                    />
+                                <div className="flex items-center">
                                     <input
-                                        type="file"
-                                        accept="audio/mp3"
-                                        onChange={handleFileUpload}
-                                        className="hidden"
-                                        name="audioFile"
+                                        type="text"
+                                        className="flex-grow  pl-4 h-8 border border-gray-300 rounded-bl-full rounded-tl-full shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                        readOnly
+                                        value={audio ? audio.name : ''}
+                                        disabled={!user}
                                     />
-                                </label>
-                                <button
-                                    className="ml-2 px-6 py-2 bg-[#C162EA] text-white rounded-full hover:bg-[#7716a1] focus:outline-none focus:ring-2 focus:ring-green-300">
-                                    Post
-                                </button>
+                                    <label
+                                        className={`flex items-center justify-center px-4 py-2 bg-[#E5D5D5] text-white rounded-tr-full rounded-br-full ${!user ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#c9a7a7] cursor-pointer transition-transform transform hover:scale-105'}`}>
+                                        <img
+                                            src="/assets/upload.png"
+                                            alt="Upload file"
+                                            className="h-4 w-6 object-contain"
+                                        />
+                                        <input
+                                            type="file"
+                                            accept="audio/mp3"
+                                            onChange={handleFileUpload}
+                                            className="hidden"
+                                            name="audioFile"
+                                            disabled={!user}
+                                        />
+                                    </label>
+                                    <button
+                                        className={`ml-2 px-6 py-2 rounded-full focus:outline-none focus:ring-2 ${!user ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#C162EA] hover:bg-[#7716a1] text-white focus:ring-green-300'}`}
+                                        disabled={!user}
+                                    >
+                                        Post
+                                    </button>
+                                </div>
                             </div>
-                            </div>
-
-
-
-
                         </form>
                     </div>
 
@@ -253,7 +208,7 @@ export default function PostPage() {
                         <div className="text-white mt-4">
                             {comments.length > 0 ? (
                                 comments.map((comment) => (
-                                    <CommentWithInteraction key={comment.id} comment={comment}/>
+                                    <CommentWithInteraction key={comment.id} comment={comment} />
                                 ))
                             ) : (
                                 <p>No comments yet.</p>

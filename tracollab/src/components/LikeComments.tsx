@@ -2,53 +2,52 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/authContext';
 
 interface LikeCommentsProps {
-    commentId: string;
-    initialLikesCount: number;
+    comment: any;
 }
 
-export default function LikeComments({ commentId, initialLikesCount }: LikeCommentsProps) {
+export default function LikeComments({ comment }: LikeCommentsProps) {
     const { user } = useAuth();
-    const [liked, setLiked] = useState<boolean>(false);
-    const [likesCount, setLikesCount] = useState<number>(initialLikesCount);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [likesCount, setLikesCount] = useState<number>(0);
+    const [hasLiked, setHasLiked] = useState<boolean>(false);
+    const [imgSrc, setImgSrc] = useState<string>("/assets/notLiked.png");
 
     useEffect(() => {
-        if (!user || !commentId) {
-            console.log('User or commentId is missing:', { user, commentId });
-            return;
-        }
+        if (!comment) return;
 
-        const checkIfCommentLiked = async () => {
+        const fetchLikesData = async () => {
             try {
-                const response = await fetch(`/api/comments/${commentId}/likes/check`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ userId: user.id }),
-                });
+                const response = await fetch(`/api/comments/${comment.id}/likes`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                setLiked(data.liked ?? false);
+                setLikesCount(data.likesCount);
+                setHasLiked(data.userHasLiked);
             } catch (error) {
-                console.error('Error checking if liked:', error);
-            } finally {
-                setLoading(false);  // Ensure loading is set to false here
+                console.error('Error fetching likes data:', error);
             }
         };
 
-        checkIfCommentLiked();
-    }, [commentId, user]);
+        fetchLikesData();
+    }, [comment.id]);
+
+    useEffect(() => {
+        changeImage();
+    }, [hasLiked]);
+
+    const changeImage = () => {
+        const imageSrc = hasLiked ? "/assets/liked.png" : "/assets/notLiked.png";
+        setImgSrc(imageSrc);
+    };
 
     const handleLikeToggle = async () => {
         if (!user) return;
 
-        setLoading(true);  // Set loading to true while toggling like
+        const newHasLiked = !hasLiked;
+        const method = newHasLiked ? 'POST' : 'DELETE';
+
         try {
-            const method = liked ? 'DELETE' : 'POST';
-            const response = await fetch(`/api/comments/${commentId}/likes`, {
+            const response = await fetch(`/api/comments/${comment.id}/likes`, {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,36 +58,26 @@ export default function LikeComments({ commentId, initialLikesCount }: LikeComme
                 throw new Error('Network response was not ok');
             }
 
-            // Update liked state and likes count based on the current liked state
-            setLiked(prevLiked => {
-                const newLiked = !prevLiked;
-                setLikesCount(prevLikesCount => prevLikesCount + (newLiked ? 1 : -1));
-                return newLiked;
-            });
+            setHasLiked(newHasLiked);
+            setLikesCount(prevCount => prevCount + (newHasLiked ? 1 : -1));
         } catch (error) {
             console.error('Error toggling like:', error);
-        } finally {
-            setLoading(false);  // Ensure loading is set to false here
         }
     };
-
-    const imageSrc = liked
-        ? "/assets/liked.png"
-        : "/assets/notLiked.png";
 
     return (
         <div className="md:space-y-2 lg:space-y-0 sm:space-y-2 flex flex-col">
             <div className="flex space-x-2">
                 <div className="w-1/4">
                     <img
-                        src={imageSrc}
+                        src={imgSrc}
                         className="h-6 object-contain cursor-pointer"
                         onClick={handleLikeToggle}
                         alt="Like button"
                     />
                 </div>
                 <label className="w-3/4 text-white">
-                    {loading ? 'Loading...' : `${likesCount} likes`}
+                    {likesCount ? `${likesCount} likes` : `0 likes`}
                 </label>
             </div>
         </div>

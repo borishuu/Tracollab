@@ -1,14 +1,12 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import LikeComments from '@/components/LikeComments';
 
-export default function CommentWithInteraction({ comment }) {
+export default function CommentWithInteraction({comment}) {
     const [audioReady, setAudioReady] = useState(false);
-    const [likesCount, setLikesCount] = useState<number | null>(null);
 
     useEffect(() => {
         if (comment.sound && comment.sound.audioPath) {
             const audio = new Audio(comment.sound.audioPath);
-
             audio.addEventListener('loadeddata', () => {
                 setAudioReady(true);
             });
@@ -23,24 +21,6 @@ export default function CommentWithInteraction({ comment }) {
             setAudioReady(true);
         }
     }, [comment.sound]);
-
-    useEffect(() => {
-        const fetchLikesCount = async () => {
-            try {
-                const response = await fetch(`/api/comments/${comment.id}/likes/count`);
-                const data = await response.json();
-                if (response.ok) {
-                    setLikesCount(data.likesCount);
-                } else {
-                    console.error('Failed to fetch likes count:', data.error);
-                }
-            } catch (error) {
-                console.error('Error fetching likes count:', error);
-            }
-        };
-
-        fetchLikesCount();
-    }, [comment.id]);
 
     if (!audioReady) {
         return <div>Loading comment...</div>;
@@ -63,22 +43,18 @@ export default function CommentWithInteraction({ comment }) {
                     <p>{comment.content}</p>
 
                     {comment.sound && comment.sound.audioPath && (
-                        <div style={{ display: 'flex', justifyContent: 'center' }} className="pt-2">
+                        <div style={{display: 'flex', justifyContent: 'center'}} className="pt-2">
                             <audio controls>
-                                <source src={comment.sound.audioPath} type="audio/mpeg" />
+                                <source src={comment.sound.audioPath} type="audio/mpeg"/>
                                 Your browser does not support the audio element.
                             </audio>
                         </div>
                     )}
                 </div>
                 <div className="w-2/12 pt-2 pl-2">
-                    {likesCount === null ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <>
-                            <LikeComments commentId={comment.id} initialLikesCount={likesCount} />
-                        </>
-                    )}
+                    <>
+                        <LikeComments comment={comment}/>
+                    </>
                 </div>
             </div>
         </div>
