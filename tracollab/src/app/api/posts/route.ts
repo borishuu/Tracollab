@@ -27,8 +27,6 @@ export async function GET(req: Request) {
       },
     });
 
-    console.log("genre: ", posts[0]);
-
     // Send the posts data back as a JSON response
     return new Response(JSON.stringify(posts), {
         status: 200,
@@ -61,31 +59,44 @@ export async function POST(req: NextRequest) {
     try {
       const userId = await getUserData(req) as string;
 
-      if (audioFile.size < 1 || imageFile.size < 1) {
-        return new NextResponse(JSON.stringify(
-            { error: "Some files are empty" }),
-            { status: 500 }
-        );
-      }
-
       const genre = await prisma.genre.findFirst({where: {name: genreName}});
+
+        if (!title) {
+            return new NextResponse(JSON.stringify(
+                    { error: "A title is required." }),
+                { status: 400 }
+            );
+        }
 
       if (!genre) {
         return new NextResponse(JSON.stringify(
-          { error: "Invalid genre selected" }),
+          { error: "Please select a genre." }),
           { status: 400 }
         );
       }
 
       if (type !== "Instrumental" && type !== "Voice") {
         return new NextResponse(JSON.stringify(
-          { error: "Invalid type selected" }),
+          { error: "Please select a type." }),
           { status: 400 }
         );
       }
 
+        if (!audioFile || !(audioFile instanceof File)) {
+            return new NextResponse(JSON.stringify(
+                    { error: "An audio file (MP3) is required." }),
+                { status: 400 }
+            );
+        }
+
       const audioUrl = await uploadToGc(audioFile, 'instrumentals');
-      const imgUrl = await uploadToGc(imageFile, 'images');
+      let imgUrl;
+
+      if (!imageFile || !(imageFile instanceof File)) {
+          imgUrl = "https://storage.googleapis.com/tracollab-storage/images/default-sound.jpg";
+      } else {
+            imgUrl = await uploadToGc(imageFile, 'images');
+      }
 
       const sound = await prisma.sound.create({
         data: {

@@ -39,7 +39,7 @@ export default function CommentsManagement() {
                 setPost(postData);
 
                 // Fetch comments
-                const commentsResponse = await fetch(`/api/posts/comments/${id}?publish=false`);
+                const commentsResponse = await fetch(`/api/posts/${id}/comments/?publish=false`);
                 const commentsData = await commentsResponse.json();
 
                 if (commentsData.error) {

@@ -1,5 +1,6 @@
-import {useEffect, useState} from "react";
-import LikeReport from "@/components/LikeReport";
+import {useEffect, useState} from 'react';
+import LikeComments from '@/components/LikeComments';
+import CustomMusicPlayer from "@/components/CustomMusicPlayer";
 
 export default function CommentWithInteraction({comment}) {
     const [audioReady, setAudioReady] = useState(false);
@@ -21,7 +22,6 @@ export default function CommentWithInteraction({comment}) {
                 console.error("Failed to load audio.");
                 setAudioReady(false);
             });
-
             // Trigger loading the audio
             audio.load();
         } else {
@@ -40,8 +40,11 @@ export default function CommentWithInteraction({comment}) {
             <div className="flex">
                 <div className="w-2/12 rounded-tl-2xl relative">
                     <div className="w-24 h-24 rounded-2xl overflow-hidden">
-                        <img src={comment.user.profilePicture} alt={comment.user.name}
-                             className="w-full h-full object-cover"/>
+                        <img
+                            src={comment.user.profilePicture}
+                            alt={comment.user.name}
+                            className="w-full h-full object-cover"
+                        />
                     </div>
                 </div>
                 <div className="w-8/12 break-words pt-2 pr-2 pb-2">
@@ -49,19 +52,14 @@ export default function CommentWithInteraction({comment}) {
                     <p>{comment.content}</p>
 
                     {comment.sound && comment.sound.audioPath && (
-                        <div style={{display: 'flex', justifyContent: 'center'}} className="pt-2">
-                            <audio controls>
-                                <source src={comment.sound.audioPath} type="audio/mpeg"/>
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
+                        <CustomMusicPlayer postOrComment={comment}></CustomMusicPlayer>
                     )}
                 </div>
+
                 <div className="w-2/12 pt-2 pl-2">
-                    <LikeReport likesCount={0}/>
+                    <LikeComments comment={comment}/>
                 </div>
             </div>
         </div>
     );
 }
- 

@@ -33,16 +33,16 @@ export default function SearchBar({query, setQuery, posts, onSearchResults }) {
     }, [query]);
 
     return (
-        <div className="w-full max-w-md mx-auto mt-1 mb-1">
+        <div className="w-full max-w-md mx-auto mt-2">
             <div className="relative">
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="w-full h-6 px-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className="w-full h-8 px-4 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                     placeholder="Search..."
                 />
-                <button className="absolute top-0 right-0 mt-1 mr-4">
+                <button className="absolute top-1 right-0 mt-1 mr-4">
                     <svg
                         className="w-4 h-4 text-gray-400"
                         fill="none"

@@ -81,10 +81,10 @@ export default function Home() {
                 <div className="w-full lg:w-1/2 bg-yellow-500" style={{backgroundColor: '#D3C3C3'}}>
                     <SearchBar query={query} setQuery={setQuery} posts={posts} onSearchResults={setResults}/>
                 </div>
-                <div className="w-1/2 lg:w-1/4 bg-blue-500" style={{backgroundColor: '#D3C3C3'}}>
+                <div className="p-1 w-1/2 lg:w-1/4 bg-blue-500" style={{backgroundColor: '#D3C3C3'}}>
                     <DropDownList name={"All Genres"} data={genres} onChange={handleGenreChange}/>
                 </div>
-                <div className="w-1/2 lg:w-1/4 bg-green-500" style={{backgroundColor: '#D3C3C3'}}>
+                <div className="p-1 w-1/2 lg:w-1/4 bg-green-500" style={{backgroundColor: '#D3C3C3'}}>
                     <DropDownList name={"Most Liked"} data={sortingOptions} onChange={handleSortChange}/>
                 </div>
             </div>

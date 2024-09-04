@@ -44,11 +44,8 @@ export async function POST(req: NextRequest) {
             ), { status: 400 });
         }
 
-
-
         // Upload image to GC
         const url = await uploadToGc(imageFile, 'images');
-        console.log("New profile image URL:", url);
 
         // Update user
         const user = await prisma.user.update({
