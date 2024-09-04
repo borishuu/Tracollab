@@ -36,11 +36,13 @@ export default function Nav() {
 
             {/* Central Logo (Hidden on small screens) */}
             <div className="flex-1 h-full flex items-center justify-center hidden md:flex">
-                <img
-                    src="/assets/LogoBlackTexteWithoutSlogan.png"
-                    className="h-10 object-contain"
-                    alt="Logo"
-                />
+                <a href="/" className="inline-block">
+                    <img
+                        src="/assets/LogoBlackTexteWithoutSlogan.png"
+                        className="h-10 object-contain"
+                        alt="Logo"
+                    />
+                </a>
             </div>
 
             {/* User and Home Icons (Visible on all screens) */}
