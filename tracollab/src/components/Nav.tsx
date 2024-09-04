@@ -65,13 +65,13 @@ export default function Nav() {
                             <a href={`/user/${user.name}`} className="inline-block">
                                 <img
                                     src="/assets/user.png"
-                                    className="w-8 h-auto cursor-pointer duration-200 hover:scale-110"
+                                    className="w-8 h-auto cursor-pointer duration-200 hover:scale-110 mr-2"
                                     alt="User"
                                 />
                             </a>
                             <button
                                 onClick={handleLogout}
-                                className="bg-black hover:scale-110 text-white py-1 px-2 rounded transition duration-300 ease-in-out whitespace-nowrap"
+                                className="bg-red-700 hover:scale-110 text-white py-1 px-2 rounded transition duration-300 ease-in-out whitespace-nowrap"
                             >
                                 Logout
                             </button>
@@ -79,7 +79,7 @@ export default function Nav() {
                     ) : (
                         <button
                             onClick={handleLogout}
-                            className="bg-black hover:scale-110 text-white py-1 px-2 rounded transition duration-300 ease-in-out whitespace-nowrap"
+                            className="bg-green-700 hover:scale-110 text-white py-1 px-2 rounded transition duration-300 ease-in-out whitespace-nowrap"
                         >
                             Login
                         </button>

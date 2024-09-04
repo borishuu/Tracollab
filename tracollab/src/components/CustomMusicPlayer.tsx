@@ -75,7 +75,7 @@ export default function CustomMusicPlayer({postOrComment}) {
         if (!audioUrl) {
             setAudioUrl(postOrComment.sound.audioPath);
         }
-        window.open(audioUrl, '_self');
+        window.open(postOrComment.sound.audioPath, '_self');
     };
 
     return (
