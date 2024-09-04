@@ -6,7 +6,7 @@ export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, u
         const confirmDelete = window.confirm('Are you sure you want to delete this music?');
         if (confirmDelete) {
             try {
-                const response = await fetch(`/api/posts/delete/${post.id}`, {
+                const response = await fetch(`/api/posts/${post.id}`, {
                     method: 'DELETE',
                 });
 

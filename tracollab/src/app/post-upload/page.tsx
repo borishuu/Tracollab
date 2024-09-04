@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import SearchBar from "@/components/SearchBar";
 import DropDownList from "@/components/DropDownList";
-import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 
 export default function Home() {
     const router = useRouter();
@@ -29,7 +27,6 @@ export default function Home() {
                 console.error("Error fetching genres: ", error);
             }
         }
-
         getGenres();
     }, []);
 
@@ -49,7 +46,7 @@ export default function Home() {
             formData.append('genre', selectedGenre);
 
             const response = await fetch('/api/posts', {
-              method: 'POST',        
+              method: 'POST',
               body: formData,
             });
 
@@ -92,17 +89,21 @@ export default function Home() {
                 <div className="lg:pl-12 lg:ml-24 sm:ml-0 sm:mr-0 lg:mr-24 lg:pr-12 lg:pt-3">
                     <div className="flex flex-col lg:flex-row h-full">
 
-                        <div
-                            className="flex-none w-full lg:w-1/3 flex flex-col items-center pl-12 pr-12 pt-6">
-                            <div
-                                className="w-full max-w-xs aspect-square bg-red-400 rounded-3xl flex justify-center items-center mb-4">                            
+                        <div className="flex-none w-full lg:w-1/3 flex flex-col items-center pl-12 pr-12 pt-6">
+                            <div className="w-full max-w-xs aspect-square bg-gray-400 rounded-3xl flex justify-center items-center mb-4 relative">
                                 {imagePreview ? (
-                                    <img src={imagePreview} alt="Uploaded Image" className="rounded-3xl object-cover" />
+                                    <img
+                                        src={imagePreview}
+                                        alt="Uploaded Image"
+                                        className="absolute inset-0 w-full h-full object-cover rounded-3xl"
+                                    />
                                 ) : (
                                     <span className="text-white">No image uploaded</span>
                                 )}
                             </div>
-                            <label className="w-full max-w-xs py-2 bg-[#C162EA] hover:bg-[#9732C2] text-white rounded-full text-lg cursor-pointer text-center">
+
+                            <label
+                                className="w-full max-w-xs py-2 bg-[#C162EA] hover:bg-[#9732C2] text-white rounded-full text-lg cursor-pointer text-center">
                                 Upload Pic
                                 <input
                                     type="file"
@@ -113,71 +114,72 @@ export default function Home() {
                             </label>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="flex-1 h-full p-4">
-                            <div className="h-1/6 mb-4">
-                                <label className="block text-sm font-medium text-white">Title</label>
+                        <form onSubmit={handleSubmit} className="flex-1 h-full p-4 flex flex-col">
+                            <div className="h-1/6 mb-4 w-full">
+                                <label className="block text-lg font-medium text-white">Title</label>
                                 <input type="text"
-                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-700"
                                        onChange={(e) => setTitle(e.target.value)}/>
                             </div>
 
-                            <div className="h-1/6 mb-4">
-                                <label className="block text-sm font-medium text-white">Genre</label>
-                                <DropDownList name={"All Genres"} data={genres} onChange={(e) => setSelectedGenre(e.target.value)} />
+                            <div className="h-1/6 mb-4 w-full">
+                                <label className="block text-lg font-medium text-white">Genre</label>
+                                <DropDownList name={"All Genres"} data={genres} onChange={(e) => setSelectedGenre(e.target.value)}/>
                             </div>
 
-                            <div className="h-1/6 mb-4">
-                                <label className="block text-sm font-medium text-white">Type</label>
-                                <DropDownList name={"Type"} data={[{name: "Instrumental"}, {name: "Voice"}]} onChange={(e) => setType(e.target.value)} />
+                            <div className="h-1/6 mb-4 w-full">
+                                <label className="block text-lg font-medium text-white">Type</label>
+                                <DropDownList name={"Type"} data={[{ name: "Instrumental" }, { name: "Voice" }]} onChange={(e) => setType(e.target.value)} />
                             </div>
 
-                            <div className="h-1/3 mb-4">
-                                <label className="block text-sm font-medium text-white">Text</label>
+                            <div className="h-1/3 mb-4 w-full">
+                                <label className="block text-lg font-medium text-white">Text</label>
                                 <input type="text"
-                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-700"
                                        onChange={(e) => setText(e.target.value)}/>
                             </div>
 
-                            <div className="h-1/6 mb-4 flex items-center space-x-0">
+                            <div className="flex flex-col lg:flex-row items-center lg:items-start space-y-4 lg:space-y-0 lg:space-x-4">
                                 <input
                                     type="text"
-                                    className="block w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-700"
+                                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-700"
                                     readOnly
                                     value={audio ? audio.name : ''}
                                 />
 
-                                <label
-                                    className="px-6 py-2 w-1/3 bg-[#E5D5D5] text-white rounded-md hover:bg-[#c9a7a7] focus:outline-none focus:ring-2 focus:ring-blue-300 -ml-px text-center cursor-pointer"
-                                >
-                                    Upload file
-                                    <input
-                                        type="file"
-                                        accept="audio/mp3"
-                                        onChange={handleFileUpload}
-                                        className="hidden"
-                                        name='audioFile'
-                                    />
-                                </label>
+                                <div className="flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0 lg:space-x-4 w-full lg:w-auto">
+                                    <label
+                                        className="px-6 py-2 min-w-[130px] bg-[#C162EA] text-white rounded-md hover:bg-[#c9a7a7] focus:outline-none focus:ring-2 focus:ring-blue-300 text-center cursor-pointer w-full lg:w-auto"
+                                    >
+                                        Upload file
+                                        <input
+                                            type="file"
+                                            accept="audio/mp3"
+                                            onChange={handleFileUpload}
+                                            className="hidden"
+                                            name='audioFile'
+                                        />
+                                    </label>
 
-                                <div className="lg:w-10 sm:w-0"></div>
-
-                                <button
-                                    className="px-4 py-2 ml-2 bg-[#C162EA] text-white rounded-md hover:bg-[#9732C2] focus:outline-none focus:ring-2 focus:ring-green-300"
-                                    type="submit">
-                                    Post
-                                </button>
+                                    <button
+                                        className="px-4 py-2 bg-[#C162EA] text-white rounded-md hover:bg-[#9732C2] focus:outline-none focus:ring-2 focus:ring-green-300 w-full lg:w-auto"
+                                        type="submit">
+                                        Post
+                                    </button>
+                                </div>
                             </div>
-                            {error && <p className="text-red-500 mb-4">{error}</p>}
+
+                            {error && <p className="text-red-500 text-xl font-bold mb-4 mt-4">{error}</p>}
                             {uploading && (
-                                <div>
-                                <img
-                                    src="https://i.gifer.com/ZKZg.gif"
-                                    alt="Loading..."
-                                    style={{ width: '50px', height: '50px' }}
-                                />
+                                <div className="flex justify-center mt-4">
+                                    <img
+                                        src="https://i.gifer.com/ZKZg.gif"
+                                        alt="Loading..."
+                                        style={{ width: '50px', height: '50px' }}
+                                    />
                                 </div>
                             )}
-                        </form>                    
+                        </form>
                     </div>
                 </div>
             </div>
