@@ -36,7 +36,7 @@ export default function CommentsManagement() {
                     return;
                 }
 
-                setPost(postData);
+                setPost(postData.fetchedPost);
 
                 // Fetch comments
                 const commentsResponse = await fetch(`/api/posts/${id}/comments/?publish=false`);
@@ -57,7 +57,7 @@ export default function CommentsManagement() {
         };
 
         fetchData();
-    }, [loggedInUser, name, id, router]);
+    }, []);
 
     return (
         <main className="min-h-screen flex flex-col">
@@ -71,7 +71,7 @@ export default function CommentsManagement() {
                                 <div
                                     className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
                                     <img
-                                        src={post?.sound.picture}
+                                        src={post && post.sound?.picture}
                                         alt="Profile picture"
                                         className="object-cover w-full h-full rounded-3xl"
                                     />
@@ -82,7 +82,7 @@ export default function CommentsManagement() {
                             <div className="flex flex-col ml-0 sm:ml-4 text-white w-full">
                                 <div className="text-3xl w-full p-1">
                                     <a href={`/TrackPage/${post?.id}`} className="hover:underline">
-                                        {post?.sound.title}
+                                        {post && post.sound?.title}
                                     </a>
                                 </div>
                                 <div className="w-full p-1">

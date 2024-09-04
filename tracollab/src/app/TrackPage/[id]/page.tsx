@@ -54,7 +54,7 @@ export default function PostPage() {
 
     const fetchComments = async () => {
         try {
-            const commentsResponse = await fetch(`/api/posts/${id}/comments`);
+            const commentsResponse = await fetch(`/api/posts/${id}/comments/?publish=true`);
             const commentsData = await commentsResponse.json();
 
             if (commentsData.error) {
