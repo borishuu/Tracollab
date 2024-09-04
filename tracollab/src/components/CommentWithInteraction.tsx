@@ -3,25 +3,37 @@ import LikeComments from '@/components/LikeComments';
 import CustomMusicPlayer from "@/components/CustomMusicPlayer";
 
 export default function CommentWithInteraction({comment}) {
-    const [likesCount, setLikesCount] = useState<number | null>(null);
+    const [audioReady, setAudioReady] = useState(false);
 
     useEffect(() => {
-        const fetchLikesCount = async () => {
-            try {
-                const response = await fetch(`/api/comments/${comment.id}/likes/count`);
-                const data = await response.json();
-                if (response.ok) {
-                    setLikesCount(data.likesCount);
-                } else {
-                    console.error('Failed to fetch likes count:', data.error);
-                }
-            } catch (error) {
-                console.error('Error fetching likes count:', error);
-            }
-        };
+        // Check if there is a sound associated with the comment
+        if (comment.sound && comment.sound.audioPath) {
+            // Create a new audio object and check if it can load properly
+            const audio = new Audio(comment.sound.audioPath);
 
-        fetchLikesCount();
-    }, [comment.id]);
+            // Add an event listener to handle the loaded data event
+            audio.addEventListener('loadeddata', () => {
+                // When the audio is fully loaded, set the audioReady state to true
+                setAudioReady(true);
+            });
+
+            // Handle potential errors in loading the audio
+            audio.addEventListener('error', () => {
+                console.error("Failed to load audio.");
+                setAudioReady(false);
+            });
+            // Trigger loading the audio
+            audio.load();
+        } else {
+            // If no audio, consider it as ready
+            setAudioReady(true);
+        }
+    }, [comment.sound]);
+
+    if (!audioReady) {
+        // Display a loading indicator or simply return null to hide the component
+        return <div>Loading comment...</div>;  // or return null;
+    }
 
     return (
         <div className="flex flex-col items-stretch mt-4 bg-[#C162EA] rounded-2xl">
@@ -43,14 +55,9 @@ export default function CommentWithInteraction({comment}) {
                         <CustomMusicPlayer postOrComment={comment}></CustomMusicPlayer>
                     )}
                 </div>
+
                 <div className="w-2/12 pt-2 pl-2">
-                    {likesCount === null ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <>
-                            <LikeComments commentId={comment.id} initialLikesCount={likesCount}/>
-                        </>
-                    )}
+                    <LikeComments comment={comment}/>
                 </div>
             </div>
         </div>
