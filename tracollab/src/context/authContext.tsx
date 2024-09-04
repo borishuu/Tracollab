@@ -3,6 +3,7 @@
 import React, { useEffect, useState, createContext, useContext, ReactNode } from "react";
 
 interface User {
+    profilePicture: string;
     id: string;
     name: string;
     email: string;
@@ -62,4 +63,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 }
 
 export default AuthProvider;
- 
+
