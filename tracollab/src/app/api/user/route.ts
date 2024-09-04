@@ -15,17 +15,6 @@ export async function getUserData(req: NextRequest) {
       console.error("Error getting user data:", error);
       return null;
     }
-
-    /*const instrumentals = await prisma.instrumental.findMany();
-    console.log(instrumentals);
-    await prisma.$disconnect();
-
-    return new Response(JSON.stringify(instrumentals), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });*/
 }
 
 export async function GET(req: NextRequest) {

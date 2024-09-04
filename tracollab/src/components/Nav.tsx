@@ -27,15 +27,17 @@ export default function Nav() {
             className="relative flex w-full items-center justify-between h-16 shadow-dark-mild dark:bg-body-dark"
             data-twe-navbar-ref
         >
-          <div className="flex-1 h-full flex items-center pl-3 justify-start">
-            <img
-                src="/assets/Logo.png"
-                className="h-12 object-contain"
-                alt="logo"
-            />
-          </div>
+            <div className="flex-1 h-full flex items-center pl-3 justify-start">
+                <a href="/" className="inline-block">
+                    <img
+                        src="/assets/Logo.png"
+                        className="h-12 object-contain"
+                        alt="logo"
+                    />
+                </a>
+            </div>
 
-          <div className="flex-1 h-full flex items-center justify-center">
+            <div className="flex-1 h-full flex items-center justify-center">
             <img
                 src="/assets/LogoBlackTexte.png"
                 className="h-10 object-contain"
@@ -48,7 +50,7 @@ export default function Nav() {
               <a href="/" className="inline-block">
                 <img
                     src="/assets/home.png"
-                    className="w-8 h-auto"
+                    className="w-8 h-auto cursor-pointer duration-200 hover:scale-110"
                     alt="Home"
                 />
               </a>
@@ -58,27 +60,30 @@ export default function Nav() {
                     <a href={`/user/${user.name}`} className="inline-block">
                         <img
                             src="/assets/user.png"
-                            className="w-8 h-auto"
+                            className="w-8 h-auto cursor-pointer duration-200 hover:scale-110"
                             alt="User"
                         />
                     </a>
-                ):(
-                    <Link href="/login" className="inline-block">
-                        Login
-                    </Link>
-                )}
-              
-            </div>
-                {user ? (
+                ): (
                     <div className="flex items-center ml-2 mr-2">
-                        <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white py-2 ox-3 rounded transition duration-300 ease-in-out">
-                            <h2>Logout</h2>
+                        <button onClick={handleLogout}
+                                className="bg-green-700 hover:bg-green-800 text-white py-2 ox-3 rounded transition duration-300 ease-in-out">
+                            <h2 className={"mx-3"}>Login</h2>
                         </button>
                     </div>
-                ):(    
-                    <div></div>               
                 )}
 
+            </div>
+              {user ? (
+                  <div className="flex items-center ml-2 mr-2">
+                      <button onClick={handleLogout}
+                              className="bg-red-500 hover:bg-red-600 text-white py-2 ox-3 rounded transition duration-300 ease-in-out">
+                          <h2 className={"mx-3"}>Logout</h2>
+                      </button>
+                    </div>
+                ):(
+                    <div></div>
+                )}
           </div>
         </nav>
     );

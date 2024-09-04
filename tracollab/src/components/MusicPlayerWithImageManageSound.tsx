@@ -1,7 +1,7 @@
-import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 import React from 'react';
+import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 
-export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, userName }) {
+export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, userName, commentsCount }) {
     const handleRemoveClick = async () => {
         const confirmDelete = window.confirm('Are you sure you want to delete this music?');
         if (confirmDelete) {
@@ -11,7 +11,7 @@ export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, u
                 });
 
                 if (response.ok) {
-                    alert('Music deleted successfully');
+                    console.log('Music deleted successfully');
                     if (onPostDeleted) {
                         onPostDeleted(post.id);
                     }
@@ -27,19 +27,21 @@ export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, u
 
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
-            <MusicPlayerWithImage post={post} />
-            <div className="flex flex-col space-y-2 mt-4 sm:mt-0">
-                <a href={`/commentsManagement/${userName}/${post.sound.id}`} className="inline-block">
+            <div className="flex-1">
+                <MusicPlayerWithImage post={post} />
+            </div>
+            <div className="flex flex-col space-y-2 mt-4 sm:mt-0 sm:ml-4">
+                <a href={`/commentsManagement/${userName}/${post.id}`} className="inline-block">
                     <img
-                        src="/assets/bell.png"
+                        src={commentsCount > 0 ? "/assets/bellWithNotif.png" : "/assets/bell.png"}
                         alt="Notification"
-                        className="w-8 h-8 object-cover rounded-lg shadow-md"
+                        className="w-8 h-8 object-cover rounded-lg"
                     />
                 </a>
                 <img
                     src="/assets/remove.png"
                     alt="Remove"
-                    className="w-8 h-8 object-cover rounded-lg shadow-md cursor-pointer"
+                    className="w-8 h-8 object-cover rounded-lg cursor-pointer"
                     onClick={handleRemoveClick}
                 />
             </div>
