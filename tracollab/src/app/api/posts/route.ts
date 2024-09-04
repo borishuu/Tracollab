@@ -3,12 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserData } from '../user/route';
 import { uploadToGc } from '@/app/lib/gcUpload';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
