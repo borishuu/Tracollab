@@ -1,15 +1,15 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import {useParams} from 'next/navigation';
+import {useEffect, useState} from 'react';
 import CommentWithInteraction from "@/components/CommentWithInteraction";
 import LikeReport from "@/components/LikeReport";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
-import { useAuth } from '@/context/authContext';
+import {useAuth} from '@/context/authContext';
 
 export default function PostPage() {
-    const { id } = useParams();
-    const { user } = useAuth();
+    const {id} = useParams();
+    const {user} = useAuth();
     const [post, setPost] = useState<any>(null);
     const [comments, setComments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -133,7 +133,7 @@ export default function PostPage() {
                 <div className="lg:pl-12 lg:ml-24 sm:ml-0 sm:mr-0 lg:mr-24 lg:pr-12 lg:pt-3">
                     <div className="w-full flex flex-row">
                         <div className="w-full md:w-10/12">
-                            {post && <MusicPlayerWithImage post={post} />}
+                            {post && <MusicPlayerWithImage post={post}/>}
                         </div>
                         <div
                             className="flex justify-center items-center sm:justify-center sm:items-center md:w-2/12 md:mt-12 md:justify-start md:items-start lg:mt-12 sm:mt-2">
@@ -208,7 +208,7 @@ export default function PostPage() {
                         <div className="text-white mt-4">
                             {comments.length > 0 ? (
                                 comments.map((comment) => (
-                                    <CommentWithInteraction key={comment.id} comment={comment} />
+                                    <CommentWithInteraction key={comment.id} comment={comment}/>
                                 ))
                             ) : (
                                 <p>No comments yet.</p>

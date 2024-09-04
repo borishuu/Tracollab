@@ -5,25 +5,33 @@ export default function CommentWithInteraction({comment}) {
     const [audioReady, setAudioReady] = useState(false);
 
     useEffect(() => {
+        // Check if there is a sound associated with the comment
         if (comment.sound && comment.sound.audioPath) {
+            // Create a new audio object and check if it can load properly
             const audio = new Audio(comment.sound.audioPath);
+
+            // Add an event listener to handle the loaded data event
             audio.addEventListener('loadeddata', () => {
+                // When the audio is fully loaded, set the audioReady state to true
                 setAudioReady(true);
             });
 
+            // Handle potential errors in loading the audio
             audio.addEventListener('error', () => {
                 console.error("Failed to load audio.");
                 setAudioReady(false);
             });
-
+            // Trigger loading the audio
             audio.load();
         } else {
+            // If no audio, consider it as ready
             setAudioReady(true);
         }
     }, [comment.sound]);
 
     if (!audioReady) {
-        return <div>Loading comment...</div>;
+        // Display a loading indicator or simply return null to hide the component
+        return <div>Loading comment...</div>;  // or return null;
     }
 
     return (

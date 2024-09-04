@@ -49,8 +49,8 @@ export default function Home() {
             formData.append('genre', selectedGenre);
 
             const response = await fetch('/api/posts', {
-                method: 'POST',
-                body: formData,
+              method: 'POST',        
+              body: formData,
             });
 
             const data = await response.json();
@@ -63,10 +63,10 @@ export default function Home() {
                 setError(data.error);
             }
         } catch (error) {
-            console.error('Error uploading file:', error);
-            setError(error);
+          console.error('Error uploading file:', error);
+          setError(error);
         } finally {
-            setUploading(false);
+          setUploading(false);
         }
     }
 
@@ -95,7 +95,7 @@ export default function Home() {
                         <div
                             className="flex-none w-full lg:w-1/3 flex flex-col items-center pl-12 pr-12 pt-6">
                             <div
-                                className="w-full max-w-xs aspect-square bg-red-400 rounded-3xl flex justify-center items-center mb-4">
+                                className="w-full max-w-xs aspect-square bg-red-400 rounded-3xl flex justify-center items-center mb-4">                            
                                 {imagePreview ? (
                                     <img src={imagePreview} alt="Uploaded Image" className="rounded-3xl object-cover" />
                                 ) : (
@@ -170,14 +170,14 @@ export default function Home() {
                             {error && <p className="text-red-500 mb-4">{error}</p>}
                             {uploading && (
                                 <div>
-                                    <img
-                                        src="https://i.gifer.com/ZKZg.gif"
-                                        alt="Loading..."
-                                        style={{ width: '50px', height: '50px' }}
-                                    />
+                                <img
+                                    src="https://i.gifer.com/ZKZg.gif"
+                                    alt="Loading..."
+                                    style={{ width: '50px', height: '50px' }}
+                                />
                                 </div>
                             )}
-                        </form>
+                        </form>                    
                     </div>
                 </div>
             </div>
