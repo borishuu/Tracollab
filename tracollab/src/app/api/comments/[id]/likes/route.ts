@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { getUserData } from "@/app/api/user/route";
 
 const prisma = new PrismaClient();
 
@@ -43,7 +44,6 @@ export async function POST(request: Request) {
     }
 }
 
-
 export async function DELETE(request: Request) {
     try {
         const { userId } = await request.json();
@@ -51,7 +51,7 @@ export async function DELETE(request: Request) {
         const commentId = url.pathname.split('/')[3];
 
         if (!commentId || !userId) {
-            return NextResponse.json({ error: 'Post ID and User ID are required' }, { status: 400 });
+            return NextResponse.json({ error: 'Comment ID and User ID are required' }, { status: 400 });
         }
 
         const like = await prisma.userLikeComment.findFirst({
@@ -72,6 +72,44 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ message: 'Like removed successfully' }, { status: 200 });
     } catch (error) {
         console.error('Error removing like:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } finally {
+        await prisma.$disconnect();
+    }
+}
+
+
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    const commentId = params.id;
+    const userId = await getUserData(req) as string;
+
+    if (!commentId) {
+        return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+    }
+
+    try {
+        // Compter le nombre de likes pour le commentaire
+        const likesCount = await prisma.userLikeComment.count({
+            where: { commentId },
+        });
+
+        // Vérifier si l'utilisateur a aimé le commentaire
+        const userHasLiked = userId
+            ? await prisma.userLikeComment.findFirst({
+                where: {
+                    commentId,
+                    userLike: { userId }
+                },
+            })
+            : null;
+
+        return NextResponse.json({
+            likesCount,
+            userHasLiked: !!userHasLiked // Convertir en booléen pour plus de clarté
+        }, { status: 200 });
+    } catch (error) {
+        console.error('Error fetching likes count and user like status:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     } finally {
         await prisma.$disconnect();
