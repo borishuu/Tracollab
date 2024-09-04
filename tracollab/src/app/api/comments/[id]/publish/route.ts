@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
     const { id } = params; // Récupération de l'ID du commentaire à partir des paramètres
 
+    console.log("comment id: ", id);
     // Check if the ID of the comment is provided
     if (!id) {
         return new Response(

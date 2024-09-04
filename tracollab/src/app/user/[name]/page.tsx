@@ -39,13 +39,13 @@ export default function ProfilePage() {
 
                         // Fetch comment counts for each post
                         const instrumentalsCounts = await Promise.all(data.postsWithInstrumentals.map(async (post) => {
-                            const response = await fetch(`/api/posts/comments/${post.id}?publish=false`);
+                            const response = await fetch(`/api/posts/${post.id}/comments/?publish=false`);
                             const commentsData = await response.json();
                             return { id: post.id, count: Array.isArray(commentsData.comments) ? commentsData.comments.length : 0 };
                         }));
 
                         const voicesCounts = await Promise.all(data.postsWithVoices.map(async (post) => {
-                            const response = await fetch(`/api/posts/comments/${post.id}?publish=false`);
+                            const response = await fetch(`/api/posts/${post.id}/comments/?publish=false`);
                             const commentsData = await response.json();
                             return { id: post.id, count: Array.isArray(commentsData.comments) ? commentsData.comments.length : 0 };
                         }));
@@ -129,7 +129,7 @@ export default function ProfilePage() {
 
                             {/* Display profile picture */ }
                             <div className="flex-none flex items-center justify-center">
-                                <div className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
+                                <div className="w-full max-w-[150px] aspect-square bg-gray-400 rounded-3xl flex justify-center items-center">
                                     <img
                                         src={user?.profilePicture}
                                         alt="Profile picture"

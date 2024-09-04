@@ -1,65 +1,62 @@
-import {PrismaClient} from '@prisma/client';
-import { getUserData } from '../../user/route';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { PrismaClient } from '@prisma/client';
+import { getUserData } from '@/app/api/user/route';
 
 type Params = {
-    id: string
+    id: string;
 }
 
-const REPORTS_TO_DELETE = 5;
+const prisma = new PrismaClient();
+const REPORTS_TO_DELETE = 5; // Nombre de rapports avant la suppression du post
 
-export async function GET(req: NextRequest, context: { params: Params }) {
-    const postId = context.params.id;
-
+export async function GET(request: NextRequest, context: { params: Params }) {
     try {
-        const userId = await getUserData(req) as string;
-  
-        const retrievedPost = await prisma.post.findFirst({
-          where: { id: postId },
-          include: {
-            reports: true,
-        },
-        });
-      
-        if (!retrievedPost) {
-            return new NextResponse(JSON.stringify(
-                { error: 'Post not found' }),
-                { status: 404 }
-            ); 
+        const userId = await getUserData(request) as string;
+        const postId = context.params.id;
+
+        if (!postId || !userId) {
+            console.error('Missing postId or userId');
+            return NextResponse.json({ error: 'Missing postId or userId' }, { status: 400 });
         }
 
-        const userReport = await prisma.userReport.create({
-          data: {
-            user: { connect: { id: userId } },
-            post: { connect: { id: postId } },
-          }
+        // Vérifier si l'utilisateur a déjà signalé ce post
+        const existingReport = await prisma.userReport.findFirst({
+            where: {
+                userId: userId,
+                postId: postId,
+            },
         });
 
-        const postReports = retrievedPost.reports.length + 1; // + 1 for the current report
+        if (existingReport) {
+            return NextResponse.json({ error: 'You have already reported this post' }, { status: 400 });
+        }
 
+        // Créer un nouveau rapport
+        await prisma.userReport.create({
+            data: {
+                userId: userId,
+                postId: postId,
+            },
+        });
+
+        // Compter le nombre total de rapports pour ce post
+        const postReports = await prisma.userReport.count({
+            where: {
+                postId: postId,
+            },
+        });
+
+        // Supprimer le post si le nombre de rapports dépasse le seuil
         if (postReports >= REPORTS_TO_DELETE) {
-          await prisma.post.delete({
-            where: { id: postId }
-          });
-
-          return new NextResponse(JSON.stringify(
-            { message: "Post reported and deleted due to excessive reports" }),
-            { status: 200 }
-          );
+            await prisma.post.delete({
+                where: { id: postId }
+            });
+            return NextResponse.json({ message: 'Post deleted due to multiple reports' }, { status: 200 });
         }
-        
-        return new NextResponse(JSON.stringify(
-            { message: "Post reported" }),
-            { status: 200 }
-        );
-      } catch (error) {
-          console.log(error);
-          return new NextResponse(JSON.stringify(
-              { error: "Server error" }),
-              { status: 500 }
-          );
-  
-      }
+
+        return NextResponse.json({ message: 'Post reported successfully' }, { status: 200 });
+    } catch (error) {
+        console.error('Error reporting post:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
 }

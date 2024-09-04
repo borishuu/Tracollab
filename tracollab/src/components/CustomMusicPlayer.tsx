@@ -13,31 +13,37 @@ export default function CustomMusicPlayer({postOrComment}) {
 
     const handleTimeUpdate = () => {
         const audio = audioRef.current;
-        setElapsedTime(audio.currentTime);
-        setProgress((audio.currentTime / audio.duration) * 100);
+        if (audio) {
+            setElapsedTime(audio.currentTime);
+            setProgress((audio.currentTime / audio.duration) * 100);
+        }
     };
 
     const handleCanPlayThrough = () => {
-        setIsAudioReady(true);
-        setTotalDuration(audioRef.current.duration);
-        audioRef.current.play(); // Lancer la lecture une fois que l'audio est prêt
-        setIsPlaying(true);
+        const audio = audioRef.current;
+        if (audio) {
+            setIsAudioReady(true);
+            setTotalDuration(audio.duration);
+            audio.play();
+            setIsPlaying(true);
+        }
     };
 
     const togglePlayPause = async () => {
         const audio = audioRef.current;
+        if (audio) {
+            if (!audioUrl) {
+                setAudioUrl(postOrComment.sound.audioPath);
+            }
 
-        if (!audioUrl) {
-            setAudioUrl(postOrComment.sound.audioPath);
-        }
-
-        if (isAudioReady) {
-            if (!isPlaying) {
-                await audio.play();
-                setIsPlaying(true);
-            } else {
-                audio.pause();
-                setIsPlaying(false);
+            if (isAudioReady) {
+                if (!isPlaying) {
+                    await audio.play();
+                    setIsPlaying(true);
+                } else {
+                    audio.pause();
+                    setIsPlaying(false);
+                }
             }
         }
     };
@@ -50,14 +56,18 @@ export default function CustomMusicPlayer({postOrComment}) {
 
     const handleProgressClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const audio = audioRef.current;
-        const newTime = (e.nativeEvent.offsetX / e.currentTarget.clientWidth) * audio.duration;
-        audio.currentTime = newTime;
-        setProgress((newTime / audio.duration) * 100);
+        if (audio) {
+            const newTime = (e.nativeEvent.offsetX / e.currentTarget.clientWidth) * audio.duration;
+            audio.currentTime = newTime;
+            setProgress((newTime / audio.duration) * 100);
+        }
     };
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newVolume = parseFloat(e.target.value);
-        audioRef.current.volume = newVolume;
+        if (audioRef.current) {
+            audioRef.current.volume = newVolume;
+        }
         setVolume(newVolume);
     };
 
@@ -75,7 +85,7 @@ export default function CustomMusicPlayer({postOrComment}) {
                     ref={audioRef}
                     src={audioUrl}
                     onTimeUpdate={handleTimeUpdate}
-                    onCanPlayThrough={handleCanPlayThrough} // Appelé lorsque l'audio est prêt à être lu
+                    onCanPlayThrough={handleCanPlayThrough}
                     className="hidden"
                 />
 
@@ -130,5 +140,5 @@ export default function CustomMusicPlayer({postOrComment}) {
                 </div>
             </div>
         </div>
-    )
+    );
 }

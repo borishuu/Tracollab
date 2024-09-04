@@ -27,8 +27,6 @@ export async function GET(req: Request) {
       },
     });
 
-    console.log("genre: ", posts[0]);
-
     // Send the posts data back as a JSON response
     return new Response(JSON.stringify(posts), {
         status: 200,
@@ -61,15 +59,6 @@ export async function POST(req: NextRequest) {
     try {
       const userId = await getUserData(req) as string;
 
-        if (!audioFile || !(audioFile instanceof File)) {
-            return new NextResponse(JSON.stringify(
-                    { error: "An audio file (MP3) is required." }),
-                { status: 400 }
-            );
-        }
-
-
-
       const genre = await prisma.genre.findFirst({where: {name: genreName}});
 
         if (!title) {
@@ -92,6 +81,13 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
+
+        if (!audioFile || !(audioFile instanceof File)) {
+            return new NextResponse(JSON.stringify(
+                    { error: "An audio file (MP3) is required." }),
+                { status: 400 }
+            );
+        }
 
       const audioUrl = await uploadToGc(audioFile, 'instrumentals');
       let imgUrl;

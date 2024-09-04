@@ -25,7 +25,7 @@ export default function MusicPlayerWithImage({ post }) {
             >
 
                     <div
-                        className="w-32 h-32 bg-black rounded-full overflow-hidden flex items-center justify-center hover:border-4 hover:border-white"
+                        className="w-32 h-32 bg-gray-400 rounded-full overflow-hidden flex items-center justify-center hover:border-4 hover:border-white"
                     >
                         <img
                             src={post.sound.picture}

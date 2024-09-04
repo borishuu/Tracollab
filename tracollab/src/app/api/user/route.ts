@@ -12,15 +12,15 @@ export async function getUserData(req: NextRequest) {
       const { payload } = await jwtVerify(token, secret);
       return payload.userId;
     } catch(error) {
-      console.error("Error getting user data:", error);
-      return NextResponse.json({error: "Error getting user data"});
+      console.error("Error getting user data:");
+      return null;
+
     }
 }
 
 export async function GET(req: NextRequest) {
-  const userId = await getUserData(req) as string;
-
   try {
+    const userId = await getUserData(req) as string;
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error(error);
+    console.error("Unable to fetch user data");
     return NextResponse.json({ error: "Error fetching user "});
   }
 }
