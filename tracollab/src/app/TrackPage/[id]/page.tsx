@@ -1,11 +1,12 @@
 'use client';
 
 import {useParams} from 'next/navigation';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CommentWithInteraction from "@/components/CommentWithInteraction";
 import LikeReport from "@/components/LikeReport";
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 import {useAuth} from '@/context/authContext';
+import Crunker from "crunker";
 
 export default function PostPage() {
     const {id} = useParams();
@@ -15,7 +16,7 @@ export default function PostPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState('');
-    const [userLiked, setUserLiked] = useState(false);
+    const [userLiked, setUserLiked] = useState<boolean>(false);
     const [audio, setAudio] = useState<File | null>(null);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
@@ -93,19 +94,39 @@ export default function PostPage() {
             const formData = new FormData();
             formData.append('userId', user.id);
             formData.append('content', sanitizedContent);
+
             if (audio) {
-                formData.append('audioFile', audio);
+                // Form data pour l'envoi de l'audio Voice au Cloud Storage
+                const audioFormData = new FormData();
+                audioFormData.append('audioFile', audio);
+
+                // Envoi de l'audio au serveur et récupération de l'URL
+                const audioPathTemp = await fetch('/api/uploadVoice', {
+                    method: 'POST',
+                    body: audioFormData,
+                } as RequestInit).then((response) => response.json()).then((data) => data.url);
+
+                // Initialiser Crunker
+                const crunker = new Crunker();
+
+                // Récupérer l'audio du post et le mélanger avec l'audio de l'utilisateur
+                const audioBuffer = await crunker.fetchAudio(
+                    post.sound.audioPath,
+                    audioPathTemp,
+                );
+                const mixedAudio = await crunker.mergeAudio(audioBuffer);
+
+                // Exporter l'audio mixé en MP3
+                const output = await crunker.export(mixedAudio, 'audio/mp3');
+                formData.append('audioFile', output.blob);
             }
 
-            const response = await fetch(`/api/posts/comments/${id}`, {
+            await fetch(`/api/posts/${id}/comments`, {
                 method: 'POST',
-                body: formData as unknown as BodyInit,
-            });
+                body: formData,
+            } as RequestInit);
 
-            if (!response.ok) {
-                throw new Error('Failed to post comment');
-            }
-
+            // Après la création du commentaire, on récupère de nouveau tous les commentaires
             fetchComments();
 
             setInputValue('');
@@ -148,7 +169,6 @@ export default function PostPage() {
                     <div className="text-white bg-[#C162EA] mb-4 p-4 rounded-3xl break-words">
                         <p>{post?.description}</p>
                     </div>
-
                     <div className="w-full bg-[#9732C2] flex rounded-3xl">
                         <div className="w-1/12 flex items-center justify-center">
                             <img
@@ -165,7 +185,7 @@ export default function PostPage() {
                                     type="text"
                                     value={inputValue}
                                     onChange={handleInputChange}
-                                    className="w-full h-8 mb-2 pl-4 rounded-full"
+                                    className="w-full h-8 mb-2 pl-4 rounded-full text-black"
                                     disabled={!user}
                                 />
 
@@ -208,7 +228,7 @@ export default function PostPage() {
                         <div className="text-white mt-4">
                             {comments.length > 0 ? (
                                 comments.map((comment) => (
-                                    <CommentWithInteraction key={comment.id} comment={comment}/>
+                                    <CommentWithInteraction comment={comment}/>
                                 ))
                             ) : (
                                 <p>No comments yet.</p>
@@ -220,5 +240,5 @@ export default function PostPage() {
                 </div>
             </div>
         </main>
-    );
+);
 }
