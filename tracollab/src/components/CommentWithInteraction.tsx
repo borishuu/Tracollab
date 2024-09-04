@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import LikeComments from '@/components/LikeComments';
+import CustomMusicPlayer from "@/components/CustomMusicPlayer";
 
 export default function CommentWithInteraction({comment}) {
     const [audioReady, setAudioReady] = useState(false);
@@ -51,18 +52,12 @@ export default function CommentWithInteraction({comment}) {
                     <p>{comment.content}</p>
 
                     {comment.sound && comment.sound.audioPath && (
-                        <div style={{display: 'flex', justifyContent: 'center'}} className="pt-2">
-                            <audio controls>
-                                <source src={comment.sound.audioPath} type="audio/mpeg"/>
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
+                        <CustomMusicPlayer postOrComment={comment}></CustomMusicPlayer>
                     )}
                 </div>
+
                 <div className="w-2/12 pt-2 pl-2">
-                    <>
-                        <LikeComments comment={comment}/>
-                    </>
+                    <LikeComments comment={comment}/>
                 </div>
             </div>
         </div>

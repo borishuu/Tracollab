@@ -2,8 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { uploadToGc } from '@/app/lib/gcUpload';
 
-// ID de genre par défaut
-const DEFAULT_GENRE_ID = '66cc8d4e5006988d7cde1790';
+// ID de genre par défaut ("Unknown")
+const DEFAULT_GENRE_ID = '66d822bce76d99d3c2cc2355';
 
 const prisma = new PrismaClient();
 
