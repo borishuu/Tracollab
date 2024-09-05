@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
         let userId;
 
         const secret = new TextEncoder().encode(process.env.SECRET_KEY);
-        const token = cookies["authToken"];
+        const token = req.cookies.get('authToken')?.value;
 
         try {
             const {payload} = await jwtVerify(token, secret);

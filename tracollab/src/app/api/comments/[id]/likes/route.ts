@@ -94,14 +94,14 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
     let userId;
 
     const secret = new TextEncoder().encode(process.env.SECRET_KEY);
-    const token = cookies["authToken"];
+    const token = req.cookies.get('authToken')?.value;
 
     try {
         const { payload} = await jwtVerify(token, secret);
         userId = payload.userId;
     } catch (error) {
         console.error("Error getting user data");
-        return null;
+        return NextResponse.json({error: 'User not authenticated'}, {status: 400} as Response);
     }
 
     // Vérifier si l'ID du commentaire est fourni

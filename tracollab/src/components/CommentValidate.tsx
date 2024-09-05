@@ -28,7 +28,7 @@ export default function CommentValidate({ comment }) {
 
     const deleteComment = async () => {
         try {
-            const response = await fetch(`/api/comments/${comment.id}/delete`, {
+            const response = await fetch(`/api/comments/${comment.id}`, {
                 method: 'DELETE',
             });
 
