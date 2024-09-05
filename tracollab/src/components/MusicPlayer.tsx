@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import CustomMusicPlayer from "@/components/CustomMusicPlayer";
-import {handlePostClick, handleUserClick} from "@/app/lib/handleClicks";
+import {useRouter} from "next/navigation";
 
 export default function MusicPlayer({post}) {
     const [timeAgo, setTimeAgo] = useState('');
+    const router = useRouter();
 
     useEffect(() => {
         calculateTimeAgo(post.date);
@@ -40,7 +41,7 @@ export default function MusicPlayer({post}) {
                 <div className="w-full overflow-hidden whitespace-nowrap mb-2">
                     <div
                         className="scrolling-title text-xl font-bold rounded-xl hover:cursor-pointer hover:bg-[#5A1980] transition-colors duration-300"
-                        onClick={() => handlePostClick(post.id)}>
+                        onClick={() => router.push(`/TrackPage/${post.id}`)}>
                         <span className="inline-block animate-scroll max-w-48">{post.sound.title}</span>
                     </div>
                 </div>
@@ -49,7 +50,7 @@ export default function MusicPlayer({post}) {
                     <div className="font-medium">
                         <span
                             className="underline hover:cursor-pointer hover:text-blue-400 transition-colors duration-300"
-                            onClick={() => handleUserClick(post.user?.name)}>
+                            onClick={() => router.push(`/user/${post.user?.name}`)}>
                             {post.user?.name}
                         </span>
                         <span className="hidden sm:inline">
