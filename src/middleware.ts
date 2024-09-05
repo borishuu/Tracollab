@@ -36,4 +36,4 @@ export const config = {
     matcher: [
         '/login', '/register', '/post-upload', '/commentsManagement'
     ]
-}
+} 
