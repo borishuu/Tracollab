@@ -13,11 +13,9 @@ export async function POST(request: NextRequest) {
         if (!email || !password) {
             return new NextResponse(JSON.stringify(
                 { error: "Please provice Credentials" }),
-                { status: 400 }
+                { status: 400 } as Response
             );
         }
-
-        console.log("email and password");
 
         const user = await prisma.user.findUnique({
             where: { email },
@@ -27,7 +25,7 @@ export async function POST(request: NextRequest) {
         if (!user) {
             return new NextResponse(JSON.stringify(
                 { error: 'Email or password incorrect' }),
-                { status: 400 }
+                { status: 400 } as Response
             );
         }
 
@@ -36,7 +34,7 @@ export async function POST(request: NextRequest) {
         if (!isPasswordValid) {
             return new NextResponse(JSON.stringify(
                 { error: 'Email or password incorrect' }),
-                { status: 400 }
+                { status: 400 } as Response
             );
         }
 

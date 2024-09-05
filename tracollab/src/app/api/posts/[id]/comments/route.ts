@@ -16,10 +16,10 @@ export async function GET(req: Request, context: { params: Params }) {
         const { id } = context.params as { id: string };
 
         if (!id) {
-            return new Response(JSON.stringify({ error: 'Post ID is required' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' },
-            });
+            return new NextResponse(JSON.stringify(
+                { error: 'Post ID is required' }),
+                { status: 400 } as Response
+            );
         }
 
         // Get the parameter of the request
@@ -76,7 +76,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const audioFile = formData.get('audioFile') as File | null;
 
     if (!userId || !content) {
-        return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        return NextResponse.json({ error: 'Missing required fields' }, { status: 400 } as Response);
     }
 
     try {

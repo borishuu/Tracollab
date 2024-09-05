@@ -1,5 +1,5 @@
 import {PrismaClient} from '@prisma/client';
-import {NextRequest} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 
 const prisma = new PrismaClient();
 
@@ -7,12 +7,10 @@ export async function POST(req: NextRequest) {
     let {query} = await req.json() as { query: string };
 
     if (typeof query !== 'string') {
-        return new Response(JSON.stringify({error: 'Invalid query'}), {
-            status: 400,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+            return new NextResponse(JSON.stringify(
+                { error: "Invalid query" }),
+                { status: 400 } as Response
+            );
     }
 
     query = query.trim().replace(/\s+/g, ' ');

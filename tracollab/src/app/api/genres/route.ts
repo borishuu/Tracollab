@@ -1,27 +1,23 @@
 import {PrismaClient} from '@prisma/client';
+import {NextResponse} from "next/server";
 
 const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
     try {
+        // Récupérer tous les genres de la base de données
         const genres = await prisma.genre.findMany();
 
-        // Send the posts data back as a JSON response
-        return new Response(JSON.stringify(genres), {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        // Retourner les genres en tant que réponse
+        return new NextResponse(JSON.stringify(genres),
+            {status: 200} as Response,
+        );
     } catch (error) {
-        console.error('Error fetching posts:', error);
-        return new Response(JSON.stringify({error: 'Internal Server Error'}), {
-            status: 500,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        return new NextResponse(JSON.stringify({message: 'Internal server error'}),
+            {status: 500} as Response,
+        );
     } finally {
+        // Déconnecter le client Prisma
         await prisma.$disconnect();
     }
 }

@@ -1,69 +1,44 @@
-import { PrismaClient } from '@prisma/client';
+import {PrismaClient} from '@prisma/client';
+import {NextResponse} from "next/server";
 
-// Initialize the PrismaClient instance
 const prisma = new PrismaClient();
 
-// Handler of the PATCH method for updating the publication status of a comment.
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-    const { id } = params; // Récupération de l'ID du commentaire à partir des paramètres
+export async function PATCH(req: Request, {params}: { params: { id: string } }) {
+    // Récupérer l'ID du commentaire
+    const {id} = params;
 
-    console.log("comment id: ", id);
-    // Check if the ID of the comment is provided
-    if (!id) {
-        return new Response(
-            JSON.stringify({ error: 'ID of the comment is required' }),
-            {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' },
-            }
+    // Vérifier si l'ID est présent
+    if (!id)
+        return new NextResponse(JSON.stringify(
+                {error: "ID of the comment is required"}),
+            {status: 400} as Response,
         );
-    }
 
     try {
+        // Récupérer l'état actuel de publication du commentaire
         const currentPublishState = await prisma.comment.findUnique({
-            where: { id },
-            select: { publish: true },
+            where: {id},
+            select: {publish: true},
         });
 
-        // Check if the comment is found
-        if (!currentPublishState) {
-            return new Response(
-                JSON.stringify({ error: 'Comment not found' }),
-                {
-                    status: 404,
-                    headers: { 'Content-Type': 'application/json' },
-                }
+        // Vérifier si le commentaire existe
+        if (!currentPublishState)
+            return new NextResponse(JSON.stringify(
+                    {error: "Comment not found"}),
+                {status: 404} as Response,
             );
-        }
 
-        // Update the comment, invert the ‘publish’ value
+        // Mettre à jour l'état de publication du commentaire
         const updatedComment = await prisma.comment.update({
-            where: { id },
-            data: { publish: !currentPublishState.publish },
+            where: {id},
+            data: {publish: !currentPublishState.publish},
         });
 
-        return new Response(
-            JSON.stringify({
-                message: 'The comment has been updated successfully',
-                comment: updatedComment,
-            }),
-            {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' },
-            }
-        );
+        return new NextResponse(JSON.stringify(updatedComment), {status: 200} as Response);
     } catch (error) {
-        console.error('Error updating comment:', error);
-
-        return new Response(
-            JSON.stringify({ error: 'Internal Server Error' }),
-            {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' },
-            }
-        );
+        return new NextResponse(JSON.stringify({error: "Internal Server Error"}), {status: 500} as Response);
     } finally {
-        // Disconnect the PrismaClient instance
+        // Déconnecter le client Prisma
         await prisma.$disconnect();
     }
 }

@@ -14,14 +14,14 @@ export async function POST(req: NextRequest) {
         if (!email || !username || !password ) {
             return new NextResponse(JSON.stringify(
                 { error: "Please provide Credentials" }),
-                { status: 400 }
+                { status: 400 } as Response
             );
         }
 
         if (!/^\S+@\S+\.\S+$/.test(email)) {
             return new NextResponse(JSON.stringify(
                 { error: "Invalid email format" }),
-                { status: 400 }
+                { status: 400 } as Response
             );
         }
 
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         if (existingUser) {
             return new NextResponse(JSON.stringify(
                 { error: "User already exists, please login" }),
-                { status: 400 }
+                { status: 400 } as Response
             );
         }
 
