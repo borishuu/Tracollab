@@ -1,10 +1,11 @@
 import {useEffect, useState} from 'react';
 import LikeComments from '@/components/LikeComments';
 import CustomMusicPlayer from "@/components/CustomMusicPlayer";
-import {handleUserClick} from "@/app/lib/handleClicks";
+import {useRouter} from "next/navigation";
 
 export default function CommentWithInteraction({comment}) {
     const [audioReady, setAudioReady] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         // Check if there is a sound associated with the comment
@@ -51,7 +52,7 @@ export default function CommentWithInteraction({comment}) {
                 <div className="w-8/12 break-words pt-2 pr-2 pb-2">
                     <p
                         className="text-sm font-semibold underline cursor-pointer hover:text-blue-400 transition-colors duration-300"
-                        onClick={() => handleUserClick(comment.user.name)}>
+                        onClick={() => router.push(`/user/${comment.user.name}`)}>
                         {comment.user.name}
                     </p>
                     <p>{comment.content}</p>
