@@ -1,15 +1,16 @@
-import { PrismaClient } from '@prisma/client';
-import { getUserData} from "@/app/lib/getUserData";
+import {PrismaClient} from '@prisma/client';
 import {NextRequest, NextResponse} from "next/server";
+import {cookies} from "next/headers";
+import {jwtVerify} from "jose";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, {params}: { params: { id: string } }) {
     const postId = params.id;
 
     try {
         const post = await prisma.post.findUnique({
-            where: { id: postId }, // Assuming IDs are strings in MongoDB
+            where: {id: postId}, // Assuming IDs are strings in MongoDB
             include: {
                 sound: {
                     include: {
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         });
 
         if (!post) {
-            return new Response(JSON.stringify({ error: 'Post not found' }), {
+            return new Response(JSON.stringify({error: 'Post not found'}), {
                 status: 404,
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,7 +37,20 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
             });
         }
 
-        const userId = await getUserData(req) as string;
+        let userId;
+
+        const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+        const token = cookies["authToken"];
+
+        try {
+            const {payload} = await jwtVerify(token, secret);
+            userId = payload.userId;
+        } catch (error) {
+            console.error("Error getting user data");
+            return new NextResponse(JSON.stringify(
+                {error: "User not authenticated"}
+            ), {status: 400});
+        }
 
         let userConnectedAndLiked = false;
 
@@ -62,10 +76,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         }
 
         return new Response(JSON.stringify(
-        {
+            {
                 fetchedPost: post,
                 userLiked: userConnectedAndLiked
-             }), {
+            }), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +87,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         });
     } catch (error) {
         console.error('Error fetching post:', error);
-        return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+        return new Response(JSON.stringify({error: 'Internal Server Error'}), {
             status: 500,
             headers: {
                 'Content-Type': 'application/json',
@@ -84,30 +98,30 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-    const { id } = params;
+export async function DELETE(req: Request, {params}: { params: { id: string } }) {
+    const {id} = params;
 
     if (!id) {
-            return new NextResponse(JSON.stringify(
-                { error: "ID is required" }),
-                { status: 400 } as Response
-            );
+        return new NextResponse(JSON.stringify(
+                {error: "ID is required"}),
+            {status: 400} as Response
+        );
     }
 
     try {
         await prisma.post.delete({
-            where: { id }
+            where: {id}
         });
 
-        return new Response(JSON.stringify({ message: 'Post deleted successfully' }), {
+        return new Response(JSON.stringify({message: 'Post deleted successfully'}), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
         });
     } catch (error) {
         console.error('Error deleting post:', error);
-        return new Response(JSON.stringify({ error: 'Failed to delete post' }), {
+        return new Response(JSON.stringify({error: 'Failed to delete post'}), {
             status: 500,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
         });
     } finally {
         await prisma.$disconnect();

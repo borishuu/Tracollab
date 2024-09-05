@@ -1,12 +1,27 @@
 import {PrismaClient} from '@prisma/client';
 import {NextRequest, NextResponse} from 'next/server';
-import {getUserData} from "@/app/lib/getUserData";
+import {cookies} from "next/headers";
+import {jwtVerify} from "jose";
 
 const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
     try {
-        const userId = await getUserData(req) as string;
+        let userId;
+
+        const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+        const token = cookies["authToken"];
+
+        try {
+            const {payload} = await jwtVerify(token, secret);
+            userId = payload.userId;
+        } catch (error) {
+            console.error("Error getting user data");
+            return new NextResponse(JSON.stringify(
+                {error: "User not authenticated"}
+            ), {status: 400});
+        }
+
         const user = await prisma.user.findUnique({
             where: {
                 id: userId,

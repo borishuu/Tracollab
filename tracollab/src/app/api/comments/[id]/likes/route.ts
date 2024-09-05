@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {PrismaClient} from '@prisma/client';
-import {getUserData} from "@/app/lib/getUserData";
+import {cookies} from "next/headers";
+import {jwtVerify} from "jose";
 
 const prisma = new PrismaClient();
 
@@ -90,7 +91,18 @@ export async function DELETE(request: Request) {
 export async function GET(req: NextRequest, {params}: { params: { id: string } }) {
     // Extraire l'ID du commentaire à partir des paramètres de la requête
     const commentId = params.id;
-    const userId = await getUserData(req) as string;
+    let userId;
+
+    const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+    const token = cookies["authToken"];
+
+    try {
+        const { payload} = await jwtVerify(token, secret);
+        userId = payload.userId;
+    } catch (error) {
+        console.error("Error getting user data");
+        return null;
+    }
 
     // Vérifier si l'ID du commentaire est fourni
     if (!commentId)
