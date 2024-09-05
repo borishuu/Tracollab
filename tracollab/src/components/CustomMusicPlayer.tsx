@@ -124,12 +124,12 @@ export default function CustomMusicPlayer({postOrComment}) {
                         step="0.01"
                         value={volume}
                         onChange={handleVolumeChange}
-                        className="w-16 hidden sm:block"
+                        className="w-16 hidden sm:block cursor-pointer"
                     />
                 </div>
 
                 <div
-                    className="flex justify-center mt-4 rounded-xl bg-[#9732C2] p-2 cursor-pointer hover:bg-[#8ACE01] transition-colors duration-300"
+                    className="flex justify-center mt-4 rounded-xl bg-purple-800 p-2 cursor-pointer hover:bg-[#005cc8] transition-colors duration-300"
                     onClick={handleDownloadClick}
                 >
                     <img

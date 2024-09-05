@@ -8,6 +8,7 @@ import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 const sortingOptions = [
     {name: "Newest"},
     {name: "Oldest"},
+    {name: "Most Liked"},
 ];
 
 export default function Home() {
@@ -16,7 +17,7 @@ export default function Home() {
     const [searchResults, setResults] = useState([]);
     const [genres, setGenres] = useState([]);
     const [selectedGenre, setSelectedGenre] = useState("");
-    const [selectedSort, setSelectedSort] = useState("Most Liked");
+    const [selectedSort, setSelectedSort] = useState("");
 
     useEffect(() => {
         async function getPosts() {
@@ -82,10 +83,10 @@ export default function Home() {
                     <SearchBar query={query} setQuery={setQuery} posts={posts} onSearchResults={setResults}/>
                 </div>
                 <div className="p-1 w-1/2 lg:w-1/4 bg-blue-500" style={{backgroundColor: '#D3C3C3'}}>
-                    <DropDownList name={"All Genres"} data={genres} onChange={handleGenreChange}/>
+                    <DropDownList name={"All Genres"} data={genres} value={selectedGenre} onChange={handleGenreChange}/>
                 </div>
                 <div className="p-1 w-1/2 lg:w-1/4 bg-green-500" style={{backgroundColor: '#D3C3C3'}}>
-                    <DropDownList name={"Most Liked"} data={sortingOptions} onChange={handleSortChange}/>
+                    <DropDownList name={"Sort by"} data={sortingOptions} value={selectedSort} onChange={handleSortChange}/>
                 </div>
             </div>
 

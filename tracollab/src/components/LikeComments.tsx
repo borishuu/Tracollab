@@ -67,17 +67,17 @@ export default function LikeComments({ comment }: LikeCommentsProps) {
 
     return (
         <div className="md:space-y-2 lg:space-y-0 sm:space-y-2 flex flex-col">
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 mt-2">
                 <div className="w-1/4">
                     <img
                         src={imgSrc}
-                        className="h-6 object-contain cursor-pointer"
+                        className="h-6 object-contain cursor-pointer hover:scale-125 transition duration-300 ease-in-out whitespace-nowrap"
                         onClick={handleLikeToggle}
                         alt="Like button"
                     />
                 </div>
                 <label className="w-3/4 text-white">
-                    {likesCount ? `${likesCount} likes` : `0 likes`}
+                    {likesCount ? `${likesCount} likes` : `0 like`}
                 </label>
             </div>
         </div>

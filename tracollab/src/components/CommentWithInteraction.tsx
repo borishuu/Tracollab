@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import LikeComments from '@/components/LikeComments';
 import CustomMusicPlayer from "@/components/CustomMusicPlayer";
+import {handleUserClick} from "@/app/lib/handleClicks";
 
 export default function CommentWithInteraction({comment}) {
     const [audioReady, setAudioReady] = useState(false);
@@ -32,7 +33,7 @@ export default function CommentWithInteraction({comment}) {
 
     if (!audioReady) {
         // Display a loading indicator or simply return null to hide the component
-        return <div>Loading comment...</div>;  // or return null;
+        return <div className={"loader"}></div>;  // or return null;
     }
 
     return (
@@ -48,7 +49,11 @@ export default function CommentWithInteraction({comment}) {
                     </div>
                 </div>
                 <div className="w-8/12 break-words pt-2 pr-2 pb-2">
-                    <p className="text-sm font-semibold">{comment.user.name}</p>
+                    <p
+                        className="text-sm font-semibold underline cursor-pointer hover:text-blue-400 transition-colors duration-300"
+                        onClick={() => handleUserClick(comment.user.name)}>
+                        {comment.user.name}
+                    </p>
                     <p>{comment.content}</p>
 
                     {comment.sound && comment.sound.audioPath && (

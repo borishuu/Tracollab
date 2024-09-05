@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import CustomMusicPlayer from "@/components/CustomMusicPlayer";
+import {handlePostClick, handleUserClick} from "@/app/lib/handleClicks";
 
-export default function MusicPlayer({post, handlePostClick, handleUserClick}) {
+export default function MusicPlayer({post}) {
     const [timeAgo, setTimeAgo] = useState('');
 
     useEffect(() => {
         calculateTimeAgo(post.date);
     }, [post.date]);
-
 
     const calculateTimeAgo = (dateString: string) => {
         const now = new Date();
@@ -56,7 +56,7 @@ export default function MusicPlayer({post, handlePostClick, handleUserClick}) {
                             {' '} - {timeAgo}
                         </span>
                     </div>
-                    <span className="font-medium">
+                    <span className="font-medium bg-[#ED7F10] rounded-full px-2 py-1 text-sm">
                         {post.sound.genre.name}
                     </span>
                 </div>
