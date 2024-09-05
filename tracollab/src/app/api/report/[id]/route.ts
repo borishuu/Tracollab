@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
 
         if (!postId || !userId) {
             console.error('Missing postId or userId');
-            return NextResponse.json({ error: 'Missing postId or userId' }, { status: 400 });
+            return NextResponse.json({ error: 'Missing postId or userId' }, { status: 400 } as Response);
         }
 
         // Vérifier si l'utilisateur a déjà signalé ce post
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, context: { params: Params }) {
         });
 
         if (existingReport) {
-            return NextResponse.json({ error: 'You have already reported this post' }, { status: 400 });
+            return NextResponse.json({ error: 'You have already reported this post' }, { status: 400 } as Response);
         }
 
         // Créer un nouveau rapport

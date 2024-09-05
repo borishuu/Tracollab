@@ -58,28 +58,28 @@ export async function POST(req: NextRequest) {
         if (!title) {
             return new NextResponse(JSON.stringify(
                     { error: "A title is required." }),
-                { status: 400 }
+                { status: 400 } as Response
             );
         }
 
       if (!genre) {
         return new NextResponse(JSON.stringify(
           { error: "Please select a genre." }),
-          { status: 400 }
+          { status: 400 } as Response
         );
       }
 
       if (type !== "Instrumental" && type !== "Voice") {
         return new NextResponse(JSON.stringify(
           { error: "Please select a type." }),
-          { status: 400 }
+          { status: 400 } as Response
         );
       }
 
         if (!audioFile || !(audioFile instanceof File)) {
             return new NextResponse(JSON.stringify(
                     { error: "An audio file (MP3) is required." }),
-                { status: 400 }
+                { status: 400 } as Response
             );
         }
 

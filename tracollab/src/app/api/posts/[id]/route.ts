@@ -88,10 +88,10 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     const { id } = params;
 
     if (!id) {
-        return new Response(JSON.stringify({ error: 'ID is required' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-        });
+            return new NextResponse(JSON.stringify(
+                { error: "ID is required" }),
+                { status: 400 } as Response
+            );
     }
 
     try {
