@@ -124,12 +124,12 @@ export default function Home() {
 
                             <div className="h-1/6 mb-4 w-full">
                                 <label className="block text-lg font-medium text-white">Genre</label>
-                                <DropDownList name={"All Genres"} data={genres} onChange={(e) => setSelectedGenre(e.target.value)}/>
+                                <DropDownList name={"All Genres"} data={genres} onChange={(e) => setSelectedGenre(e.target.value)} value={undefined}/>
                             </div>
 
                             <div className="h-1/6 mb-4 w-full">
                                 <label className="block text-lg font-medium text-white">Type</label>
-                                <DropDownList name={"Type"} data={[{ name: "Instrumental" }, { name: "Voice" }]} onChange={(e) => setType(e.target.value)} />
+                                <DropDownList name={"Type"} data={[{ name: "Instrumental" }, { name: "Voice" }]} onChange={(e) => setType(e.target.value)} value={undefined} />
                             </div>
 
                             <div className="h-1/3 mb-4 w-full">
