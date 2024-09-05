@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
-import { uploadToGc } from '@/app/lib/gcUpload';
+import { uploadToGc } from '@/lib/gcUpload';
 import {Params} from "next/dist/shared/lib/router/utils/route-matcher";
 
 // ID de genre par défaut ("Unknown")

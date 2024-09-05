@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
-import {uploadToGc} from "@/app/lib/gcUpload";
+import {uploadToGc} from "@/lib/gcUpload";
 
 export async function POST(req: NextRequest) {
     try {

@@ -1,7 +1,6 @@
 import {PrismaClient} from '@prisma/client';
 import {NextRequest, NextResponse} from 'next/server';
-import {uploadToGc} from "@/app/lib/gcUpload";
-import {cookies} from "next/headers";
+import {uploadToGc} from "@/lib/gcUpload";
 import {jwtVerify} from "jose";
 
 const prisma = new PrismaClient();

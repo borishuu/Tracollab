@@ -1,8 +1,8 @@
 import {SaveOptions, Storage} from '@google-cloud/storage';
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import path from 'path';
 
-const serviceAccountKeyFile = path.join(process.cwd(), process.env.GC_KEY_PATH || '');
+const key = JSON.parse(process.env.GC_KEY);
 const bucketName = 'tracollab-storage';
 
 export async function uploadToGc(file: File, folder: string): Promise<string> {
@@ -13,7 +13,7 @@ export async function uploadToGc(file: File, folder: string): Promise<string> {
 
     // Convertir le fichier en Buffer
     const buffer = Buffer.from(await file.arrayBuffer());
-    const storage = new Storage({ keyFilename: serviceAccountKeyFile });
+    const storage = new Storage({credentials: key});
 
     const filePath = `${folder}/${newFileName}`;
 
