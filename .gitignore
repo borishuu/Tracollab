@@ -46,8 +46,10 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 /tracollab/.env*.local
+/tracollab/.env
 
 # vercel
 /tracollab/.vercel
