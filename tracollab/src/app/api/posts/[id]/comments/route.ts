@@ -3,14 +3,6 @@ import { NextResponse } from 'next/server';
 import { uploadToGc } from '@/lib/gcUpload';
 import {Params} from "next/dist/shared/lib/router/utils/route-matcher";
 
-export const config = {
-    api: {
-      bodyParser: {
-        sizeLimit: '100mb', // Set desired size limit here
-      },
-    },
-  };
-
 // ID de genre par défaut ("Unknown")
 const DEFAULT_GENRE_ID = '66d822bce76d99d3c2cc2355';
 
