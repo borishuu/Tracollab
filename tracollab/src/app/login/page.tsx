@@ -34,7 +34,7 @@ export default function Login() {
 
             // Redirect or handle successful signup
             //const data = await response.json();
-            //Cookies.set('authToken', data.token);
+            // Cookies.set('authToken', data.token);
             router.push('/');
 
         } catch (error: any) {

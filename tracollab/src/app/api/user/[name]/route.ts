@@ -25,6 +25,7 @@ export async function GET(req: Request, { params }: { params: { name: string } }
         });
 
         if (!user) {
+            await prisma.$disconnect();
             return new Response(JSON.stringify({ error: 'User not found' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },
@@ -54,7 +55,9 @@ export async function GET(req: Request, { params }: { params: { name: string } }
             headers: { 'Content-Type': 'application/json' },
         });
     } catch (error) {
+        // Déconnecter le client Prisma
         await prisma.$disconnect();
+
         console.error(error); // Afficher l'erreur dans les logs
         return new Response(JSON.stringify({ error: 'Internal server error' }), {
             status: 500,

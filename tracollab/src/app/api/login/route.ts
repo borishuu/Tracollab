@@ -21,7 +21,6 @@ export async function POST(request: NextRequest) {
             where: { email },
         });
 
-        console.log("user found");
         if (!user) {
             return new NextResponse(JSON.stringify(
                 { error: 'Email or password incorrect' }),
@@ -38,8 +37,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        console.log("password valid");
-
         const jwtSecret = new TextEncoder().encode(secret);
         const token = await new SignJWT({ userId: user.id })
             .setProtectedHeader({ alg:"HS256" })
@@ -55,9 +52,8 @@ export async function POST(request: NextRequest) {
             httpOnly: true,
             maxAge: 3600,
             secure: true
-        });
+        } as any);
 
-        console.log("login succeed");
         return response;
     } catch (error) {
         console.log(error);

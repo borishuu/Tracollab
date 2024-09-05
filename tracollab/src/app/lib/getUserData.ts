@@ -1,10 +1,11 @@
 import {NextRequest} from "next/server";
 import {jwtVerify} from "jose";
+import {cookies} from "next/headers";
 
 export async function getUserData(req: NextRequest) {
 
     const secret = new TextEncoder().encode(process.env.SECRET_KEY);
-    const token = req.cookies.get('authToken' as any)?.value;
+    const token = cookies["authToken"];
 
     try {
       const { payload } = await jwtVerify(token, secret);
