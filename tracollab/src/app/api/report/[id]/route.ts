@@ -10,7 +10,7 @@ type Params = {
 const prisma = new PrismaClient();
 const REPORTS_TO_DELETE = 5; // Nombre de rapports avant la suppression du post
 
-export async function GET(request: NextRequest, context: { params: Params }) {
+export async function GET(req: NextRequest, context: { params: Params }) {
     try {
         let userId;
 
