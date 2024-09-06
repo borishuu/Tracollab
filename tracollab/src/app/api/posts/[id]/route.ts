@@ -46,10 +46,7 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
             const {payload} = await jwtVerify(token, secret);
             userId = payload.userId;
         } catch (error) {
-            console.error("Error getting user data");
-            return new NextResponse(JSON.stringify(
-                {error: "User not authenticated"}
-            ), {status: 400});
+            userId = null;
         }
 
         let userConnectedAndLiked = false;
