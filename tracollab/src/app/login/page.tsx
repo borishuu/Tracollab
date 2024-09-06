@@ -1,20 +1,26 @@
 'use client'
+
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {useAuth} from '@/context/authContext';
 
 export default function Login() {
-    const router = useRouter();
+    // Référence au contexte d'authentification
     const {fetchData} = useAuth();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    const router = useRouter();
+
+    // Fonction pour gérer la soumission du formulaire
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
+            // Envoi de la requête POST pour se connecter
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -25,20 +31,18 @@ export default function Login() {
             const data = await response.json();
             localStorage.setItem('authToken', data.token);
 
+            // Récupérer les informations de l'utilisateur connecté
             await fetchData();
 
+            // Vérifier si la requête a échoué
             if (!response.ok) {
                 const data = await response.json();
                 throw new Error(data.error || 'Login failed');
             }
 
-            // Redirect or handle successful signup
-            //const data = await response.json();
-            // Cookies.set('authToken', data.token);
+            // Rediriger l'utilisateur vers la page d'accueil après la connexion
             router.push('/');
-
         } catch (error: any) {
-            console.log(error.message);
             setError(error.message as string);
         }
     };
@@ -75,11 +79,13 @@ export default function Login() {
                                 placeholder="Enter your password"
                             />
                         </div>
+
                         <div className="mt-1">
                             <Link href="/register">Don&apos;t have an account?&nbsp;
                                 <span className={"hover:text-blue-400 hover:underline"}>Register here</span>
                             </Link>
                         </div>
+
                         <div>
                             <button
                                 className="bg-[#C162EA] hover:bg-[#9732C2] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -87,7 +93,6 @@ export default function Login() {
                             >
                                 Login
                             </button>
-
                         </div>
                     </form>
                 </div>

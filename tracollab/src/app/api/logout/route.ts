@@ -1,22 +1,11 @@
-import bcrypt from 'bcrypt';
-import { PrismaClient } from '@prisma/client';
-import { SignJWT } from 'jose';
-import { NextRequest, NextResponse } from 'next/server';
-
-const secret = process.env.SECRET_KEY;
-const prisma = new PrismaClient();
+import { NextResponse } from 'next/server';
 
 export async function GET() {
-    
-    /*const response = new NextResponse(JSON.stringify(
-        { message: "Logout Successful" }),
-        { status: 200 }
-    );*/
-
+    // Récupérer le cookie d'authentification
     const response = NextResponse.json({ message: "Logout Successful "});
 
+    // Supprimer le cookie d'authentification
     response.cookies.delete("authToken");
 
     return response;
 }
-

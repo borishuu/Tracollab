@@ -1,50 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/authContext';
+import React, {useState, useEffect} from 'react';
+import {useAuth} from '@/context/authContext';
 
 interface LikeReportProps {
     post: any;
     userLiked: any;
 }
 
-export default function LikeReport({ post, userLiked }: LikeReportProps) {
-    const { user } = useAuth();
+export default function LikeReport({post, userLiked}: LikeReportProps) {
+    // Référence à l'utilisateur connecté
+    const {user} = useAuth();
+
     const [likesCount, setLikesCount] = useState<number>(0);
-    const [reporting, setReporting] = useState<boolean>(false); // Track reporting state
+    const [reporting, setReporting] = useState<boolean>(false);
     const [hasLiked, setHasLiked] = useState<boolean>(false);
     const [imgSrc, setImgSrc] = useState<string>("/assets/notLiked.png");
 
+    // Fonction pour changer la couleur du coeur en fonction de l'état du like
     const changeImage = () => {
-        const imageSrc = hasLiked
-            ? "/assets/liked.png"
-            : "/assets/notLiked.png";
+        const imageSrc = hasLiked ? "/assets/liked.png" : "/assets/notLiked.png";
 
         setImgSrc(imageSrc);
     }
 
     useEffect(() => {
-
         setLikesCount(post.likes.length);
         setHasLiked(userLiked);
         changeImage();
     }, [post, user]);
 
     const handleLikeToggle = async () => {
-        if (!user) return;
+        if (!user)
+            return;
 
-        const newHasLiked = !hasLiked; // Déterminez le nouvel état de "like" avant de l'envoyer
+        // Déterminer la méthode à utiliser
+        const newHasLiked = !hasLiked;
+        const method = hasLiked ? 'DELETE' : 'POST';
 
         try {
-            const method = hasLiked ? 'DELETE' : 'POST';
             const response = await fetch(`/api/posts/${post.id}/likes`, {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId: user.id }),
+                body: JSON.stringify({userId: user.id}),
             });
-            if (!response.ok) {
+            if (!response.ok)
                 throw new Error('Network response was not ok');
-            }
 
             // Mettre à jour les états de manière synchrone
             setHasLiked(newHasLiked);
@@ -55,9 +56,10 @@ export default function LikeReport({ post, userLiked }: LikeReportProps) {
         }
     };
 
-
+    // Fonction pour signaler un post
     const handleReport = async () => {
-        if (!user) return;
+        if (!user)
+            return;
 
         try {
             const response = await fetch(`/api/report/${post.id}`, {
@@ -66,16 +68,15 @@ export default function LikeReport({ post, userLiked }: LikeReportProps) {
                     'Content-Type': 'application/json',
                 },
             });
-            if (!response.ok) {
+            if (!response.ok)
                 throw new Error('Network response was not ok');
-            }
+
             const data = await response.json();
-            alert(data.message); // Show server message to user
+            alert(data.message);
         } catch (error) {
-            console.error('Error reporting post:', error);
             alert('Post already reported.');
         } finally {
-            setReporting(false); // Reset reporting state
+            setReporting(false);
         }
     };
 
@@ -91,7 +92,7 @@ export default function LikeReport({ post, userLiked }: LikeReportProps) {
                     />
                 </div>
                 <label className="w-3/4 text-white">
-                    {likesCount ? `${likesCount} likes` : `0 like` }
+                    {likesCount ? `${likesCount} likes` : `0 like`}
                 </label>
             </div>
 

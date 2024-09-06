@@ -1,10 +1,10 @@
-// FormattedDate.tsx
 import React from 'react';
 
 interface FormattedDateProps {
     dateString: string;
 }
 
+// Formatter la date au format jj/mm/aaaa
 function formatDate(dateString: string): string {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');

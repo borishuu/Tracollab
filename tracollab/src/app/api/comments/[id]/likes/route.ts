@@ -40,7 +40,12 @@ export async function POST(request: Request) {
             },
         });
 
-        return NextResponse.json({message: 'Like added successfully'}, {status: 200} as Response);
+        return NextResponse.json({message: 'Like added successfully'}, {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        } as Response);
     } catch (error) {
         console.error('Error adding like:', error);
         return NextResponse.json({error: 'Internal Server Error'}, {status: 500} as Response);
@@ -78,7 +83,12 @@ export async function DELETE(request: Request) {
             where: {id: like.id},
         });
 
-        return NextResponse.json({message: 'Like removed successfully'}, {status: 200} as Response);
+        return NextResponse.json({message: 'Like removed successfully'}, {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        } as Response);
     } catch (error) {
         console.error('Error removing like:', error);
         return NextResponse.json({error: 'Internal Server Error'}, {status: 500} as Response);
@@ -97,7 +107,7 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
     const token = req.cookies.get('authToken')?.value;
 
     try {
-        const { payload} = await jwtVerify(token, secret);
+        const {payload} = await jwtVerify(token, secret);
         userId = payload.userId;
     } catch (error) {
         console.error("Error getting user data");
@@ -127,7 +137,12 @@ export async function GET(req: NextRequest, {params}: { params: { id: string } }
         return NextResponse.json({
             likesCount,
             userHasLiked: !!userHasLiked // Convertir en booléen pour plus de clarté
-        }, {status: 200} as Response);
+        }, {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        } as Response);
     } catch (error) {
         console.error('Error fetching likes count and user like status:', error);
         return NextResponse.json({error: 'Internal Server Error'}, {status: 500} as Response);

@@ -5,18 +5,22 @@ import Link from 'next/link';
 import {useAuth} from '@/context/authContext';
 
 export default function Register() {
-    const router = useRouter();
+    // Référence au contexte d'authentification
     const {fetchData} = useAuth();
+
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    const router = useRouter();
+
+    // Fonction pour gérer la soumission du formulaire
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
-            // Send signup request to your backend API
+            // Envoi de la requête de création de compte
             const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: {
@@ -25,11 +29,13 @@ export default function Register() {
                 body: JSON.stringify({email, username, password}),
             });
 
+            // Vérification de la réponse
             if (!response.ok) {
                 const data = await response.json();
                 throw new Error(data.error || 'Signup failed');
             }
 
+            // Envoi de la requête de connexion
             if (response.status === 200) {
                 await response.json();
                 const loginReponse = await fetch('/api/login', {
@@ -40,11 +46,13 @@ export default function Register() {
                     body: JSON.stringify({email, password}),
                 });
 
+                /* Vérification de la réponse de connexion, si elle est réussie, on redirige l'utilisateur vers la page
+                   d'accueil */
                 if (loginReponse.status === 200) {
                     await loginReponse.json();
                     await fetchData();
                     router.push('/');
-                } else {
+                } else { // Sinon, on affiche un message d'erreur
                     console.log("Login failed after registration", loginReponse.status);
                     setUsername("");
                     setEmail("");
@@ -56,7 +64,6 @@ export default function Register() {
                 setEmail("");
                 setPassword("");
             }
-
         } catch (error: any) {
             console.log(error.message);
             setError(error.message as string);
@@ -108,6 +115,7 @@ export default function Register() {
                                 placeholder="Enter your password"
                             />
                         </div>
+
                         <div className="mt-1">
                             <Link href="/login">Already have an account?&nbsp;
                                 <span className={"hover:text-blue-400 hover:underline"}>
@@ -115,6 +123,7 @@ export default function Register() {
                                 </span>
                             </Link>
                         </div>
+                        
                         <div>
                             <button
                                 className="bg-[#C162EA] hover:bg-[#9732C2] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

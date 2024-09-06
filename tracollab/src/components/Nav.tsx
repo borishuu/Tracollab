@@ -1,21 +1,23 @@
 'use client';
 
-import { useRouter } from "next/navigation";
-import { useAuth } from '@/context/authContext';
+import {useRouter} from "next/navigation";
+import {useAuth} from '@/context/authContext';
 
 export default function Nav() {
-    const { user, setUser } = useAuth();
+    // Référence à l'utilisateur connecté
+    const {user, setUser} = useAuth();
+
     const router = useRouter();
 
+    // Fonction de déconnexion
     const handleLogout = async () => {
         try {
             const response = await fetch('/api/logout');
             if (response.status === 200) {
                 router.push('/login');
                 setUser(null);
-            } else {
+            } else
                 console.error("Logout failed");
-            }
         } catch (error) {
             console.error("Logout failed:", error);
         }
@@ -23,7 +25,7 @@ export default function Nav() {
 
     return (
         <nav className="relative flex w-full items-center justify-between h-16 shadow-dark-mild dark:bg-body-dark">
-            {/* Logo Section */}
+            {/* Logo */}
             <div className="flex-1 h-full flex items-center pl-3 justify-start">
                 <a href="/" className="inline-block">
                     <img
@@ -34,7 +36,7 @@ export default function Nav() {
                 </a>
             </div>
 
-            {/* Central Logo (Hidden on small screens) */}
+            {/* Logo central (caché sur les petits écrans) */}
             <div className="flex-1 h-full flex items-center justify-center hidden md:flex">
                 <a href="/" className="inline-block">
                     <img
@@ -45,10 +47,11 @@ export default function Nav() {
                 </a>
             </div>
 
-            {/* User and Home Icons (Visible on all screens) */}
-            <div className="flex-1 flex items-center justify-end px-3 bg-[#C162EA] h-full space-x-4"> {/* Adjusted space-x-4 for spacing */}
-                {/* Home Icon */}
-                <div className="flex items-center"> {/* Visible on all screens */}
+            {/* Utilisateur et boutons d'authentification */}
+            <div
+                className="flex-1 flex items-center justify-end px-3 bg-[#C162EA] h-full space-x-4">
+                {/* Icône d'accueil */}
+                <div className="flex items-center"> {/* Visible sur tous les écrans */}
                     <a href="/" className="inline-block">
                         <img
                             src="/assets/home.png"
@@ -58,10 +61,10 @@ export default function Nav() {
                     </a>
                 </div>
 
-                {/* User Icon and Authentication Buttons */}
-                <div className="flex items-center space-x-2"> {/* Removed extra margins and managed spacing */}
+                {/* Icone de l'utilisateur et bouton de connexion */}
+                <div className="flex items-center space-x-2">
                     {user ? (
-                        <div className="flex items-center space-x-2"> {/* Spacing between elements */}
+                        <div className="flex items-center space-x-2">
                             <a href={`/user/${user.name}`} className="inline-block">
                                 <img
                                     src="/assets/user.png"

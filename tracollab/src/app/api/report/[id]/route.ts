@@ -1,6 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {PrismaClient} from '@prisma/client';
-import {cookies} from "next/headers";
 import {jwtVerify} from "jose";
 
 type Params = {
@@ -14,23 +13,25 @@ export async function GET(req: NextRequest, context: { params: Params }) {
     try {
         let userId;
 
+        // Récupérer le token d'authentification de l'utilisateur
         const secret = new TextEncoder().encode(process.env.SECRET_KEY);
         const token = req.cookies.get('authToken')?.value;
 
         try {
+            // Vérifier le token JWT
             const {payload} = await jwtVerify(token, secret);
             userId = payload.userId;
         } catch (error) {
-            console.error("Error getting user data");
             return new NextResponse(JSON.stringify(
                 {error: "User not authenticated"}
-            ), {status: 400});
+            ), {status: 400} as Response);
         }
 
+        // Récupérer l'ID du post
         const postId = context.params.id;
 
+        // Vérifier les paramètres
         if (!postId || !userId) {
-            console.error('Missing postId or userId');
             return NextResponse.json({error: 'Missing postId or userId'}, {status: 400} as Response);
         }
 
@@ -41,10 +42,8 @@ export async function GET(req: NextRequest, context: { params: Params }) {
                 postId: postId,
             },
         });
-
-        if (existingReport) {
+        if (existingReport)
             return NextResponse.json({error: 'You have already reported this post'}, {status: 400} as Response);
-        }
 
         // Créer un nouveau rapport
         await prisma.userReport.create({
@@ -66,12 +65,21 @@ export async function GET(req: NextRequest, context: { params: Params }) {
             await prisma.post.delete({
                 where: {id: postId}
             });
-            return NextResponse.json({message: 'Post deleted due to multiple reports'}, {status: 200});
+            return NextResponse.json({message: 'Post deleted due to multiple reports'}, {
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            } as Response);
         }
 
-        return NextResponse.json({message: 'Post reported successfully'}, {status: 200});
+        return NextResponse.json({message: 'Post reported successfully'}, {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        } as Response);
     } catch (error) {
-        console.error('Error reporting post:', error);
-        return NextResponse.json({error: 'Internal Server Error'}, {status: 500});
+        return NextResponse.json({error: 'Internal Server Error'}, {status: 500} as Response);
     }
 }

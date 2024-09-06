@@ -20,6 +20,7 @@ export default function Home() {
     const [selectedSort, setSelectedSort] = useState("");
 
     useEffect(() => {
+        // Récupération des posts
         async function getPosts() {
             try {
                 const response = await fetch("/api/posts");
@@ -30,6 +31,7 @@ export default function Home() {
             }
         }
 
+        // Récupération des genres
         async function getGenres() {
             try {
                 const response = await fetch("/api/genres");
@@ -44,10 +46,12 @@ export default function Home() {
         getPosts();
     }, []);
 
+    // Fonction gérant le changement de genre
     const handleGenreChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedGenre(event.target.value);
     };
 
+    // Fonction gérant le changement de tri
     const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedSort(event.target.value);
     };
@@ -65,6 +69,7 @@ export default function Home() {
 
     const filteredPosts = getFilteredPosts();
 
+    // Tri des posts
     const sortedPosts = [...filteredPosts].sort((a, b) => {
         if (selectedSort === "Newest") {
             return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -86,7 +91,8 @@ export default function Home() {
                     <DropDownList name={"All Genres"} data={genres} value={selectedGenre} onChange={handleGenreChange}/>
                 </div>
                 <div className="p-1 w-1/2 lg:w-1/4 bg-green-500" style={{backgroundColor: '#D3C3C3'}}>
-                    <DropDownList name={"Sort by"} data={sortingOptions} value={selectedSort} onChange={handleSortChange}/>
+                    <DropDownList name={"Sort by"} data={sortingOptions} value={selectedSort}
+                                  onChange={handleSortChange}/>
                 </div>
             </div>
 

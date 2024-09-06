@@ -1,13 +1,16 @@
-import { PrismaClient } from '@prisma/client';
+import {PrismaClient} from '@prisma/client';
+import {NextResponse} from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: Request, { params }: { params: { name: string } }) {
-    const { name } = params;
+export async function GET(req: Request, {params}: { params: { name: string } }) {
+    // Extraire le nom de l'utilisateur de la requête
+    const {name} = params;
 
     try {
+        // Rechercher l'utilisateur dans la base de données
         const user = await prisma.user.findFirst({
-            where: { name: { mode: 'insensitive', equals: name } },
+            where: {name: {mode: 'insensitive', equals: name}},
             include: {
                 posts: {
                     include: {
@@ -24,15 +27,15 @@ export async function GET(req: Request, { params }: { params: { name: string } }
             }
         });
 
+        // Vérifier si l'utilisateur existe
         if (!user) {
+            // Déconnecter le client Prisma
             await prisma.$disconnect();
-            return new Response(JSON.stringify({ error: 'User not found' }), {
-                status: 404,
-                headers: { 'Content-Type': 'application/json' },
-            });
+
+            return new NextResponse(JSON.stringify({error: 'User not found'}), {status: 404});
         }
 
-        // Séparer les posts en fonction de la présence d'instrumentals ou de voices
+        // Séparer les posts en fonction de la présence d'Instrumentals ou de Voices
         const postsWithInstrumentals = user.posts.filter(post => post.sound?.instrumentals?.length > 0);
         const postsWithVoices = user.posts.filter(post => post.sound?.voices?.length > 0);
 
@@ -48,20 +51,16 @@ export async function GET(req: Request, { params }: { params: { name: string } }
             voiceOverCount: postsWithVoices.length,
         };
 
-        await prisma.$disconnect();
-
-        return new Response(JSON.stringify(responseData), {
+        return new NextResponse(JSON.stringify(responseData), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        } as Response);
     } catch (error) {
+        return new NextResponse(JSON.stringify({error: 'Internal server error'}), {status: 500} as Response);
+    } finally {
         // Déconnecter le client Prisma
         await prisma.$disconnect();
-
-        console.error(error); // Afficher l'erreur dans les logs
-        return new Response(JSON.stringify({ error: 'Internal server error' }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-        });
     }
 }

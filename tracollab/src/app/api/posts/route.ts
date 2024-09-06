@@ -1,13 +1,13 @@
 import {PrismaClient} from '@prisma/client';
 import {NextRequest, NextResponse} from 'next/server';
 import {uploadToGc} from '@/lib/gcUpload';
-import {cookies} from "next/headers";
 import {jwtVerify} from "jose";
 
 const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
     try {
+        // Récupérer tous les posts de la base de données
         const posts = await prisma.post.findMany({
             include: {
                 sound: {
@@ -22,27 +22,22 @@ export async function GET(req: Request) {
             },
         });
 
-        // Send the posts data back as a JSON response
-        return new Response(JSON.stringify(posts), {
+        return new NextResponse(JSON.stringify(posts), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',
             },
-        });
+        } as Response);
     } catch (error) {
-        console.error('Error fetching posts:', error);
-        return new Response(JSON.stringify({error: 'Internal Server Error'}), {
-            status: 500,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        return new NextResponse(JSON.stringify({error: 'Internal Server Error'}), {status: 500} as Response);
     } finally {
+        // Déconnecter le client Prisma
         await prisma.$disconnect();
     }
 }
 
 export async function POST(req: NextRequest) {
+    // Récupérer les données du formulaire
     const form = await req.formData();
     const audioFile = form.get("audioFile") as File;
     const imageFile = form.get("imageFile") as File;
@@ -54,58 +49,60 @@ export async function POST(req: NextRequest) {
     try {
         let userId;
 
+        // Récupérer le token JWT de l'utilisateur
         const secret = new TextEncoder().encode(process.env.SECRET_KEY);
         const token = req.cookies.get('authToken')?.value;
 
         try {
+            // Vérifier le token JWT
             const {payload} = await jwtVerify(token, secret);
             userId = payload.userId;
         } catch (error) {
-            console.error("Error getting user data");
             return new NextResponse(JSON.stringify(
                 {error: "User not authenticated"}
-            ), {status: 400});
+            ), {status: 400} as Response);
         }
 
         const genre = await prisma.genre.findFirst({where: {name: genreName}});
 
-        if (!title) {
+        // Vérifier si les champs obligatoires sont remplis
+        if (!title)
             return new NextResponse(JSON.stringify(
                     {error: "A title is required."}),
                 {status: 400} as Response
             );
-        }
 
-        if (!genre) {
+        if (!genre)
             return new NextResponse(JSON.stringify(
                     {error: "Please select a genre."}),
                 {status: 400} as Response
             );
-        }
 
-        if (type !== "Instrumental" && type !== "Voice") {
+        // Vérifier si le type est valide
+        if (type !== "Instrumental" && type !== "Voice")
             return new NextResponse(JSON.stringify(
                     {error: "Please select a type."}),
                 {status: 400} as Response
             );
-        }
 
-        if (!audioFile || !(audioFile instanceof File)) {
+        // Vérifier si un fichier audio est fourni
+        if (!audioFile || !(audioFile instanceof File))
             return new NextResponse(JSON.stringify(
                     {error: "An audio file (MP3) is required."}),
                 {status: 400} as Response
             );
-        }
 
+        // Uploader le fichier sur Google Cloud Storage et récupérer l'URL
         const audioUrl = await uploadToGc(audioFile, 'instrumentals');
         let imgUrl;
 
-        if (!imageFile || !(imageFile instanceof File)) {
+        // Vérifier si un fichier image est fourni et l'uploader sur Google Cloud Storage
+        if (!imageFile || !(imageFile instanceof File))
             imgUrl = "https://storage.googleapis.com/tracollab-storage/images/default-sound.jpg";
-        } else {
+        else
             imgUrl = await uploadToGc(imageFile, 'images');
-        }
 
+        // Créer un nouveau son dans la base de données
         const sound = await prisma.sound.create({
             data: {
                 title: title,
@@ -115,6 +112,7 @@ export async function POST(req: NextRequest) {
             },
         });
 
+        // Créer un nouvel enregistrement dans la base de données en fonction du type
         switch (type) {
             case "Instrumental":
                 await prisma.instrumental.create({
@@ -130,9 +128,15 @@ export async function POST(req: NextRequest) {
                     },
                 });
                 break;
+            default:
+                return new NextResponse(JSON.stringify(
+                        {error: "Invalid type."}),
+                    {status: 400} as Response
+                );
         }
 
-        const post = await prisma.post.create({
+        // Créer un nouveau post dans la base de données
+        await prisma.post.create({
             data: {
                 description: text,
                 user: {connect: {id: userId}},
@@ -140,16 +144,17 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        return new NextResponse(JSON.stringify(
-                {message: "Audio uploaded"}),
-            {status: 200}
+        return new NextResponse(JSON.stringify({error: "Audio uploaded"}), {
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            } as Response
         );
     } catch (error) {
-        console.log(error);
         return new NextResponse(JSON.stringify(
                 {error: "Server error"}),
-            {status: 500}
+            {status: 500} as Response
         );
-
     }
 }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect} from "react";
 
-export default function SearchBar({query, setQuery, posts, onSearchResults }) {
+export default function SearchBar({query, setQuery, posts, onSearchResults}) {
     useEffect(() => {
         if (query.length === 0) {
             onSearchResults([]);
@@ -8,21 +8,7 @@ export default function SearchBar({query, setQuery, posts, onSearchResults }) {
         }
 
         const fetchResults = async () => {
-            // try {
-            //     const response = await fetch('/api/search', {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify({ query }),
-            //     });
-            //     const data = await response.json();
-            //     onSearchResults(data);
-            // } catch (error) {
-            //     console.error("Error fetching search results:", error);
-            // }
-
-            // Filter the results
+            // Filtrer les posts par titre de son ou nom d'utilisateur
             const results = posts.filter((post) => {
                 return post.sound.title.toLowerCase().includes(query.toLowerCase()) || post.user.name.toLowerCase().includes(query.toLowerCase());
             });

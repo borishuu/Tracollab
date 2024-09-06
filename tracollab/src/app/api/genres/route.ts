@@ -9,11 +9,15 @@ export async function GET(req: Request) {
         const genres = await prisma.genre.findMany();
 
         // Retourner les genres en tant que réponse
-        return new NextResponse(JSON.stringify(genres),
-            {status: 200} as Response,
+        return new NextResponse(JSON.stringify(genres), {
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            } as Response,
         );
     } catch (error) {
-        return new NextResponse(JSON.stringify({message: 'Internal server error'}),
+        return new NextResponse(JSON.stringify({error: 'Internal server error'}),
             {status: 500} as Response,
         );
     } finally {

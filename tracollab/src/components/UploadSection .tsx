@@ -12,6 +12,7 @@ export default function UploadSection({ onFileSelect, acceptedFileTypes = "audio
     const [fileName, setFileName] = useState('');
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Récupère le fichier sélectionné
         const file = e.target.files?.[0] || null;
         setFileName(file ? file.name : '');
         onFileSelect(file);

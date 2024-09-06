@@ -7,49 +7,59 @@ import FormattedDate from "@/components/formatDate";
 import CommentValidate from "@/components/CommentValidate";
 
 export default function CommentsManagement() {
-    const { name, id } = useParams(); // Get the name and id from the URL
-    const { user: loggedInUser } = useAuth(); // Get user logged from the context of authentication
-    const router = useRouter();
+    // Récupérer les paramètres de l'URL
+    const { name, id } = useParams();
+
+    // Référence au contexte d'authentification
+    const { user: loggedInUser } = useAuth();
 
     const [post, setPost] = useState<any>(null);
     const [comments, setComments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const router = useRouter();
+
     useEffect(() => {
+        // Vérifier si l'utilisateur est connecté et si le nom de l'utilisateur correspond à celui de l'URL
         const nameStr = Array.isArray(name) ? name[0] : name;
         const decodedName = nameStr ? decodeURIComponent(nameStr) : '';
 
+        /* Rediriger l'utilisateur vers la page de connexion si l'utilisateur n'est pas connecté ou si le nom de
+           l'utilisateur ne correspond pas à celui de l'URL */
         if (!loggedInUser || loggedInUser.name !== decodedName) {
              router.push('/login');
              return;
          }
 
+        // Fonction pour récupérer les données du post et des commentaires
         const fetchData = async () => {
             try {
-                // Fetch post data
+                // Récupérer les informations du post
                 const postResponse = await fetch(`/api/posts/${id}`);
                 const postData = await postResponse.json();
 
+                // Vérifier si une erreur s'est produite lors de la récupération des informations du post
                 if (postData.error) {
                     setError(postData.error);
                     return;
                 }
 
+                // Mettre à jour les informations du post
                 setPost(postData.fetchedPost);
 
-                // Fetch comments
+                // Récupérer les commentaires non publiés du post
                 const commentsResponse = await fetch(`/api/posts/${id}/comments/?publish=false`);
                 const commentsData = await commentsResponse.json();
 
+                // Vérifier si une erreur s'est produite lors de la récupération des commentaires
                 if (commentsData.error) {
                     setError(commentsData.error);
                     return;
                 }
-                setComments(commentsData.comments || []); // Ensure comments is always an array
-
+                // S'assurer que les commentaires sont bien un tableau
+                setComments(commentsData.comments || []);
             } catch (err) {
-                console.error('Error fetching data:', err);
                 setError('Error fetching data');
             } finally {
                 setLoading(false);
@@ -63,10 +73,10 @@ export default function CommentsManagement() {
         <main className="min-h-screen flex flex-col">
             <div className="flex-grow bg-[#404040] px-4 lg:px-36 py-4">
                 <div className="max-w-7xl mx-auto">
-                    { /* Display the information of the sound */ }
+                    { /* Information of the sound */ }
                     <div className="flex flex-col sm:flex-row items-center sm:items-start pt-6 w-full">
                         <div className="flex flex-col sm:flex-row items-center sm:space-x-4 mb-4 sm:mb-0 w-full">
-                            {/* Display the cover of the sound */}
+                            {/* Cover of the sound */}
                             <div className="flex-none flex items-center justify-center w-full sm:w-auto">
                                 <div
                                     className="w-full max-w-[150px] aspect-square bg-red-400 rounded-3xl flex justify-center items-center">
@@ -78,7 +88,7 @@ export default function CommentsManagement() {
                                 </div>
                             </div>
 
-                            {/* Display the title and date of the sound */}
+                            {/* Title and date of the sound */}
                             <div className="flex flex-col ml-0 sm:ml-4 text-white w-full">
                                 <div className="text-3xl w-full p-1">
                                     <a href={`/TrackPage/${post?.id}`} className="hover:underline">
@@ -92,7 +102,7 @@ export default function CommentsManagement() {
                         </div>
                     </div>
 
-                    {/* Display the comments */}
+                    {/* Comments */}
                     <div className="bg-[#C162EA] text-white p-4 rounded-3xl mt-10">
                         <div className="mt-4 space-y-4">
                             {loading ? (

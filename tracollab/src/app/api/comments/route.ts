@@ -15,7 +15,7 @@ export async function GET(req: Request) {
             },
         });
     } catch (error) {
-        return new NextResponse(JSON.stringify({message: 'Internal server error'}),
+        return new NextResponse(JSON.stringify({error: 'Internal server error'}),
             {status: 500} as Response,
         );
     } finally {
@@ -45,15 +45,14 @@ export async function DELETE(req: Request, {params}: { params: { id: string } })
         });
 
         // Retourner le commentaire supprimé en tant que réponse
-        return new Response(JSON.stringify(deletedComment), {
+        return new NextResponse(JSON.stringify(deletedComment), {
             status: 200,
-            headers: {'Content-Type': 'application/json'},
-        });
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        } as Response);
     } catch (error) {
-        return new Response(JSON.stringify({error: 'Internal Server Error'}), {
-            status: 500,
-            headers: {'Content-Type': 'application/json'},
-        });
+        return new NextResponse(JSON.stringify({error: 'Internal Server Error'}), {status: 500} as Response);
     } finally {
         // Déconnecter le client Prisma
         await prisma.$disconnect();

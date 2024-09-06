@@ -34,7 +34,12 @@ export async function PATCH(req: Request, {params}: { params: { id: string } }) 
             data: {publish: !currentPublishState.publish},
         });
 
-        return new NextResponse(JSON.stringify(updatedComment), {status: 200} as Response);
+        return new NextResponse(JSON.stringify(updatedComment), {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        } as Response);
     } catch (error) {
         return new NextResponse(JSON.stringify({error: "Internal Server Error"}), {status: 500} as Response);
     } finally {

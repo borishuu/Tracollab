@@ -11,6 +11,7 @@ export default function CustomMusicPlayer({postOrComment}) {
 
     const audioRef = useRef<HTMLAudioElement>(null);
 
+    // Gère la mise à jour du temps écoulé et de la barre de progression
     const handleTimeUpdate = () => {
         const audio = audioRef.current;
         if (audio) {
@@ -19,6 +20,7 @@ export default function CustomMusicPlayer({postOrComment}) {
         }
     };
 
+    // Gère le chargement de l'audio et le lancement de la lecture
     const handleCanPlayThrough = () => {
         const audio = audioRef.current;
         if (audio) {
@@ -29,6 +31,7 @@ export default function CustomMusicPlayer({postOrComment}) {
         }
     };
 
+    // Gère le lancement et l'arrêt de la lecture
     const togglePlayPause = async () => {
         const audio = audioRef.current;
         if (audio) {
@@ -48,12 +51,14 @@ export default function CustomMusicPlayer({postOrComment}) {
         }
     };
 
+    // Formate le temps en minutes et secondes
     const formatTime = (time: number) => {
         const minutes = Math.floor(time / 60);
         const seconds = Math.floor(time % 60);
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
+    // Gère le déplacement de la barre de progression
     const handleProgressClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const audio = audioRef.current;
         if (audio) {
@@ -63,6 +68,7 @@ export default function CustomMusicPlayer({postOrComment}) {
         }
     };
 
+    // Gère le changement du volume
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newVolume = parseFloat(e.target.value);
         if (audioRef.current) {
@@ -71,6 +77,7 @@ export default function CustomMusicPlayer({postOrComment}) {
         setVolume(newVolume);
     };
 
+    // Gère le téléchargement du fichier audio
     const handleDownloadClick = async () => {
         if (!audioUrl) {
             setAudioUrl(postOrComment.sound.audioPath);

@@ -4,12 +4,14 @@ import {useRouter} from "next/navigation";
 
 export default function MusicPlayer({post}) {
     const [timeAgo, setTimeAgo] = useState('');
+
     const router = useRouter();
 
     useEffect(() => {
         calculateTimeAgo(post.date);
     }, [post.date]);
 
+    // Fonction pour calculer le temps écoulé depuis la publication
     const calculateTimeAgo = (dateString: string) => {
         const now = new Date();
         const postDate = new Date(dateString);
@@ -22,16 +24,22 @@ export default function MusicPlayer({post}) {
         const months = Math.floor(days / 30);
         const years = Math.floor(months / 12);
 
-        if (years > 0) {
-            setTimeAgo(`${years} year${years > 1 ? 's' : ''} ago`);
-        } else if (months > 0) {
-            setTimeAgo(`${months} month${months > 1 ? 's' : ''} ago`);
-        } else if (days > 0) {
-            setTimeAgo(`${days} day${days > 1 ? 's' : ''} ago`);
-        } else if (hours > 0) {
-            setTimeAgo(`${hours} hour${hours > 1 ? 's' : ''} ago`);
-        } else {
-            setTimeAgo(`${minutes} minute${minutes > 1 ? 's' : ''} ago`);
+        switch (true) {
+            case (years > 0):
+                setTimeAgo(`${years} year${years > 1 ? 's' : ''} ago`);
+                break;
+            case (months > 0):
+                setTimeAgo(`${months} month${months > 1 ? 's' : ''} ago`);
+                break;
+            case (days > 0):
+                setTimeAgo(`${days} day${days > 1 ? 's' : ''} ago`);
+                break;
+            case (hours > 0):
+                setTimeAgo(`${hours} hour${hours > 1 ? 's' : ''} ago`);
+                break;
+            default:
+                setTimeAgo(`${minutes} minute${minutes > 1 ? 's' : ''} ago`);
+                break;
         }
     };
 

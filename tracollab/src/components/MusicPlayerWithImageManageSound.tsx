@@ -1,7 +1,8 @@
 import React from 'react';
 import MusicPlayerWithImage from "@/components/MusicPlayerWithImage";
 
-export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, userName, commentsCount }) {
+export default function MusicPlayerWithImageManageSound({post, onPostDeleted, userName, commentsCount}) {
+    // Fonction pour supprimer un post
     const handleRemoveClick = async () => {
         const confirmDelete = window.confirm('Are you sure you want to delete this music?');
         if (confirmDelete) {
@@ -10,16 +11,11 @@ export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, u
                     method: 'DELETE',
                 });
 
-                if (response.ok) {
-                    console.log('Music deleted successfully');
-                    if (onPostDeleted) {
-                        onPostDeleted(post.id);
-                    }
-                } else {
+                if (response.ok && onPostDeleted)
+                    onPostDeleted(post.id);
+                else
                     alert('Failed to delete music: ' + response.statusText);
-                }
             } catch (error) {
-                console.error('Error deleting post:', error);
                 alert('An error occurred while deleting the music');
             }
         }
@@ -28,7 +24,7 @@ export default function MusicPlayerWithImageManageSound({ post, onPostDeleted, u
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
             <div className="flex-1">
-                <MusicPlayerWithImage post={post} />
+                <MusicPlayerWithImage post={post}/>
             </div>
             <div className="flex flex-col space-y-2 mt-4 sm:mt-0 sm:ml-4">
                 <a href={`/commentsManagement/${userName}/${post.id}`} className="inline-block">

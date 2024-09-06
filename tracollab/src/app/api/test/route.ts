@@ -1,12 +1,10 @@
-/*import {PrismaClient} from '@prisma/client';
-
-const prisma = new PrismaClient();*/
+import {NextResponse} from "next/server";
 
 export async function GET(req: Request) {
-    return new Response(JSON.stringify({ message: 'Hello, world!' }), {
+    return new NextResponse(JSON.stringify({ message: 'Hello, world!' }), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
         },
-      });
+      } as Response);
 }

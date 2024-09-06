@@ -9,8 +9,12 @@ import {useAuth} from '@/context/authContext';
 import Crunker from "crunker";
 
 export default function PostPage() {
+    // Récupérer l'ID du post dans l'URL
     const {id} = useParams();
+
+    // Référence au contexte d'authentification
     const {user} = useAuth();
+
     const [post, setPost] = useState<any>(null);
     const [comments, setComments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -23,6 +27,7 @@ export default function PostPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // Récupérer les données du post
                 const postResponse = await fetch(`/api/posts/${id}`);
                 const postData = await postResponse.json();
 
@@ -34,26 +39,29 @@ export default function PostPage() {
                 setPost(postData.fetchedPost);
                 setUserLiked(postData.userLiked);
 
+                // Récupérer les commentaires du post
                 await fetchComments();
             } catch (err) {
-                setError('Error fetching data');
                 console.error('Error while fetching data:', err);
+                setError('Error fetching data');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (id) {
+        if (id)
             fetchData();
-        }
     }, [id, sortOrder, user?.id]);
 
+    // Gestion de l'input de commentaire
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);
     };
 
+    // Fonction pour récupérer les commentaires du post
     const fetchComments = async () => {
         try {
+            // Récupérer les commentaires du post
             const commentsResponse = await fetch(`/api/posts/${id}/comments/?publish=true`);
             const commentsData = await commentsResponse.json();
 
@@ -62,7 +70,10 @@ export default function PostPage() {
                 return;
             }
 
-            const sortedComments = commentsData.comments.sort((a: any, b: any) =>
+            console.log("Comments : ", commentsData.comments);
+
+            // Trier les commentaires par ordre de date
+            const sortedComments = commentsData.comments?.sort((a: any, b: any) =>
                 sortOrder === 'desc'
                     ? b.id.localeCompare(a.id)
                     : a.id.localeCompare(b.id)
@@ -75,11 +86,13 @@ export default function PostPage() {
         }
     };
 
+    // Gestion de l'upload de fichier audio
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         setAudio(file ?? null);
     };
 
+    // Fonction pour poster un commentaire
     const handlePostComment = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -88,13 +101,16 @@ export default function PostPage() {
             return;
         }
 
+        // Nettoyage de l'input pour éviter les attaques XSS
         const sanitizedContent = inputValue.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
         try {
+            // Form data pour l'envoi du commentaire
             const formData = new FormData();
             formData.append('userId', user.id);
             formData.append('content', sanitizedContent);
 
+            // Si un fichier audio est présent, on l'ajoute au FormData
             if (audio) {
                 // Form data pour l'envoi de l'audio Voice au Cloud Storage
                 const audioFormData = new FormData();
@@ -121,6 +137,7 @@ export default function PostPage() {
                 formData.append('audioFile', output.blob);
             }
 
+            // Envoi du commentaire au serveur
             await fetch(`/api/posts/${id}/comments`, {
                 method: 'POST',
                 body: formData,
@@ -136,17 +153,16 @@ export default function PostPage() {
         }
     };
 
+    // Fonction pour changer l'ordre de tri des commentaires
     const handleSortToggle = () => {
         setSortOrder(prevOrder => prevOrder === 'asc' ? 'desc' : 'asc');
     };
 
-    if (loading) {
+    if (loading)
         return <p>Loading...</p>;
-    }
 
-    if (error) {
+    if (error)
         return <p>Error: {error}</p>;
-    }
 
     return (
         <main>
@@ -240,5 +256,5 @@ export default function PostPage() {
                 </div>
             </div>
         </main>
-);
+    );
 }

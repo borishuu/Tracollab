@@ -12,7 +12,6 @@ export default function MusicPlayerWithImage({post}) {
                 className="flex-shrink-0 flex items-center justify-center mb-4 sm:mb-0 hover:cursor-pointer transition-all duration-300"
                 onClick={() => router.push(`/TrackPage/${post.id}`)}
             >
-
                 <div
                     className="w-32 h-32 bg-gray-400 rounded-full overflow-hidden flex items-center justify-center hover:border-4 hover:border-white"
                 >

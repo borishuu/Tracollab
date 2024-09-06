@@ -1,6 +1,5 @@
 import {PrismaClient} from '@prisma/client';
 import {NextRequest, NextResponse} from 'next/server';
-import {cookies} from "next/headers";
 import {jwtVerify} from "jose";
 
 const prisma = new PrismaClient();
@@ -9,28 +8,35 @@ export async function GET(req: NextRequest) {
     try {
         let userId;
 
+        // Récupérer le token de l'utilisateur
         const secret = new TextEncoder().encode(process.env.SECRET_KEY);
         const token = req.cookies.get('authToken')?.value;
 
         try {
+            // Vérifier le token
             const {payload} = await jwtVerify(token, secret);
             userId = payload.userId;
         } catch (error) {
-            console.error("Error getting user data");
-            return new NextResponse(JSON.stringify(
-                {error: "User not authenticated"}
-            ), {status: 400});
+            return new NextResponse(JSON.stringify({error: "User not authenticated"}), {status: 400} as Response);
         }
 
+        // Rechercher l'utilisateur dans la base de données
         const user = await prisma.user.findUnique({
             where: {
                 id: userId,
             }
         });
 
-        return NextResponse.json(user, {status: 200} as Response);
+        return NextResponse.json(user, {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        } as Response);
     } catch (error) {
-        console.error("Unable to fetch user data: ", error);
         return NextResponse.json({error: "Error fetching user "});
+    } finally {
+        // Déconnecter le client Prisma
+        await prisma.$disconnect();
     }
 }

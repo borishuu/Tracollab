@@ -6,20 +6,25 @@ interface LikeCommentsProps {
 }
 
 export default function LikeComments({ comment }: LikeCommentsProps) {
+    // Référence à l'utilisateur connecté
     const { user } = useAuth();
+
     const [likesCount, setLikesCount] = useState<number>(0);
     const [hasLiked, setHasLiked] = useState<boolean>(false);
     const [imgSrc, setImgSrc] = useState<string>("/assets/notLiked.png");
 
     useEffect(() => {
-        if (!comment) return;
+        // Si le commentaire n'existe pas, on ne fait rien
+        if (!comment)
+            return;
 
         const fetchLikesData = async () => {
             try {
+                // Récupération des données de likes
                 const response = await fetch(`/api/comments/${comment.id}/likes`);
-                if (!response.ok) {
+                if (!response.ok)
                     throw new Error('Network response was not ok');
-                }
+
                 const data = await response.json();
                 setLikesCount(data.likesCount);
                 setHasLiked(data.userHasLiked);
@@ -35,18 +40,23 @@ export default function LikeComments({ comment }: LikeCommentsProps) {
         changeImage();
     }, [hasLiked]);
 
+    // Fonction pour changer la couleur du coeur en fonction de l'état du like
     const changeImage = () => {
         const imageSrc = hasLiked ? "/assets/liked.png" : "/assets/notLiked.png";
         setImgSrc(imageSrc);
     };
 
+    // Fonction pour gérer le like
     const handleLikeToggle = async () => {
-        if (!user) return;
+        if (!user)
+            return;
 
+        // Déterminer la méthode à utiliser
         const newHasLiked = !hasLiked;
         const method = newHasLiked ? 'POST' : 'DELETE';
 
         try {
+            // Envoi de la requête pour le like
             const response = await fetch(`/api/comments/${comment.id}/likes`, {
                 method,
                 headers: {
@@ -54,9 +64,8 @@ export default function LikeComments({ comment }: LikeCommentsProps) {
                 },
                 body: JSON.stringify({ userId: user.id }),
             });
-            if (!response.ok) {
+            if (!response.ok)
                 throw new Error('Network response was not ok');
-            }
 
             setHasLiked(newHasLiked);
             setLikesCount(prevCount => prevCount + (newHasLiked ? 1 : -1));
